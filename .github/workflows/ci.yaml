@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  run-analyzers:
 
     runs-on: ubuntu-latest
 
@@ -16,15 +16,11 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apt install build-essentials
-        apt install cmake
         apt install shellcheck
         apt install shfmt
         apt install bear
         apt install clang-format-20
         apt install clang-tidy
-        apt install valgrind
-        apt install lcov
         pip install cmakelang
 
     - name: Check shell scripts
@@ -36,11 +32,33 @@ jobs:
     - name: Check code formatting
       run: ./scripts/ci/format-check.sh
 
+    - name: Lint code
+      run: ./scripts/ci/lint.sh
+
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
     - name: Build
       run: ./scripts/ci/build.sh
 
-    - name: Lint code
-      run: ./scripts/ci/lint.sh
+  tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        apt install valgrind
+        apt install lcov
 
     - name: Run tests and display coverage
       run: ./scripts/ci/tests_coverage.sh
