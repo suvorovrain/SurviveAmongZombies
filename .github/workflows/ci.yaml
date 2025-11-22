@@ -23,6 +23,7 @@ jobs:
         apt install -y cmake
         apt install -y clang-format-20
         apt install -y clang-tidy
+        python -m pip install --upgrade pip
         pip install cmakelang
 
     - name: Check shell scripts
