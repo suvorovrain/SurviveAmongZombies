@@ -18,12 +18,12 @@ jobs:
         sudo apt update
         sudo apt install -y shellcheck
         sudo apt install -y shfmt
-        sudo apt install -y bear
-        sudo apt install -y cmake
-        sudo apt install -y clang-format-20
-        sudo apt install -y clang-tidy
         python -m pip install --upgrade pip
         pip install cmakelang
+        sudo apt install -y clang-format-20
+        sudo apt install -y bear
+        sudo apt install -y cmake
+        sudo apt install -y clang-tidy
 
     - name: Check shell scripts
       run: ./scripts/ci/shellcheck.sh
@@ -32,7 +32,7 @@ jobs:
       run: ./scripts/ci/cmake-check.sh
 
     - name: Check code formatting
-      run: ./scripts/ci/format-check.sh
+      run: ./scripts/ci/code-format-check.sh
 
     - name: Lint code
       run: ./scripts/ci/lint.sh
@@ -76,8 +76,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y valgrind
         sudo apt install -y lcov
+        sudo apt install -y valgrind
 
     - name: Run tests and display coverage
       run: ./scripts/ci/tests_coverage.sh
