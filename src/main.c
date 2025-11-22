@@ -1,7 +1,7 @@
 #include "utils/utils.h"
 #include <stdio.h>
 
-int main() {
+int main(void) {
   printf("5 + 3 = %d\n", add(5, 3));
 
 #ifdef OS_WINDOWS
