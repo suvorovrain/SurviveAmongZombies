@@ -8,7 +8,6 @@ on:
 
 jobs:
   run-analyzers:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -48,22 +47,27 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install CMake
+    - name: Install CMake (Linux)
+      if: runner.os == 'Linux'
       run: |
-        if [ "$RUNNER_OS" == "Linux" ]; then
-          sudo apt update
-          sudo apt install -y cmake
-        elif [ "$RUNNER_OS" == "macOS" ]; then
-          brew install cmake
-        elif [ "$RUNNER_OS" == "Windows" ]; then
-          choco install cmake
-        fi
+        sudo apt update
+        sudo apt install -y cmake
+
+    - name: Install CMake (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install cmake
+
+    - name: Install CMake (Windows)
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: |
+        choco install cmake
 
     - name: Build
       run: ./scripts/ci/build.sh
 
   tests:
-
     runs-on: ubuntu-latest
 
     steps:
