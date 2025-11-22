@@ -16,13 +16,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apt update
-        apt install -y shellcheck
-        apt install -y shfmt
-        apt install -y bear
-        apt install -y cmake
-        apt install -y clang-format-20
-        apt install -y clang-tidy
+        sudo apt update
+        sudo apt install -y shellcheck
+        sudo apt install -y shfmt
+        sudo apt install -y bear
+        sudo apt install -y cmake
+        sudo apt install -y clang-format-20
+        sudo apt install -y clang-tidy
         python -m pip install --upgrade pip
         pip install cmakelang
 
@@ -51,8 +51,8 @@ jobs:
     - name: Install CMake
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-          apt update
-          apt install -y cmake
+          sudo apt update
+          sudo apt install -y cmake
         elif [ "$RUNNER_OS" == "macOS" ]; then
           brew install cmake
         elif [ "$RUNNER_OS" == "Windows" ]; then
@@ -71,9 +71,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apt update
-        apt install -y valgrind
-        apt install -y lcov
+        sudo apt update
+        sudo apt install -y valgrind
+        sudo apt install -y lcov
 
     - name: Run tests and display coverage
       run: ./scripts/ci/tests_coverage.sh
