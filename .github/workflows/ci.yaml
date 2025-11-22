@@ -16,11 +16,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apt install shellcheck
-        apt install shfmt
-        apt install bear
-        apt install clang-format-20
-        apt install clang-tidy
+        apt install -y shellcheck
+        apt install -y shfmt
+        apt install -y bear
+        apt install -y cmake
+        apt install -y clang-format-20
+        apt install -y clang-tidy
         pip install cmakelang
 
     - name: Check shell scripts
@@ -45,6 +46,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install CMake
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          apt install -y cmake
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          brew install cmake
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+          choco install cmake
+        fi
+
     - name: Build
       run: ./scripts/ci/build.sh
 
@@ -57,8 +68,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apt install valgrind
-        apt install lcov
+        apt install -y valgrind
+        apt install -y lcov
 
     - name: Run tests and display coverage
       run: ./scripts/ci/tests_coverage.sh
