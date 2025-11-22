@@ -2,6 +2,9 @@ file(GLOB_RECURSE SRC_FILES "*.c")
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
+target_compile_options(${PROJECT_NAME} PRIVATE -O2 -Wall -Wextra -pedantic
+                                               -Werror)
+
 if(PLATFORM_WINDOWS)
   target_compile_definitions(${PROJECT_NAME} PRIVATE OS_WINDOWS)
 elseif(PLATFORM_LINUX)
