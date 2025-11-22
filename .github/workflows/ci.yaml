@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check shell scripts
+      run: ./scripts/ci/shellcheck.sh
+
+    - name: Check CMake files
+      run: ./scripts/ci/cmake-check.sh
+
+    - name: Check code formatting
+      run: ./scripts/ci/format-check.sh
+
+    - name: Build
+      run: ./scripts/ci/build.sh
+
+    - name: Lint code
+      run: ./scripts/ci/lint.sh
+
+    - name: Run tests and display coverage
+      run: ./scripts/ci/tests_coverage.sh
+
+    - name: Check tests for leaks
+      run: ./scripts/ci/leaks.sh
