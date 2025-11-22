@@ -59,7 +59,7 @@ if(ENABLE_COVERAGE)
               ${CMAKE_BINARY_DIR}/coverage.info --quiet 2>/dev/null
       COMMAND
         ${LCOV} --remove ${CMAKE_BINARY_DIR}/coverage.info '*/tests/*'
-        '*/vendor/*' '*/usr/*' '*/unity/*' '*/CMakeFiles/*' --output-file
+        '*/vendor/*' --output-file
         ${CMAKE_BINARY_DIR}/coverage.filtered.info --quiet 2>/dev/null
       COMMAND ${LCOV} --summary ${CMAKE_BINARY_DIR}/coverage.filtered.info
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
