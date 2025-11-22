@@ -14,6 +14,19 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install dependencies
+      run: |
+        apt install build-essentials
+        apt install cmake
+        apt install shellcheck
+        apt install shfmt
+        apt install bear
+        apt install clang-format-20
+        apt install clang-tidy
+        apt install valgrind
+        apt install lcov
+        pip install cmakelang
+
     - name: Check shell scripts
       run: ./scripts/ci/shellcheck.sh
 
