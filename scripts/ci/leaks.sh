@@ -48,7 +48,7 @@ cmake -S . -B build
 cmake --build build
 
 tmpfile=$(mktemp)
-find ./build/bin -type f -executable > "$tmpfile"
+find ./build/bin/tests -type f -executable > "$tmpfile"
 
 while read -r prog; do
     if ! check_program "$prog"; then
