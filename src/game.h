@@ -1,0 +1,21 @@
+#ifndef GAME_H
+#define GAME_H
+
+#include "dyn_objs.h"
+#include "static_objs.h"
+#include <../vendor/GTA-VI/include/engine/engine.h>
+#include <../vendor/GTA-VI/include/engine/types.h>
+
+typedef struct Game {
+  DynamicObjects *dyn_objs;
+  StaticObjects *st_objs;
+  GameObject **objects; // All objects (static + dynamic)
+  GameObject *player;
+  Engine *engine;
+} Game;
+
+Game *game_create();
+void game_free(Game *game); 
+void game_update(Game *game, Input *input);
+
+#endif
