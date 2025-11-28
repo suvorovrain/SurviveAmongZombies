@@ -8,7 +8,7 @@ Camera *camera_create(float width, float height) {
   camera->size = (Vector){width, height};
   camera->position = (Vector){0.0f, 0.0f};
   camera->target = (Vector){0.0f, 0.0f};
-  camera->follow_speed = 8.0f; // not used yet
+  camera->follow_speed = 80.0f; // not used yet
   camera->following = true;
   camera->world_bounds = (Vector){0.0f, 0.0f}; // not used yet (and not needed mb?)
 
