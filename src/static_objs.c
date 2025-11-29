@@ -17,15 +17,14 @@ typedef enum {
 static Sprite *load_st_sprites() {
   Sprite *obj_sprites = calloc(OBJ_COUNT, sizeof(Sprite));
 
-  obj_sprites[OBJ_BUSH1] =
-      load_sprite("../../assets/static/bush_red.png", 7.5f);
-  obj_sprites[OBJ_ROCK] = load_sprite("../../assets/static/rock.png", 3.5f);
+  obj_sprites[OBJ_BUSH1] = load_sprite("assets/static/bush_red.png", 7.5f);
+  obj_sprites[OBJ_ROCK] = load_sprite("assets/static/rock.png", 3.5f);
   obj_sprites[OBJ_CACTUS_LONG] =
-      load_sprite("../../assets/static/cactus_long.png", 4.5f);
+      load_sprite("assets/static/cactus_long.png", 4.5f);
   obj_sprites[OBJ_CACTUS_SHORT] =
-      load_sprite("../../assets/static/cactus_short.png", 3.0f);
-  // obj_sprites[OBJ_CACTUS] = load_sprite("../../assets/cactus1.png", 1.0f);
-  // obj_sprites[OBJ_PALM] = load_sprite("../../assets/palm.png", 2.5f);
+      load_sprite("assets/static/cactus_short.png", 3.0f);
+  // obj_sprites[OBJ_CACTUS] = load_sprite("assets/cactus1.png", 1.0f);
+  // obj_sprites[OBJ_PALM] = load_sprite("assets/palm.png", 2.5f);
 
   return obj_sprites;
 }
