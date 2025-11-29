@@ -133,14 +133,23 @@ static void update_projectile_positions(GlobalState *state) {
 // TODO: fix deleting from arrays this
 static void damage_and_kill_enemies(GlobalState *state) {
   for (size_t i = 0; i < state->projectiles_count; i++) {
+    Projectile *proj = &state->projectiles[i];
+
+    if (proj->state == PROJ_EXPLODE)
+      continue;
+
     for (size_t j = 0; j < state->enemies_count; j++) {
-      Projectile *proj = &state->projectiles[i];
       Enemy *enemy = &state->enemies[j];
 
-      if (units_intersect(&proj, &enemy)) {
+      if (units_intersect(proj, enemy)) {
         enemy->stat_hp -= proj->stat_damage;
         enemy->state = ENEMY_HURTED;
-        proj->state = PROJ_EXPLODE;
+        proj->kills += 1;
+
+        if (proj->kills == (uint64_t)state->player.stat_piercing) {
+          proj->state = PROJ_EXPLODE;
+          proj->live_frames_last = 1;
+        }
       }
     }
   }
