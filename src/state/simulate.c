@@ -85,7 +85,7 @@ static void process_input(GlobalState *state, Input input) {
 // TODO: attack speed
 // create projectile each 3 seconds
 static void create_projectiles(GlobalState *state) {
-  if (state->frame_counter % 20 != 0) {
+  if (state->frame_counter % (int)(state->player.stat_attack_speed * 60) != 0) {
     return;
   }
 
