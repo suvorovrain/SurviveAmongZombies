@@ -1,11 +1,11 @@
 #include "game.h"
 #include "dyn_objs.h"
+#include "engine/coordinates.h"
+#include "engine/engine.h"
+#include "engine/input.h"
+#include "engine/map.h"
 #include "static_objs.h"
-#include <../vendor/GTA-VI/include/engine/coordinates.h>
-#include <../vendor/GTA-VI/include/engine/engine.h>
-#include <../vendor/GTA-VI/include/engine/input.h>
-#include <../vendor/GTA-VI/include/engine/map.h>
-#include <stb_ds.h>
+#include "stb_ds.h"
 #include <stdlib.h>
 
 #define MAP_WIDTH 50
@@ -16,7 +16,9 @@ void game_free(Game *game);
 
 Game *game_create() {
   Game *game = calloc(1, sizeof(Game));
-  if (!game) { return NULL; }
+  if (!game) {
+    return NULL;
+  }
 
   Engine *engine = engine_create(800, 600, "Survie Among Zombies");
   game->engine = engine;
@@ -53,23 +55,31 @@ Game *game_create() {
     arrpush(game->objects, &st_objs->objects[i]);
   }
   GameObject *dyn_objs_arr = dyn_objs_get_objects(dyn_objs);
-  for (int i = 0; i < arrlen(dyn_objs_arr); i++) { arrpush(game->objects, &dyn_objs_arr[i]); }
+  for (int i = 0; i < arrlen(dyn_objs_arr); i++) {
+    arrpush(game->objects, &dyn_objs_arr[i]);
+  }
 
   return game;
 }
 
 void game_free(Game *game) {
-  if (!game) return;
+  if (!game)
+    return;
 
-  if (game->dyn_objs) free_dyn_objects(game->dyn_objs);
-  if (game->st_objs) free_static_objs(game->st_objs);
-  if (game->objects) arrfree(game->objects);
-  if (game->engine) engine_free(game->engine);
+  if (game->dyn_objs)
+    free_dyn_objects(game->dyn_objs);
+  if (game->st_objs)
+    free_static_objs(game->st_objs);
+  if (game->objects)
+    arrfree(game->objects);
+  if (game->engine)
+    engine_free(game->engine);
   free(game);
 }
 
 void game_update(Game *game, Input *input) {
-  if (!game || !input) return;
+  if (!game || !input)
+    return;
 
   dyn_objs_update(game->dyn_objs, input, ENGINE_LOGIC_STEP);
 }

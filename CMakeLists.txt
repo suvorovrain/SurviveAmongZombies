@@ -18,5 +18,28 @@ if(ENABLE_COVERAGE)
   add_link_options(-fprofile-arcs -ftest-coverage)
 endif()
 
+set(SRC_COMPILE_OPTIONS -O2 -Wall -Wextra -pedantic)
+set(VENDOR_COMPILE_OPTIONS -O2 -w)
+
+add_library(stb STATIC vendor/stb/stb_implementations.c)
+
+target_include_directories(stb PUBLIC ${CMAKE_SOURCE_DIR}/vendor/stb)
+target_compile_options(stb PRIVATE ${VENDOR_COMPILE_OPTIONS})
+
+file(GLOB_RECURSE GTA_VI_SOURCES vendor/GTA-VI/src/*.c)
+add_library(gta_vi OBJECT ${GTA_VI_SOURCES})
+
+target_include_directories(
+  gta_vi
+  PUBLIC ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/include
+         ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/src ${CMAKE_SOURCE_DIR}/vendor/stb)
+
+target_compile_options(gta_vi PRIVATE ${VENDOR_COMPILE_OPTIONS})
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SDL2 REQUIRED sdl2)
+
+find_library(MATH_LIBRARY m)
+
 add_subdirectory(src)
 add_subdirectory(tests)

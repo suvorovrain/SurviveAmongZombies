@@ -1,11 +1,11 @@
 #include "dyn_objs.h"
-#include <../vendor/GTA-VI/include/engine/coordinates.h>
-#include <../vendor/GTA-VI/include/engine/input.h>
-#include <../vendor/GTA-VI/include/engine/map.h>
-#include <../vendor/GTA-VI/include/engine/random.h>
-#include <../vendor/GTA-VI/include/engine/types.h>
+#include "engine/coordinates.h"
+#include "engine/input.h"
+#include "engine/map.h"
+#include "engine/random.h"
+#include "engine/types.h"
+#include "stb_ds.h"
 #include <math.h>
-#include <stb_ds.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -55,15 +55,19 @@ static EntitySprites create_man_sprites() {
   float scale = 2.5f;
 
   // Man spritesheets:
-  // Idle: 3 rows x 12 columns, 1 row x 4 columns = 40 frames (rows: back, left, right, forward)
-  // Walk: 4 rows x 6 columns = 24 frames (rows: back, left, right, forward)
-  // Combined into one array: [idle 0..39][walk 40..63]
+  // Idle: 3 rows x 12 columns, 1 row x 4 columns = 40 frames (rows: back, left,
+  // right, forward) Walk: 4 rows x 6 columns = 24 frames (rows: back, left,
+  // right, forward) Combined into one array: [idle 0..39][walk 40..63]
 
   const int idle_count = 40;
   const int walk_count = 24;
-  Sprite *idle = load_spritesheet_frames("assets/man_idle.png", 28, 30, idle_count, scale);
-  if (!idle) { return sprs; }
-  Sprite *walk = load_spritesheet_frames("assets/man_walk.png", 28, 30, walk_count, scale);
+  Sprite *idle = load_spritesheet_frames("vendor/GTA-VI/assets/man_idle.png",
+                                         28, 30, idle_count, scale);
+  if (!idle) {
+    return sprs;
+  }
+  Sprite *walk = load_spritesheet_frames("vendor/GTA-VI/assets/man_walk.png",
+                                         28, 30, walk_count, scale);
   if (!walk) {
     free_spritesheet_frames(idle, idle_count);
     return sprs;
@@ -112,8 +116,11 @@ static EntitySprites create_sheep_sprites() {
   // Walk: 4 rows x 6 columns = 24 frames (rows: back, forward, left, right)
   // Idle: 4 rows x 4 columns = 16 frames (rows: back, forward, left, right)
 
-  sprs.all_frames = load_spritesheet_frames("assets/sheep_spritesheet.png", 32, 32, 48, scale);
-  if (!sprs.all_frames) { return sprs; }
+  sprs.all_frames = load_spritesheet_frames(
+      "vendor/GTA-VI/assets/sheep_spritesheet.png", 32, 32, 48, scale);
+  if (!sprs.all_frames) {
+    return sprs;
+  }
   sprs.frame_count = 48;
 
   // Setup animation clips
@@ -168,8 +175,9 @@ static GameObject *gen_dyn_objects(DynamicObjects *dyn_objs, Map *map) {
     man.velocity = (Vector){0, 0};
 
     // Set initial sprite
-    man.cur_sprite = &dyn_objs->sprites[TYPE_MAN]
-                          .all_frames[dyn_objs->sprites[TYPE_MAN].clips[ANIM_IDLE][DIR_BACK].start];
+    man.cur_sprite =
+        &dyn_objs->sprites[TYPE_MAN].all_frames
+             [dyn_objs->sprites[TYPE_MAN].clips[ANIM_IDLE][DIR_BACK].start];
 
     arrpush(objects, man);
   }
@@ -195,8 +203,8 @@ static GameObject *gen_dyn_objects(DynamicObjects *dyn_objs, Map *map) {
 
     // Set initial sprite
     sheep.cur_sprite =
-        &dyn_objs->sprites[TYPE_SHEEP]
-             .all_frames[dyn_objs->sprites[TYPE_SHEEP].clips[ANIM_IDLE][DIR_BACK].start];
+        &dyn_objs->sprites[TYPE_SHEEP].all_frames
+             [dyn_objs->sprites[TYPE_SHEEP].clips[ANIM_IDLE][DIR_BACK].start];
 
     arrpush(objects, sheep);
   }
@@ -206,7 +214,8 @@ static GameObject *gen_dyn_objects(DynamicObjects *dyn_objs, Map *map) {
 
 DynamicObjects *create_dynamic_objects(Map *map) {
   DynamicObjects *dyn_objs = calloc(1, sizeof(DynamicObjects));
-  if (!dyn_objs) return NULL;
+  if (!dyn_objs)
+    return NULL;
 
   dyn_objs->sprites = calloc(TYPE_COUNT, sizeof(EntitySprites));
   if (!dyn_objs->sprites) {
@@ -224,11 +233,13 @@ DynamicObjects *create_dynamic_objects(Map *map) {
 }
 
 void free_dyn_objects(DynamicObjects *dyn_objs) {
-  if (!dyn_objs) return;
+  if (!dyn_objs)
+    return;
 
   for (int i = 0; i < TYPE_COUNT; i++) {
     if (dyn_objs->sprites[i].all_frames) {
-      free_spritesheet_frames(dyn_objs->sprites[i].all_frames, dyn_objs->sprites[i].frame_count);
+      free_spritesheet_frames(dyn_objs->sprites[i].all_frames,
+                              dyn_objs->sprites[i].frame_count);
     }
   }
 
@@ -238,21 +249,27 @@ void free_dyn_objects(DynamicObjects *dyn_objs) {
 }
 
 GameObject *dyn_objs_get_player(DynamicObjects *dyn_objs) {
-  if (!dyn_objs) return NULL;
+  if (!dyn_objs)
+    return NULL;
   return dyn_objs->player;
 }
 
 GameObject *dyn_objs_get_objects(DynamicObjects *dyn_objs) {
-  if (!dyn_objs) return NULL;
+  if (!dyn_objs)
+    return NULL;
   return dyn_objs->objects;
 }
 
 static void player_update_velocity(Input *input, GameObject *player) {
   float ax = 0.0f, ay = 0.0f;
-  if (input->a) ax -= 1.0f;
-  if (input->d) ax += 1.0f;
-  if (input->w) ay -= 1.0f;
-  if (input->s) ay += 1.0f;
+  if (input->a)
+    ax -= 1.0f;
+  if (input->d)
+    ax += 1.0f;
+  if (input->w)
+    ay -= 1.0f;
+  if (input->s)
+    ay += 1.0f;
 
   // Normalize diagonal movement
   float len = sqrtf(ax * ax + ay * ay);
@@ -279,7 +296,7 @@ static void npc_update_velocity(GameObject *npc) {
   Vector rand_dir = {cosf(angle), sinf(angle)};
 
   Vector newv = {keep * oldv.x + (1 - keep) * (moving * rand_dir.x * spd),
-      keep * oldv.y + (1 - keep) * (moving * rand_dir.y * spd)};
+                 keep * oldv.y + (1 - keep) * (moving * rand_dir.y * spd)};
 
   newv.x += (1 - moving) * (1 - keep) * rand_dir.x;
   newv.y += (1 - moving) * (1 - keep) * rand_dir.y;
@@ -298,13 +315,16 @@ static void npc_run_away(GameObject *player, GameObject *npc) {
 
 // Update animation and set sprite
 static void update_entity_animation(GameObject *obj) {
-  if (!obj) return;
+  if (!obj)
+    return;
   EntityData *data = (EntityData *)obj->data;
-  if (!data || !data->sprites) return;
+  if (!data || !data->sprites)
+    return;
 
   int clip_start = data->sprites->clips[data->state][data->direction].start;
   int clip_count = data->sprites->clips[data->state][data->direction].count;
-  if (clip_count == 0) return;
+  if (clip_count == 0)
+    return;
   if (data->timer >= ANIM_FRAME_TIME) {
     data->timer = 0.0f;
     data->frame_in_anim = (data->frame_in_anim + 1) % clip_count;
@@ -316,11 +336,13 @@ static void update_entity_animation(GameObject *obj) {
 }
 
 void dyn_objs_update(DynamicObjects *dyn_objs, Input *input, float delta_time) {
-  if (!dyn_objs || !input) return;
+  if (!dyn_objs || !input)
+    return;
 
   for (int i = 0; i < arrlen(dyn_objs->objects); i++) {
     GameObject *obj = &dyn_objs->objects[i];
-    if (!obj || !obj->data) continue;
+    if (!obj || !obj->data)
+      continue;
     EntityData *data = (EntityData *)obj->data;
     data->timer += delta_time;
 
@@ -348,8 +370,12 @@ void dyn_objs_update(DynamicObjects *dyn_objs, Input *input, float delta_time) {
     } else if (fabs(dy) < fabs(dx) && dx < -0.1f) {
       n_dir = DIR_LEFT;
     }
-    if (n_st != data->state) { data->frame_in_anim = 0; }
-    if (n_dir != data->direction) { data->frame_in_anim = 0; }
+    if (n_st != data->state) {
+      data->frame_in_anim = 0;
+    }
+    if (n_dir != data->direction) {
+      data->frame_in_anim = 0;
+    }
     data->state = n_st;
     data->direction = n_dir;
     obj->position.x += dx;

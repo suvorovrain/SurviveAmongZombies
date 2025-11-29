@@ -1,8 +1,8 @@
 #ifndef STATIC_OBJS_H
 #define STATIC_OBJS_H
 
-#include <../vendor/GTA-VI/include/engine/map.h>
-#include <../vendor/GTA-VI/include/engine/types.h>
+#include "engine/map.h"
+#include "engine/types.h"
 
 typedef struct StaticObjects {
   Sprite *sprites;

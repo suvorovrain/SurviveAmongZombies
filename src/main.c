@@ -1,20 +1,17 @@
 
+#include "engine/coordinates.h"
+#include "engine/engine.h"
+#include "engine/input.h"
+#include "engine/map.h"
 #include "game.h"
 #include "static_objs.h"
 #include "stb_ds.h"
-#include <../vendor/GTA-VI/include/engine/coordinates.h>
-#include <../vendor/GTA-VI/include/engine/engine.h>
-#include <../vendor/GTA-VI/include/engine/input.h>
-#include <../vendor/GTA-VI/include/engine/map.h>
 #include <math.h>
-#include <stb_ds.h>
 #include <stdio.h>
 
 static void update(Input *input, void *user_data);
 
 int main(void) {
-  printf("5 + 3 = %d\n", add(5, 3));
-
 #ifdef OS_WINDOWS
   printf("Running on Windows\n");
 #elif defined(OS_LINUX)
