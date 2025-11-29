@@ -1,8 +1,11 @@
+#ifndef STATE_HEADER
+#define STATE_HEADER
+
 #include "inttypes.h"
 
 // include "types.h" from GTA-VI
 
-typedef struct {
+typedef struct Vector_t {
   float x, y;
 } Vector;
 
@@ -11,6 +14,8 @@ typedef struct {
   int width;
   int height;
 } Sprite;
+
+#define ENGINE_LOGIC_STEP (1.0f / 60.0f)
 
 // state.h
 
@@ -21,9 +26,12 @@ typedef struct {
   Sprite *frames;
 } SpriteSheet;
 
-typedef enum { PLAYER_WALK = 0, PLAYER_IDLE, PLAYER_HURTED } PlayerState;
+typedef enum { UNIT_PLAYER = 0, UNIT_ENEMY, UNIT_PROJECTILE } UnitType;
+
+typedef enum { PLAYER_WALK = 0, PLAYER_HURTED, PLAYER_IDLE } PlayerState;
 
 typedef struct {
+  UnitType type; // must be UNIT_PLAYER
   Vector position;
   Vector movement;
   PlayerState state;
@@ -36,11 +44,14 @@ typedef struct {
   double stat_experience;
   double stat_damage;
   double stat_proj_count;
+  // internal state (don't be used for render)
+  uint64_t invincibility_count // after getting damage we has invincibility
 } Player;
 
 typedef enum { ENEMY_WALK = 0, ENEMY_IDLE, ENEMY_HURTED } EnemyState;
 
 typedef struct {
+  UnitType type; // must be UNIT_PLAYER
   Vector position;
   Vector movement;
   EnemyState state;
@@ -55,6 +66,7 @@ typedef struct {
 typedef enum { PROJ_WALK = 0, PROJ_EXPLODE } ProjState;
 
 typedef struct {
+  UnitType type; // must be UNIT_PROJECTILE
   Vector position;
   Vector movement;
   ProjState state;
@@ -75,4 +87,8 @@ typedef struct {
   uint64_t projectiles_count;
   uint64_t kills;
   GameStatus status;
+  // internal state (don't be used for render)
+  uint64_t frame_counter; // count of frames lasted from begin of game
 } GlobalState;
+
+#endif
