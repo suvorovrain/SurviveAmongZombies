@@ -17,8 +17,8 @@ static void decrease_frame_counters(GlobalState *state) {
   *invin = *invin == 0 ? 0 : *invin - 1;
 }
 
-static void process_input(GlobalState state, Input input) {
-  Player player = state.player;
+static void process_input(GlobalState *state, Input input) {
+  Player player = state->player;
   float *x = &player.movement.x;
   float *y = &player.movement.y;
 
@@ -41,42 +41,42 @@ static void process_input(GlobalState state, Input input) {
 
 // TODO: attack speed
 // create projectile each 3 seconds
-static void create_projectiles(GlobalState state) {
-  if (state.frame_counter % 180 != 0) {
+static void create_projectiles(GlobalState *state) {
+  if (state->frame_counter % 180 != 0) {
     return;
   }
 
-  if (state.enemies_count == 0) {
+  if (state->enemies_count == 0) {
     return;
   }
 
   // find closest
   float distance = 100000.0;
   Enemy *closest = NULL;
-  for (size_t i = 0; i < state.enemies_count; i++) {
-    Enemy enemy = state.enemies[i];
+  for (size_t i = 0; i < state->enemies_count; i++) {
+    Enemy enemy = state->enemies[i];
 
-    float cur_distance = units_distance_between(&enemy, &state.player);
+    float cur_distance = units_distance_between(&enemy, &state->player);
     if (cur_distance < distance) {
       distance = cur_distance;
       closest = &enemy;
     }
   }
-  Vector movement = vector_from_to(&state.player, closest);
+  Vector movement = vector_from_to(&state->player, closest);
   movement = vector_normalize(movement);
 
-  Projectile projectile = projectile_create(state.player, movement);
+  Projectile projectile = projectile_create(state->player, movement);
 
-  state.projectiles[state.projectiles_count] = projectile;
-  state.projectiles_count++;
+  state->projectiles[state->projectiles_count] = projectile;
+  state->projectiles_count++;
 
   return;
 }
 
 // Update position of projectiles (why i wrote this comment?)
-static void update_projectile_positions(GlobalState state) {
-  for (size_t i = 0; i < state.projectiles_count; i++) {
-    Projectile *proj = &state.projectiles[i];
+static void update_projectile_positions(GlobalState *state) {
+  for (size_t i = 0; i < state->projectiles_count; i++) {
+    Projectile *proj = &state->projectiles[i];
 
     Vector movement = vector_multiply(proj->movement, proj->stat_movespeed);
     Vector result = vector_add(proj->position, movement);
