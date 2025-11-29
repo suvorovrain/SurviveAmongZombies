@@ -31,10 +31,11 @@ typedef struct {
   double stat_hp;
   double stat_level;
   double stat_experience;
+  double stat_attack_speed;
   double stat_damage;
   double stat_proj_count;
   // internal state (don't be used for render)
-  uint64_t invincibility_count // after getting damage we has invincibility
+  uint64_t invincibility_count; // after getting damage we has invincibility
 } Player;
 
 typedef enum { ENEMY_WALK = 0, ENEMY_IDLE, ENEMY_HURTED } EnemyState;
