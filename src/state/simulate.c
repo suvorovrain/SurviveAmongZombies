@@ -53,7 +53,7 @@ static void process_input(GlobalState *state, Input input) {
 // TODO: attack speed
 // create projectile each 3 seconds
 static void create_projectiles(GlobalState *state) {
-  if (state->frame_counter % 180 != 0) {
+  if (state->frame_counter % 20 != 0) {
     return;
   }
 
@@ -65,12 +65,12 @@ static void create_projectiles(GlobalState *state) {
   float distance = 100000.0;
   Enemy *closest = NULL;
   for (size_t i = 0; i < state->enemies_count; i++) {
-    Enemy enemy = state->enemies[i];
+    Enemy *enemy = &state->enemies[i];
 
-    float cur_distance = units_distance_between(&enemy, &state->player);
+    float cur_distance = units_distance_between(enemy, &state->player);
     if (cur_distance < distance) {
       distance = cur_distance;
-      closest = &enemy;
+      closest = enemy;
     }
   }
   Vector movement = vector_from_to(&state->player, closest);
