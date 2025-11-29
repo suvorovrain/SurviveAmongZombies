@@ -1,15 +1,10 @@
 // #include "input.h"
+#include "../units/units.h"
 #include "state.h"
-#include "units/units.h"
 #include <math.h>
 #include <stdlib.h>
 
 #include <stdbool.h>
-
-typedef struct {
-  bool w, a, s, d;
-  bool quit;
-} Input;
 
 #define MAX_ENEMIES 300
 #define MAX_PROJECTILES 300

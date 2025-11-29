@@ -1,8 +1,8 @@
 #ifndef STATE_HEADER
 #define STATE_HEADER
 
+#include "../vendor/GTA-VI/include/engine/types.h"
 #include "inttypes.h"
-#include "types.h"
 
 #define ENGINE_LOGIC_STEP (1.0f / 60.0f)
 
