@@ -15,11 +15,11 @@ Player player_create() {
   result.stat_max_hp = 100.0;
   result.stat_hp = 100.0;
   result.stat_level = 1.0;
-  result.stat_attack_speed = 3.0;
+  result.stat_attack_speed = 0.75;
   result.stat_experience = 1.0;
   result.stat_piercing = 3;
-  result.stat_damage = 50.0;
-  result.stat_proj_count = 1.0;
+  result.stat_damage = 100.0;
+  result.stat_proj_count = 9.0;
 
   result.invincibility_count = 0;
 
