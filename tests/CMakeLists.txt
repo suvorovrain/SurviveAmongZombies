@@ -18,7 +18,7 @@ target_include_directories(
   PRIVATE ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/include
           ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/src ${CMAKE_SOURCE_DIR}/vendor/stb)
 
-target_compile_options(${PROJECT_NAME}_tests PRIVATE ${OUR_COMPILE_OPTIONS})
+target_compile_options(${PROJECT_NAME}_tests PRIVATE ${SRC_COMPILE_OPTIONS})
 
 if(ENABLE_COVERAGE)
   target_compile_options(${PROJECT_NAME}_tests PRIVATE -fprofile-arcs

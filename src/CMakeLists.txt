@@ -11,7 +11,7 @@ target_include_directories(
   PRIVATE ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/include
           ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/src ${CMAKE_SOURCE_DIR}/vendor/stb)
 
-target_compile_options(${PROJECT_NAME} PRIVATE ${OUR_COMPILE_OPTIONS})
+target_compile_options(${PROJECT_NAME} PRIVATE ${SRC_COMPILE_OPTIONS})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${SDL2_CFLAGS_OTHER})
 
