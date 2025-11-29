@@ -51,7 +51,7 @@ Map *map_create(int width, int height) {
     map->tiles[i] = TILE_GRASS;
 
   map->tile_sprites[TILE_GRASS] =
-      load_sprite("../../assets/static/grass.png", 4.0f);
+      load_sprite("assets/static/grass.png", 4.0f);
 
   map_render_tiles(map);
 
