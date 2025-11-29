@@ -93,25 +93,44 @@ static void create_projectiles(GlobalState *state) {
     return;
   }
 
-  // find closest
-  float distance = 100000.0;
-  Enemy *closest = NULL;
+  // find closests
+  Enemy *closests = calloc(state->player.stat_proj_count, sizeof(Enemy));
+  size_t *indicies = calloc(state->player.stat_proj_count, sizeof(size_t));
+  float *distances = calloc(state->player.stat_proj_count, sizeof(float));
+  for (size_t i = 0; i < state->player.stat_proj_count; i++) {
+    closests[i] = state->enemies[0];
+    indicies[i] = 0;
+    distances[i] = 100000.0;
+  }
+
+  size_t max_local = 0;
   for (size_t i = 0; i < state->enemies_count; i++) {
     Enemy *enemy = &state->enemies[i];
 
     float cur_distance = units_distance_between(enemy, &state->player);
-    if (cur_distance < distance) {
-      distance = cur_distance;
-      closest = enemy;
+    if (cur_distance < distances[max_local]) {
+      distances[max_local] = cur_distance;
+      indicies[max_local] = i;
+      closests[max_local] = state->enemies[i];
+
+      max_local = 0;
+      for (size_t j = 0; j < state->player.stat_proj_count; j++) {
+        if (distances[j] > distances[max_local]) {
+          max_local = j;
+        }
+      }
     }
   }
-  Vector movement = vector_from_to(&state->player, closest);
-  movement = vector_normalize(movement);
 
-  Projectile projectile = projectile_create(state->player, movement);
+  for (size_t i = 0; i < state->player.stat_proj_count; i++) {
+    Vector movement = vector_from_to(&state->player, &closests[i]);
+    movement = vector_normalize(movement);
 
-  state->projectiles[state->projectiles_count] = projectile;
-  state->projectiles_count++;
+    Projectile projectile = projectile_create(state->player, movement);
+
+    state->projectiles[state->projectiles_count] = projectile;
+    state->projectiles_count++;
+  }
 
   return;
 }
