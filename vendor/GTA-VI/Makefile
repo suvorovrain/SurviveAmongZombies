@@ -7,7 +7,7 @@ DEMO_DIR = ../../src
 INCLUDE_DIR = include
 BUILD_DIR = build
 TEST_DIR = tests
-DEPS_DIR = ../../deps
+DEPS_DIR = ../stb
 
 # Sources for engine (src/)
 LIB_SOURCES = $(shell find $(SRC_DIR) -type f -name '*.c')
