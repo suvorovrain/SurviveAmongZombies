@@ -17,6 +17,7 @@ Player player_create() {
   result.stat_level = 1.0;
   result.stat_attack_speed = 3.0;
   result.stat_experience = 1.0;
+  result.stat_piercing = 3;
   result.stat_damage = 50.0;
   result.stat_proj_count = 1.0;
 

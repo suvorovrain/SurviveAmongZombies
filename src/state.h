@@ -34,6 +34,7 @@ typedef struct {
   double stat_attack_speed;
   double stat_damage;
   double stat_proj_count;
+  double stat_piercing;
   // internal state (don't be used for render)
   uint64_t invincibility_count; // after getting damage we has invincibility
 } Player;
@@ -66,6 +67,7 @@ typedef struct {
   double stat_damage;
   // internal state
   uint64_t live_frames_last; // count of frames that projectile can be alive
+  uint64_t kills;
 } Projectile;
 
 // Is player alive (so game too) or player already dead and game at pause

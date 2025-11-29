@@ -12,6 +12,7 @@ Projectile projectile_create(Player player, Vector movement) {
   result.stat_damage = player.stat_damage;
   result.stat_movespeed = 5.0;
   result.movement = movement;
+  result.kills = 0;
   result.live_frames_last = 120;
 
   Sprite *frames = load_spritesheet_frames("../../assets/projectiles/blue.png",
