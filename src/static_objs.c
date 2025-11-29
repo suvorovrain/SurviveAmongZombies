@@ -1,8 +1,8 @@
 #include "static_objs.h"
-#include <../vendor/GTA-VI/include/engine/map.h>
-#include <../vendor/GTA-VI/include/engine/random.h>
-#include <../vendor/GTA-VI/include/engine/types.h>
-#include <stb_ds.h>
+#include "engine/map.h"
+#include "engine/random.h"
+#include "engine/types.h"
+#include "stb_ds.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -17,10 +17,13 @@ typedef enum {
 static Sprite *load_st_sprites() {
   Sprite *obj_sprites = calloc(OBJ_COUNT, sizeof(Sprite));
 
-  obj_sprites[OBJ_BUSH1] = load_sprite("../../assets/static/bush_red.png", 7.5f);
+  obj_sprites[OBJ_BUSH1] =
+      load_sprite("../../assets/static/bush_red.png", 7.5f);
   obj_sprites[OBJ_ROCK] = load_sprite("../../assets/static/rock.png", 3.5f);
-  obj_sprites[OBJ_CACTUS_LONG] = load_sprite("../../assets/static/cactus_long.png", 4.5f);
-  obj_sprites[OBJ_CACTUS_SHORT] = load_sprite("../../assets/static/cactus_short.png", 3.0f);
+  obj_sprites[OBJ_CACTUS_LONG] =
+      load_sprite("../../assets/static/cactus_long.png", 4.5f);
+  obj_sprites[OBJ_CACTUS_SHORT] =
+      load_sprite("../../assets/static/cactus_short.png", 3.0f);
   // obj_sprites[OBJ_CACTUS] = load_sprite("../../assets/cactus1.png", 1.0f);
   // obj_sprites[OBJ_PALM] = load_sprite("../../assets/palm.png", 2.5f);
 
@@ -28,7 +31,8 @@ static Sprite *load_st_sprites() {
 }
 
 static GameObject *gen_st_objs(Map *map, Sprite *sprites, int count) {
-  if (!map || !sprites) return NULL;
+  if (!map || !sprites)
+    return NULL;
 
   GameObject *objects = NULL;
 
@@ -39,12 +43,14 @@ static GameObject *gen_st_objs(Map *map, Sprite *sprites, int count) {
     ObjectType type = rand_big() % OBJ_COUNT;
     Sprite *sprite = &sprites[type];
 
-    if (!sprite->pixels) continue;
+    if (!sprite->pixels)
+      continue;
 
-    VectorU32 world = map_gen_random_position(map, margin,sprite);
+    VectorU32 world = map_gen_random_position(map, margin, sprite);
     VectorU32 map_size = map_get_size(map);
     // Check if sprite corners are within map pixel bounds
-    if (world.x + sprite->width >= map_size.x || world.y + sprite->height >= map_size.y) {
+    if (world.x + sprite->width >= map_size.x ||
+        world.y + sprite->height >= map_size.y) {
       continue;
     }
 
@@ -63,8 +69,9 @@ static GameObject *gen_st_objs(Map *map, Sprite *sprites, int count) {
     obj.position = (Vector){(float)world.x, (float)world.y};
     obj.cur_sprite = sprite;
     // obj.data = NULL;
-    if (type == OBJ_ROCK || type == OBJ_CACTUS_SHORT || type == OBJ_CACTUS_LONG) {
-        obj.data = (void *)true;
+    if (type == OBJ_ROCK || type == OBJ_CACTUS_SHORT ||
+        type == OBJ_CACTUS_LONG) {
+      obj.data = (void *)true;
     }
     arrpush(objects, obj);
   }
@@ -73,10 +80,12 @@ static GameObject *gen_st_objs(Map *map, Sprite *sprites, int count) {
 }
 
 StaticObjects *create_static_objs(Map *map, int count) {
-  if (!map) return NULL;
+  if (!map)
+    return NULL;
 
   StaticObjects *st_objs = calloc(1, sizeof(StaticObjects));
-  if (!st_objs) return NULL;
+  if (!st_objs)
+    return NULL;
 
   st_objs->sprites = load_st_sprites();
   if (!st_objs->sprites) {
@@ -86,7 +95,9 @@ StaticObjects *create_static_objs(Map *map, int count) {
 
   st_objs->objects = gen_st_objs(map, st_objs->sprites, count);
   if (!st_objs->objects) {
-    for (int i = 0; i < OBJ_COUNT; i++) { free_sprite(&st_objs->sprites[i]); }
+    for (int i = 0; i < OBJ_COUNT; i++) {
+      free_sprite(&st_objs->sprites[i]);
+    }
     free(st_objs->sprites);
     free(st_objs);
     return NULL;
@@ -96,14 +107,19 @@ StaticObjects *create_static_objs(Map *map, int count) {
 }
 
 void free_static_objs(StaticObjects *st_objs) {
-  if (!st_objs) return;
+  if (!st_objs)
+    return;
 
   if (st_objs->sprites) {
-    for (int i = 0; i < OBJ_COUNT; i++) { free_sprite(&st_objs->sprites[i]); }
+    for (int i = 0; i < OBJ_COUNT; i++) {
+      free_sprite(&st_objs->sprites[i]);
+    }
     free(st_objs->sprites);
   }
 
-  if (st_objs->objects) { arrfree(st_objs->objects); }
+  if (st_objs->objects) {
+    arrfree(st_objs->objects);
+  }
 
   free(st_objs);
 }

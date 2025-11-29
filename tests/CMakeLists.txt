@@ -2,14 +2,23 @@ set(UNITY_DIR ${CMAKE_SOURCE_DIR}/vendor/unity/src)
 
 file(GLOB TEST_SOURCES "test*.c")
 
-add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
+add_executable(
+  ${PROJECT_NAME}_tests ${TEST_SOURCES} ${CMAKE_SOURCE_DIR}/src/utils/utils.c
+                        ${UNITY_DIR}/unity.c $<TARGET_OBJECTS:gta_vi>)
 
-target_include_directories(${PROJECT_NAME}_tests PRIVATE ${CMAKE_SOURCE_DIR}/src
-                                                         ${UNITY_DIR})
+target_link_libraries(${PROJECT_NAME}_tests
+                      PRIVATE stb gta_vi ${SDL2_LIBRARIES} ${MATH_LIBRARY})
 
-target_sources(
-  ${PROJECT_NAME}_tests PRIVATE ${CMAKE_SOURCE_DIR}/src/utils/utils.c
-                                ${UNITY_DIR}/unity.c)
+target_include_directories(
+  ${PROJECT_NAME}_tests PRIVATE ${CMAKE_SOURCE_DIR}/src ${UNITY_DIR}
+                                ${SDL2_INCLUDE_DIRS})
+
+target_include_directories(
+  ${PROJECT_NAME}_tests SYSTEM
+  PRIVATE ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/include
+          ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/src ${CMAKE_SOURCE_DIR}/vendor/stb)
+
+target_compile_options(${PROJECT_NAME}_tests PRIVATE ${OUR_COMPILE_OPTIONS})
 
 if(ENABLE_COVERAGE)
   target_compile_options(${PROJECT_NAME}_tests PRIVATE -fprofile-arcs

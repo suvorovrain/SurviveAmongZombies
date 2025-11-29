@@ -1,9 +1,9 @@
 #ifndef DYN_OBJS_H
 #define DYN_OBJS_H
 
-#include <../vendor/GTA-VI/include/engine/input.h>
-#include <../vendor/GTA-VI/include/engine/map.h>
-#include <../vendor/GTA-VI/include/engine/types.h>
+#include "engine/input.h"
+#include "engine/map.h"
+#include "engine/types.h"
 
 typedef struct DynamicObjects DynamicObjects;
 
