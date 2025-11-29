@@ -2,9 +2,9 @@
 #define GAME_H
 
 #include "dyn_objs.h"
+#include "engine/engine.h"
+#include "engine/types.h"
 #include "static_objs.h"
-#include <../vendor/GTA-VI/include/engine/engine.h>
-#include <../vendor/GTA-VI/include/engine/types.h>
 
 typedef struct Game {
   DynamicObjects *dyn_objs;
@@ -15,7 +15,7 @@ typedef struct Game {
 } Game;
 
 Game *game_create();
-void game_free(Game *game); 
+void game_free(Game *game);
 void game_update(Game *game, Input *input);
 
 #endif
