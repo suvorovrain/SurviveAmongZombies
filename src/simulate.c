@@ -11,6 +11,22 @@ typedef struct {
   bool quit;
 } Input;
 
+#define MAX_ENEMIES 300
+#define MAX_PROJECTILES 300
+
+GlobalState init_global_state() {
+  GlobalState result = {0};
+  result.enemies = calloc(sizeof(Enemy), MAX_ENEMIES);
+  result.enemies_count = 0;
+  result.projectiles = calloc(sizeof(Projectile), MAX_PROJECTILES);
+  result.projectiles_count = 0;
+  result.status = GAME_ALIVE;
+  result.kills = 0;
+  result.frame_counter = 0;
+
+  result.player = player_create();
+}
+
 static void decrease_frame_counters(GlobalState *state) {
   uint64_t *invin = &state->player.invincibility_count;
 
