@@ -1,4 +1,5 @@
 #include "../state.h"
+#include "types.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -13,6 +14,8 @@ typedef struct Rect {
 
 Projectile projectile_create();
 void projectile_free();
+
+Player player_create();
 
 // get unit hitbox size. Generic function
 Vector unit_get_size(void *unit);
