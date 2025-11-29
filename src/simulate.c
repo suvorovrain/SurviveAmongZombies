@@ -14,7 +14,7 @@ typedef struct {
 static void decrease_frame_counters(GlobalState *state) {
   uint64_t *invin = &state->player.invincibility_count;
 
-  *invin = *invin == 0 ? 0 : invin - 1;
+  *invin = *invin == 0 ? 0 : *invin - 1;
 }
 
 static void process_input(GlobalState state, Input input) {
@@ -130,7 +130,7 @@ static void update_enemies_positions(GlobalState *state) {
 
   // update enemy positions
   for (size_t i = 0; i < state->enemies_count; i++) {
-    Projectile *enemy = &state->enemies[i];
+    Enemy *enemy = &state->enemies[i];
 
     Vector movement = vector_multiply(enemy->movement, enemy->stat_movespeed);
     Vector result = vector_add(enemy->position, movement);
