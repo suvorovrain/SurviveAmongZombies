@@ -179,7 +179,7 @@ static GameObject *gen_dyn_objects(DynamicObjects *dyn_objs, Map *map) {
     GameObject sheep = {0};
 
     // Random positions around the map
-    VectorU32 pos = map_gen_random_position(map, 100);
+    VectorU32 pos = map_gen_random_position(map, 100, sheep.cur_sprite);
     sheep.position = (Vector){(float)pos.x, (float)pos.y};
 
     EntityData *data = calloc(1, sizeof(EntityData));

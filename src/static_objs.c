@@ -8,23 +8,21 @@
 
 typedef enum {
   OBJ_BUSH1 = 0,
-  OBJ_BUSH2,
-  OBJ_BUSH3,
-  OBJ_TREE,
-  OBJ_CACTUS,
-  OBJ_PALM,
+  OBJ_ROCK,
+  OBJ_CACTUS_LONG,
+  OBJ_CACTUS_SHORT,
   OBJ_COUNT
 } ObjectType;
 
 static Sprite *load_st_sprites() {
   Sprite *obj_sprites = calloc(OBJ_COUNT, sizeof(Sprite));
 
-  obj_sprites[OBJ_BUSH1] = load_sprite("assets/bush1.png", 1.5f);
-  obj_sprites[OBJ_BUSH2] = load_sprite("assets/bush2.png", 1.5f);
-  obj_sprites[OBJ_BUSH3] = load_sprite("assets/bush3.png", 1.5f);
-  obj_sprites[OBJ_TREE] = load_sprite("assets/tree.png", 2.0f);
-  obj_sprites[OBJ_CACTUS] = load_sprite("assets/cactus1.png", 1.0f);
-  obj_sprites[OBJ_PALM] = load_sprite("assets/palm.png", 2.5f);
+  obj_sprites[OBJ_BUSH1] = load_sprite("../../assets/static/bush_red.png", 7.5f);
+  obj_sprites[OBJ_ROCK] = load_sprite("../../assets/static/rock.png", 3.5f);
+  obj_sprites[OBJ_CACTUS_LONG] = load_sprite("../../assets/static/cactus_long.png", 4.5f);
+  obj_sprites[OBJ_CACTUS_SHORT] = load_sprite("../../assets/static/cactus_short.png", 3.0f);
+  // obj_sprites[OBJ_CACTUS] = load_sprite("../../assets/cactus1.png", 1.0f);
+  // obj_sprites[OBJ_PALM] = load_sprite("../../assets/palm.png", 2.5f);
 
   return obj_sprites;
 }
@@ -43,7 +41,7 @@ static GameObject *gen_st_objs(Map *map, Sprite *sprites, int count) {
 
     if (!sprite->pixels) continue;
 
-    VectorU32 world = map_gen_random_position(map, margin);
+    VectorU32 world = map_gen_random_position(map, margin,sprite);
     VectorU32 map_size = map_get_size(map);
     // Check if sprite corners are within map pixel bounds
     if (world.x + sprite->width >= map_size.x || world.y + sprite->height >= map_size.y) {
@@ -64,7 +62,10 @@ static GameObject *gen_st_objs(Map *map, Sprite *sprites, int count) {
     GameObject obj = {0};
     obj.position = (Vector){(float)world.x, (float)world.y};
     obj.cur_sprite = sprite;
-    obj.data = NULL;
+    // obj.data = NULL;
+    if (type == OBJ_ROCK || type == OBJ_CACTUS_SHORT || type == OBJ_CACTUS_LONG) {
+        obj.data = (void *)true;
+    }
     arrpush(objects, obj);
   }
 

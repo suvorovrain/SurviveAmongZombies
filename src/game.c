@@ -10,7 +10,7 @@
 
 #define MAP_WIDTH 50
 #define MAP_HEIGHT 50
-#define STATIC_OBJ_COUNT 200
+#define STATIC_OBJ_COUNT 100
 
 void game_free(Game *game);
 
@@ -18,7 +18,7 @@ Game *game_create() {
   Game *game = calloc(1, sizeof(Game));
   if (!game) { return NULL; }
 
-  Engine *engine = engine_create(800, 600, "GTA VI");
+  Engine *engine = engine_create(800, 600, "Survie Among Zombies");
   game->engine = engine;
   if (!engine) {
     game_free(game);
