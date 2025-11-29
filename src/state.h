@@ -2,18 +2,7 @@
 #define STATE_HEADER
 
 #include "inttypes.h"
-
-// include "types.h" from GTA-VI
-
-typedef struct Vector_t {
-  float x, y;
-} Vector;
-
-typedef struct {
-  uint32_t *pixels;
-  int width;
-  int height;
-} Sprite;
+#include "types.h"
 
 #define ENGINE_LOGIC_STEP (1.0f / 60.0f)
 
