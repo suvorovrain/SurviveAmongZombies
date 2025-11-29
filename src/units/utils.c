@@ -51,14 +51,14 @@ Vector unit_get_size(void *unit) {
   return size;
 }
 
-Rect unit_get_rect(void *unit) {
+Homka_Rect unit_get_rect(void *unit) {
   Vector pos = unit_get_position(unit);
   Vector size = unit_get_size(unit);
 
-  return (Rect){.left = pos.x,
-                .right = pos.x + size.x,
-                .top = pos.y,
-                .down = pos.y + size.y};
+  return (Homka_Rect){.left = pos.x,
+                      .right = pos.x + size.x,
+                      .top = pos.y,
+                      .down = pos.y + size.y};
 }
 
 Vector unit_get_centre(void *unit) {
@@ -104,8 +104,8 @@ Vector vector_normalize(Vector vector) {
 
 bool units_intersect(void *first, void *second) {
 
-  Rect rect1 = unit_get_rect(first);
-  Rect rect2 = unit_get_rect(second);
+  Homka_Rect rect1 = unit_get_rect(first);
+  Homka_Rect rect2 = unit_get_rect(second);
 
   return (rect1.left < rect2.right && rect1.right > rect2.left &&
           rect1.top > rect2.down && rect1.down < rect2.top);
