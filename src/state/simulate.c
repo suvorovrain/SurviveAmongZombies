@@ -3,10 +3,11 @@
 #include "state.h"
 #include <math.h>
 #include <stdlib.h>
+#include <sys/random.h>
 
 #include <stdbool.h>
 
-#define MAX_ENEMIES 300
+#define MAX_ENEMIES 3000
 #define MAX_PROJECTILES 300
 
 GlobalState init_global_state() {
@@ -20,12 +21,39 @@ GlobalState init_global_state() {
   result.frame_counter = 0;
 
   result.player = player_create();
+
+  const int range = 6;
+
+  for (float i = -range; i <= range; i++) {
+    for (float j = -range; j <= range; j++) {
+      if (i == j && i == 0) {
+        continue;
+      }
+
+      result.enemies[result.enemies_count++] =
+          enemy_create((Vector){90.0 * i, 90.0 * j});
+    }
+  }
+
+  return result;
 }
 
 static void decrease_frame_counters(GlobalState *state) {
   uint64_t *invin = &state->player.invincibility_count;
 
   *invin = *invin == 0 ? 0 : *invin - 1;
+
+  for (size_t i = 0; i < state->projectiles_count; i++) {
+    state->projectiles[i].live_frames_last--;
+
+    if (state->projectiles[i].live_frames_last == 0) {
+      for (size_t j = i + 1; j < state->projectiles_count; j++) {
+        state->projectiles[j - 1] = state->projectiles[j];
+      }
+      state->projectiles_count--;
+      i--;
+    }
+  }
 }
 
 static void process_input(GlobalState *state, Input input) {

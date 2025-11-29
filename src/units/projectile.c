@@ -3,15 +3,19 @@
 Projectile projectile_create(Player player, Vector movement) {
   Projectile result = {0};
 
+  const int size = 8;
+
   result.type = UNIT_PROJECTILE;
-  result.position = player.position;
+  Vector player_center = unit_get_centre(&player);
+  Vector proj_size = (Vector){.x = size * SCALE, .y = size * SCALE};
+  result.position = vector_add(player_center, vector_multiply(proj_size, -0.5));
   result.stat_damage = player.stat_damage;
   result.stat_movespeed = 5.0;
   result.movement = movement;
+  result.live_frames_last = 120;
 
-  Sprite *frames = load_spritesheet_frames(
-      "../../assets/projectiles/PNGs/medium/blue/medium blue1.png", 16, 16, 1,
-      1.0);
+  Sprite *frames = load_spritesheet_frames("../../assets/projectiles/blue.png",
+                                           size, size, 1, SCALE);
   result.spritesheet = (SpriteSheet){.frames = frames, .frames_count = 1};
 
   return result;

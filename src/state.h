@@ -63,6 +63,8 @@ typedef struct {
   SpriteSheet spritesheet;
   double stat_movespeed;
   double stat_damage;
+  // internal state
+  uint64_t live_frames_last; // count of frames that projectile can be alive
 } Projectile;
 
 // Is player alive (so game too) or player already dead and game at pause
