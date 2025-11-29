@@ -200,3 +200,15 @@ static void damage_player(GlobalState *state) {
     }
   }
 }
+
+void make_step(GlobalState *state, Input input) {
+  decrease_frame_counters(state);
+  process_input(state, input);
+  create_projectiles(state);
+  update_projectile_positions(state);
+  damage_and_kill_enemies(state);
+  update_enemies_positions(state);
+  damage_player(state);
+
+  return;
+}
