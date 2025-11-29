@@ -151,31 +151,33 @@ static void update_enemies_positions(GlobalState *state) {
 
   // iteration algorithm for resolve collisions
   for (size_t iteration = 0; iteration < 8; iteration++) {
-    // TODO: sort by collision power
+
     for (size_t i = 0; i < state->enemies_count; i++) {
-      for (size_t j = 0; j < state->enemies_count; j++) {
-        if (i == j)
+      for (size_t j = i + 1; j < state->enemies_count; j++) {
+
+        Enemy *a = &state->enemies[i];
+        Enemy *b = &state->enemies[j];
+
+        Homka_Rect ra = unit_get_rect(a);
+        Homka_Rect rb = unit_get_rect(b);
+
+        if (ra.right <= rb.left || ra.left >= rb.right || ra.down <= rb.top ||
+            ra.top >= rb.down) {
           continue;
+        }
 
-        Enemy *first = &state->enemies[i];
-        float first_len = vector_length(unit_get_size(first));
-        Enemy *second = &state->enemies[j];
-        float second_len = vector_length(unit_get_size(second));
+        float overlap_x = fminf(ra.right, rb.right) - fmaxf(ra.left, rb.left);
+        float overlap_y = fminf(ra.down, rb.down) - fmaxf(ra.top, rb.top);
 
-        if (!units_intersect(first, second))
-          continue;
-
-        Vector first_center = unit_get_centre(first);
-        Vector second_center = unit_get_centre(second);
-
-        Vector delta = vector_sub(second_center, first_center);
-
-        // TODO: fix collision movement
-        Vector delta_norm = vector_normalize(delta);
-        Vector first_movement = vector_multiply(delta_norm, -first_len / 2.0);
-        Vector second_movement = vector_multiply(delta_norm, -second_len / 2.0);
-        first->position = vector_add(first->position, first_movement);
-        second->position = vector_add(second->position, second_movement);
+        if (overlap_x < overlap_y) {
+          float half = overlap_x * 0.5f;
+          a->position.x -= half;
+          b->position.x += half;
+        } else {
+          float half = overlap_y * 0.5f;
+          a->position.y -= half;
+          b->position.y += half;
+        }
       }
     }
   }
