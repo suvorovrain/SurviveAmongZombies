@@ -57,23 +57,27 @@ static void decrease_frame_counters(GlobalState *state) {
 }
 
 static void process_input(GlobalState *state, Input input) {
-  Player player = state->player;
-  float *x = &player.movement.x;
-  float *y = &player.movement.y;
+  Player *player = &state->player;
+  Vector movement = {0.0, 0.0};
 
   if (input.w)
-    *y = 1;
+    movement.y = -1;
   if (input.s)
-    *y = -1;
+    movement.y = 1;
   if (input.d)
-    *x = 1;
+    movement.x = 1;
   if (input.a)
-    *x = -1;
+    movement.x = -1;
+
+  if (movement.x == 0.0 && movement.y == 0.0) {
+    return;
+  }
 
   // normalize
-  double length = sqrtl((*x) * (*x) + (*y) * (*y));
-  *y = *y / length;
-  *x = *x / length;
+  movement = vector_normalize(movement);
+  movement = vector_multiply(movement, player->stat_movespeed);
+
+  player->position = vector_add(player->position, movement);
 
   return;
 }
