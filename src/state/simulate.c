@@ -244,14 +244,12 @@ static void update_enemies_positions(GlobalState *state) {
     rects[i] = unit_get_rect(&state->enemies[i]);
   }
 
+  const size_t enemy_n = state->enemies_count;
   // iteration algorithm for resolve collisions
   for (size_t iteration = 0; iteration < 8; iteration++) {
-    for (size_t i = 0; i < state->enemies_count; i++) {
-      for (size_t j = i + 1; j < state->enemies_count; j++) {
-
-        Enemy *a = &state->enemies[i];
-        Enemy *b = &state->enemies[j];
-
+#pragma omp parallel for
+    for (size_t i = 0; i < enemy_n; i++) {
+      for (size_t j = i + 1; j < enemy_n; j++) {
         Homka_Rect ra = rects[i];
         Homka_Rect rb = rects[j];
 
@@ -262,6 +260,9 @@ static void update_enemies_positions(GlobalState *state) {
 
         float overlap_x = fminf(ra.right, rb.right) - fmaxf(ra.left, rb.left);
         float overlap_y = fminf(ra.down, rb.down) - fmaxf(ra.top, rb.top);
+
+        Enemy *a = &state->enemies[i];
+        Enemy *b = &state->enemies[j];
 
         if (overlap_x < overlap_y) {
           float half = overlap_x * 0.5f;
