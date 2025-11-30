@@ -18,8 +18,8 @@
 
 static void update(Input *input, void *user_data);
 
-#define MAP_WIDTH 50
-#define MAP_HEIGHT 50
+#define MAP_WIDTH 40
+#define MAP_HEIGHT 40
 #define STATIC_OBJ_COUNT 100
 
 GameObject **get_game_objects_from_state(GlobalState *state) {

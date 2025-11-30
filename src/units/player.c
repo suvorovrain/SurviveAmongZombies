@@ -1,10 +1,10 @@
 #include "units.h"
 
-Player player_create() {
+Player player_create(Vector position) {
   Player result = {0};
 
   result.type = UNIT_PLAYER;
-  result.position = (Vector){0.0, 0.0};
+  result.position = position;
   result.movement = (Vector){0.0, 0.0};
   result.state = PLAYER_IDLE;
 

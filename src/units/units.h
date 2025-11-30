@@ -14,7 +14,7 @@ typedef struct Rect {
   float down;
 } Homka_Rect;
 
-#define SCALE (2.0f)
+#define SCALE (3.0f)
 
 Projectile projectile_create();
 void projectile_free();
