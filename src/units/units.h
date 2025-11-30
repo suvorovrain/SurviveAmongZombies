@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../state.h"
 #include "../vendor/GTA-VI/include/engine/types.h"
 #include <math.h>
@@ -12,10 +14,13 @@ typedef struct Rect {
   float down;
 } Homka_Rect;
 
+#define SCALE (2.0f)
+
 Projectile projectile_create();
 void projectile_free();
 
 Player player_create();
+Enemy enemy_create();
 
 // get unit hitbox size. Generic function
 Vector unit_get_size(void *unit);
