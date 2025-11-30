@@ -4,13 +4,15 @@
 #include "dyn_objs.h"
 #include "engine/engine.h"
 #include "engine/types.h"
+#include "state.h"
 #include "static_objs.h"
 
 typedef struct Game {
-  DynamicObjects *dyn_objs;
-  StaticObjects *st_objs;
-  GameObject **objects; // All objects (static + dynamic)
-  GameObject *player;
+  GlobalState state;
+  RenderBatch batch; // All objects and UI elements to render
+  TTF_Font **fonts;
+
+  Map *map;
   Engine *engine;
 } Game;
 

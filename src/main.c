@@ -18,40 +18,6 @@
 
 static void update(Input *input, void *user_data);
 
-#define MAP_WIDTH 40
-#define MAP_HEIGHT 40
-#define STATIC_OBJ_COUNT 100
-
-GameObject **get_game_objects_from_state(GlobalState *state) {
-  GameObject **objects =
-      calloc(sizeof(GameObject *),
-             state->enemies_count + state->projectiles_count + 1);
-
-  GameObject *player = calloc(sizeof(GameObject), 1);
-  player->position = state->player.position;
-  player->cur_sprite = &state->player.spritesheet.frames[0];
-
-  objects[0] = player;
-
-  for (size_t i = 0; i < state->enemies_count; i++) {
-    GameObject *enemy = calloc(sizeof(GameObject), 1);
-    enemy->position = state->enemies[i].position;
-    enemy->cur_sprite = &state->enemies[i].spritesheet.frames[0];
-
-    objects[i + 1] = enemy;
-  }
-
-  for (size_t i = 0; i < state->projectiles_count; i++) {
-    GameObject *projectile = calloc(sizeof(GameObject), 1);
-    projectile->position = state->projectiles[i].position;
-    projectile->cur_sprite = &state->projectiles[i].spritesheet.frames[0];
-
-    objects[i + state->enemies_count + 1] = projectile;
-  }
-
-  return objects;
-}
-
 int main(void) {
 #ifdef OS_WINDOWS
   printf("Running on Windows\n");
@@ -66,36 +32,12 @@ int main(void) {
   //   return 1;
   // }
 
-  Engine *engine = engine_create(800, 600, "Survie Among Zombies");
-  TilesInfo ti = {0};
-  ti.tile_sprites = calloc(1, sizeof(Sprite));
-  ti.tile_sprites[0] = load_sprite("assets/static/grass.png", 4.0f);
-  printf("%p\n", ti.tile_sprites[0]);
-  ti.sprite_count = 1;
-  ti.tiles = calloc(MAP_WIDTH * MAP_HEIGHT, sizeof(uint32_t));
-  ti.sides_height = 32;
-  Map *map = map_create(MAP_WIDTH, MAP_HEIGHT, ti);
-  engine_set_map(engine, map);
-  GlobalState globalState = init_global_state(map);
+  Game *game = game_create();
 
-  GameObject **objects = get_game_objects_from_state(&globalState);
-
-  engine_set_player(engine, objects[0]);
-
-  void **global_state_objects = calloc(sizeof(void *), 3);
-  global_state_objects[0] = &globalState;
-  global_state_objects[1] = &objects;
-  global_state_objects[2] = &engine;
-
-  while (engine_begin_frame(engine, update, global_state_objects)) {
-    engine_render(engine,
-                  &(RenderBatch){.objs = objects,
-                                 .obj_count = 1 + globalState.enemies_count +
-                                              globalState.projectiles_count,
-                                 .ui_count = 0,
-                                 .uis = NULL});
+  while (engine_begin_frame(game->engine, update, game)) {
+    engine_render(game->engine, &(game->batch));
     // printf("FPS: %d\n", (int)engine_get_fps(engine));
-    engine_end_frame(engine);
+    engine_end_frame(game->engine);
   }
 
   // game_free(game);
@@ -103,12 +45,7 @@ int main(void) {
 }
 
 static void update(Input *input, void *user_data) {
-  GlobalState *globalState = ((void **)(user_data))[0];
-  GameObject ***objects = ((void **)(user_data))[1];
-  Engine **engine = ((void **)(user_data))[2];
+  Game *game = user_data;
 
-  make_step(globalState, *input);
-
-  *objects = get_game_objects_from_state(globalState);
-  engine_set_player(*engine, (*objects)[0]);
+  game_update(game, input);
 }
