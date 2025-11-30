@@ -6,12 +6,12 @@ add_executable(
   ${PROJECT_NAME}_tests ${TEST_SOURCES} ${CMAKE_SOURCE_DIR}/src/utils/utils.c
                         ${UNITY_DIR}/unity.c $<TARGET_OBJECTS:gta_vi>)
 
-target_link_libraries(${PROJECT_NAME}_tests
-                      PRIVATE stb gta_vi ${SDL2_LIBRARIES} ${MATH_LIBRARY})
-
+target_link_libraries(
+  ${PROJECT_NAME}_tests PRIVATE stb gta_vi ${SDL2_LIBRARIES}
+                                ${SDL2_TTF_LIBRARIES} ${MATH_LIBRARY})
 target_include_directories(
   ${PROJECT_NAME}_tests PRIVATE ${CMAKE_SOURCE_DIR}/src ${UNITY_DIR}
-                                ${SDL2_INCLUDE_DIRS})
+                                ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 
 target_include_directories(
   ${PROJECT_NAME}_tests SYSTEM
