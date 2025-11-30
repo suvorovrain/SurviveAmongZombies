@@ -69,7 +69,8 @@ int main(void) {
   Engine *engine = engine_create(800, 600, "Survie Among Zombies");
   TilesInfo ti = {0};
   ti.tile_sprites = calloc(1, sizeof(Sprite));
-  ti.tile_sprites[0] = load_sprite("assets/statis/grass.png", 4.0f);
+  ti.tile_sprites[0] = load_sprite("assets/static/grass.png", 4.0f);
+  printf("%p\n", ti.tile_sprites[0]);
   ti.sprite_count = 1;
   ti.tiles = calloc(MAP_WIDTH * MAP_HEIGHT, sizeof(uint32_t));
   ti.sides_height = 32;
