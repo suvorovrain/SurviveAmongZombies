@@ -239,9 +239,15 @@ static void update_enemies_positions(GlobalState *state) {
     enemy->position = result;
   }
 
+  const int PADDING = 3.0;
+
   Homka_Rect rects[state->enemies_count];
   for (size_t i = 0; i < state->enemies_count; i++) {
     rects[i] = unit_get_rect(&state->enemies[i]);
+    rects[i].left += PADDING * SCALE;
+    rects[i].right -= PADDING * SCALE;
+    rects[i].top += PADDING * SCALE;
+    rects[i].down -= PADDING * SCALE;
   }
 
   const size_t enemy_n = state->enemies_count;
