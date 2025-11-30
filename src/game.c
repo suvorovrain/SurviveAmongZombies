@@ -15,6 +15,45 @@
 
 void game_free(Game *game);
 
+static UIElement hp_bar(Game *game) {
+  UIElement bar = {0};
+  bar.mode = UI_POS_ATTACHED;
+  bar.position.attached.object = game->player;
+  bar.position.attached.offset =
+      (Vector){-3 * SCALE, game->player->cur_sprite->height + 2.0 * SCALE};
+  bar.z_index = 0;
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite = load_sprite("assets/hp_bar.png", 1.0f);
+  bar.sprite = sprite;
+  return bar;
+}
+
+static void update_hp_bar(UIElement *hp_bar, Game *game) {
+  float percent = 100.0;
+  if (game->state.player.stat_hp < 0) {
+    percent = 0.0;
+  } else {
+    percent = game->state.player.stat_hp / game->state.player.stat_max_hp;
+  }
+
+  printf("PERCENT %f\n", percent);
+
+  float size = 62;
+  int32_t width_pixels = (int32_t)(size * percent);
+
+  for (uint32_t x = 1; x <= width_pixels; x++) {
+    for (uint32_t y = 1; y <= 6; y++) {
+      *(hp_bar->sprite->pixels + y * 64 + x) = 0xFF00FF00;
+    }
+  }
+
+  for (uint32_t x = width_pixels; x <= 63; x++) {
+    for (uint32_t y = 1; y <= 6; y++) {
+      *(hp_bar->sprite->pixels + y * 64 + x) = 0xFFFF0000;
+    }
+  }
+}
+
 GameObject **get_game_objects_from_state(GlobalState *state) {
   GameObject **objects =
       calloc(sizeof(GameObject *),
@@ -78,11 +117,16 @@ Game *game_create() {
   GameObject **objects = get_game_objects_from_state(&globalState);
 
   engine_set_player(engine, objects[0]);
+  game->player = objects[0];
+
+  game->uis = calloc(sizeof(UIElement), 1);
+  game->ui_count = 1;
+  game->uis[0] = hp_bar(game);
 
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
                                            game->state.enemies_count,
-                              .ui_count = 0,
-                              .uis = NULL};
+                              .ui_count = 1,
+                              .uis = &game->uis};
   game->engine = engine;
   game->fonts = NULL;
   game->map = map;
@@ -104,10 +148,12 @@ void game_update(Game *game, Input *input) {
 
   make_step(&game->state, *input);
   GameObject **objects = get_game_objects_from_state(&(game->state));
+  update_hp_bar(&(game->uis[0]), game);
+  game->uis[0].position.attached.object = objects[0];
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
                                            game->state.projectiles_count,
                               .objs = objects,
-                              .ui_count = 0,
-                              .uis = NULL};
+                              .ui_count = 1,
+                              .uis = &game->uis};
   engine_set_player(game->engine, game->batch.objs[0]);
 }

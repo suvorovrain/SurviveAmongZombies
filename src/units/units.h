@@ -40,4 +40,4 @@ Vector vector_multiply(Vector vector, float value);
 Vector vector_div(Vector vector, float num);
 Vector vector_add(Vector first, Vector second);
 Vector vector_sub(Vector first, Vector second);
-bool units_intersect(void *first, void *second);
+bool units_intersect(void *first, void *second, float padding);

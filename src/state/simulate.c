@@ -186,7 +186,7 @@ static void damage_and_kill_enemies(GlobalState *state) {
     for (size_t j = 0; j < state->enemies_count; j++) {
       Enemy *enemy = &state->enemies[j];
 
-      if (units_intersect(proj, enemy)) {
+      if (units_intersect(proj, enemy, 4.0f)) {
         enemy->stat_hp -= proj->stat_damage;
         enemy->state = ENEMY_HURTED;
         proj->kills += 1;
@@ -291,11 +291,15 @@ static void update_enemies_positions(GlobalState *state) {
 }
 
 static void damage_player(GlobalState *state) {
+  if (state->player.invincibility_count > 0) {
+    return;
+  }
+
   for (size_t i = 0; i < state->enemies_count; i++) {
     Enemy *enemy = &state->enemies[i];
     Player *player = &state->player;
 
-    if (units_intersect(player, enemy)) {
+    if (units_intersect(player, enemy, 5.0f)) {
       player->stat_hp -= enemy->stat_damage;
       player->state = PLAYER_HURTED;
       player->invincibility_count = 30; // half of second invincible
