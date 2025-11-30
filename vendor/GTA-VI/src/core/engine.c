@@ -24,9 +24,15 @@ struct Engine {
   int width;
   int height;
 
-  // Fixed timestep: we accumulate time between updates
+  // Time of last frame begin in milliseconds. Used only for fixed game logic timestep calculations.
+  // Not used for FPS calculations.
   uint64_t last_frame_time;
+  // We accumulate time between updates for fixed game logic timestep
   float accumulator;
+
+  // FPS is calculated based on the EMA (Exponential Moving Average) formula.
+  // It smooths out sudden changes in frame time.
+  float ema_delta_time;
 };
 
 Engine *engine_create(int width, int height, const char *title) {
@@ -63,6 +69,7 @@ Engine *engine_create(int width, int height, const char *title) {
 
   e->last_frame_time = display_get_ticks();
   e->accumulator = 0.0f;
+  e->ema_delta_time = 1.0f / 60.0f; // initial FPS guess
 
   return e;
 }
@@ -88,7 +95,6 @@ void engine_free(Engine *e) {
   free(e);
 }
 
-// Begin frame: process input and update logic with fixed timestep
 bool engine_begin_frame(Engine *e, void (*update)(Input *input, void *user_data), void *user_data) {
   if (!e) return false;
 
@@ -96,7 +102,8 @@ bool engine_begin_frame(Engine *e, void (*update)(Input *input, void *user_data)
 
   // Fixed timestep: measure frame time
   uint64_t current_time = display_get_ticks();
-  float frame_time = (current_time - e->last_frame_time) / 1000.0f;
+  float frame_time = (float)(current_time - e->last_frame_time) / 1000.0f;
+  e->last_frame_time = current_time;
 
   // Cap framte time to avoid slowdown game
   if (frame_time > 0.25f) frame_time = 0.25f;
@@ -111,14 +118,11 @@ bool engine_begin_frame(Engine *e, void (*update)(Input *input, void *user_data)
     camera_update(e->camera, ENGINE_LOGIC_STEP);
   }
 
-  // Update frame only after game logic updates!
-  e->last_frame_time = current_time;
   return true;
 }
 
-// Render given objects on screen, sorting by depth
-void engine_render(Engine *e, GameObject **objects, int count) {
-  if (!e || !objects || count <= 0) return;
+void engine_render(Engine *e, RenderBatch *batch) {
+  if (!e || !batch) return;
 
   // Fill background
   uint32_t bg_color = 0xFF87CEEB;
@@ -126,21 +130,24 @@ void engine_render(Engine *e, GameObject **objects, int count) {
 
   load_prerendered(e->pixels, e->map, e->camera);
 
-  // Sort objects by depth
-  qsort(objects, count, sizeof(GameObject *), compare_objs_by_depth);
-  render_objects(e->pixels, objects, count, e->camera);
+  // Render objects and UI
+  render_batch(e->pixels, batch, e->camera);
 }
 
 void engine_end_frame(Engine *e) {
   if (!e) return;
   display_present(e->display, e->pixels);
+
+  float alpha = 0.1f;
+  e->ema_delta_time =
+      e->ema_delta_time * (1.0f - alpha) + (display_get_delta_time(e->display) / 1000.0f) * alpha;
 }
 
 float engine_get_fps(Engine *e) {
-  return e ? display_get_fps(e->display) : 0.0f;
+  return e ? (1.0f / e->ema_delta_time) : 0.0f;
 }
 
-// Get delta time from last frame in seconds
-float engine_get_delta_time(Engine *e) {
-  return e ? (display_get_ticks() - e->last_frame_time) / 1000.0f : 0.0f;
+// Get time between last two displayed frames in milliseconds
+uint64_t engine_get_delta_time(Engine *e) {
+  return e ? (display_get_delta_time(e->display)) : 0;
 }

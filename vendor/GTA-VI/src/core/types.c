@@ -1,8 +1,11 @@
 #include "stb_image.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <engine/types.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Load and scale a rectangular region from image data
 // Returns a Sprite with the scaled region
@@ -58,7 +61,6 @@ static Sprite load_and_scale_region(const unsigned char *data,
   return sprite;
 }
 
-// Load sprite from file and scale it
 Sprite load_sprite(const char *path, float scale) {
   Sprite sprite = {0};
 
@@ -81,11 +83,8 @@ void free_sprite(Sprite *sprite) {
 }
 
 // Load spritesheet and split into individual frames (sprites)
-Sprite *load_spritesheet_frames(const char *path,
-    int frame_width,
-    int frame_height,
-    int frame_count,
-    float scale) {
+Sprite *
+load_spritesheet_frames(const char *path, int frame_width, int frame_height, int frame_count, float scale) {
   if (!path || frame_width <= 0 || frame_height <= 0 || frame_count <= 0) return NULL;
   if (scale <= 0.0f) scale = 1.0f;
 
@@ -117,14 +116,8 @@ Sprite *load_spritesheet_frames(const char *path,
     int region_x = col * frame_width;
     int region_y = row * frame_height;
 
-    frames[i] = load_and_scale_region(data,
-        width,
-        height,
-        region_x,
-        region_y,
-        frame_width,
-        frame_height,
-        scale);
+    frames[i] =
+        load_and_scale_region(data, width, height, region_x, region_y, frame_width, frame_height, scale);
 
     // If allocation failed, clean up and return NULL
     if (!frames[i].pixels && (frame_width > 0 && frame_height > 0)) {
@@ -139,7 +132,44 @@ Sprite *load_spritesheet_frames(const char *path,
   return frames;
 }
 
-void free_spritesheet_frames(Sprite *frames, int frame_count) {
+Sprite text_sprite(const char *text, TTF_Font *font, SDL_Color color) {
+  Sprite sprite = {0};
+  if (!text || !font) return sprite;
+
+  SDL_Surface *surf = TTF_RenderUTF8_Blended(font, text, color);
+  if (!surf) return sprite;
+
+  SDL_Surface *src = surf;
+  if (surf->format->format != SDL_PIXELFORMAT_ARGB8888) {
+    src = SDL_ConvertSurfaceFormat(surf, SDL_PIXELFORMAT_ARGB8888, 0);
+    SDL_FreeSurface(surf);
+    if (!src) return sprite;
+  }
+
+  sprite.width = (uint32_t)src->w;
+  sprite.height = (uint32_t)src->h;
+  size_t row_bytes = (size_t)sprite.width * sizeof(uint32_t);
+  sprite.pixels = (uint32_t *)calloc((size_t)sprite.width * sprite.height, sizeof(uint32_t));
+  if (!sprite.pixels) {
+    sprite.width = sprite.height = 0;
+    SDL_FreeSurface(src);
+    return sprite;
+  }
+
+  // SDL_Surface pitch may be wider than width * 4, copy row by row
+  uint8_t *src_row = (uint8_t *)src->pixels;
+  uint8_t *dst_row = (uint8_t *)sprite.pixels;
+  for (uint32_t y = 0; y < sprite.height; y++) {
+    memcpy(dst_row, src_row, row_bytes);
+    src_row += src->pitch;
+    dst_row += row_bytes;
+  }
+
+  SDL_FreeSurface(src);
+  return sprite;
+}
+
+void free_sprites(Sprite *frames, int frame_count) {
   if (!frames) return;
 
   for (int i = 0; i < frame_count; i++) { free_sprite(&frames[i]); }
