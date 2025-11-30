@@ -57,8 +57,7 @@ GlobalState init_global_state(Map *map) {
 
   for (size_t i = 0; i < enemies_count; i++) {
     result.enemies[result.enemies_count++] = enemy_create((Vector){0.0, 0.0});
-    VectorU32 random_pos = map_gen_random_position(
-        map, 10, &result.enemies[i].spritesheet.frames[0]);
+    VectorU32 random_pos = map_gen_random_position(map, 10);
     result.enemies[i].position = (Vector){random_pos.x, random_pos.y};
   }
 

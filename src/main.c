@@ -67,7 +67,13 @@ int main(void) {
   // }
 
   Engine *engine = engine_create(800, 600, "Survie Among Zombies");
-  Map *map = map_create(MAP_WIDTH, MAP_HEIGHT);
+  TilesInfo ti = {0};
+  ti.tile_sprites = calloc(1, sizeof(Sprite));
+  ti.tile_sprites[0] = load_sprite("assets/statis/grass.png", 4.0f);
+  ti.sprite_count = 1;
+  ti.tiles = calloc(MAP_WIDTH * MAP_HEIGHT, sizeof(uint32_t));
+  ti.sides_height = 32;
+  Map *map = map_create(MAP_WIDTH, MAP_HEIGHT, ti);
   engine_set_map(engine, map);
   GlobalState globalState = init_global_state(map);
 
@@ -81,9 +87,12 @@ int main(void) {
   global_state_objects[2] = &engine;
 
   while (engine_begin_frame(engine, update, global_state_objects)) {
-    engine_render(engine, objects,
-                  1 + globalState.enemies_count +
-                      globalState.projectiles_count);
+    engine_render(engine,
+                  &(RenderBatch){.objs = objects,
+                                 .obj_count = 1 + globalState.enemies_count +
+                                              globalState.projectiles_count,
+                                 .ui_count = 0,
+                                 .uis = NULL});
     // printf("FPS: %d\n", (int)engine_get_fps(engine));
     engine_end_frame(engine);
   }
