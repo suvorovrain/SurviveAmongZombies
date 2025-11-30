@@ -9,10 +9,10 @@
 #include "stb_ds.h"
 #include "units/units.h"
 #include "utils/utils.h"
-#include <../vendor/GTA-VI/include/engine/coordinates.h>
-#include <../vendor/GTA-VI/include/engine/engine.h>
-#include <../vendor/GTA-VI/include/engine/input.h>
-#include <../vendor/GTA-VI/include/engine/map.h>
+#include <engine/coordinates.h>
+#include <engine/engine.h>
+#include <engine/input.h>
+#include <engine/map.h>
 #include <math.h>
 #include <stdio.h>
 
@@ -66,11 +66,10 @@ int main(void) {
   //   return 1;
   // }
 
-  GlobalState globalState = init_global_state();
-
   Engine *engine = engine_create(800, 600, "Survie Among Zombies");
   Map *map = map_create(MAP_WIDTH, MAP_HEIGHT);
   engine_set_map(engine, map);
+  GlobalState globalState = init_global_state(map);
 
   GameObject **objects = get_game_objects_from_state(&globalState);
 
