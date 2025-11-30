@@ -43,10 +43,8 @@ static SpriteSheet unit_get_spritesheet(void *unit) {
 }
 
 Vector unit_get_size(void *unit) {
-  UnitType type = ((Player *)unit)->type;
-
   SpriteSheet spritesheet = unit_get_spritesheet(unit);
-  Vector size = {spritesheet.frames->width, spritesheet.frames->width};
+  Vector size = {spritesheet.frames->width, spritesheet.frames->height};
 
   return size;
 }
@@ -65,9 +63,7 @@ Vector unit_get_centre(void *unit) {
   Vector pos = unit_get_position(unit);
   Vector size = unit_get_size(unit);
 
-  Vector diag = vector_add(pos, size);
-
-  return vector_div(vector_sub(diag, pos), 0.5);
+  return vector_add(pos, vector_multiply(size, 0.5));
 }
 
 Vector vector_multiply(Vector vector, float num) {
@@ -107,6 +103,15 @@ bool units_intersect(void *first, void *second) {
   Homka_Rect rect1 = unit_get_rect(first);
   Homka_Rect rect2 = unit_get_rect(second);
 
-  return (rect1.left < rect2.right && rect1.right > rect2.left &&
-          rect1.top > rect2.down && rect1.down < rect2.top);
+  // if (fabsf(rect1.left - rect2.left) < 0.001 &&
+  //     fabsf(rect1.right - rect2.right) < 0.001 &&
+  //     fabsf(rect1.top - rect2.top) < 0.001 &&
+  //     fabsf(rect1.down - rect2.down) < 0.001)
+  //   return true;
+
+  return !(rect1.right <= rect2.left || rect1.left >= rect2.right ||
+           rect1.top >= rect2.down || rect1.down <= rect2.top);
+
+  // return ((rect1.right > rect2.left || rect1.left < rect2.right) &&
+  //         (rect1.down < rect2.top || rect1.top > rect2.down));
 }
