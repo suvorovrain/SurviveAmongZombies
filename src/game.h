@@ -9,6 +9,9 @@
 
 typedef struct Game {
   GlobalState state;
+  UIElement *uis;
+  size_t ui_count;
+  GameObject *player;
   RenderBatch batch; // All objects and UI elements to render
   TTF_Font **fonts;
 
