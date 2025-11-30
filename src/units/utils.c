@@ -98,10 +98,19 @@ Vector vector_normalize(Vector vector) {
   return vector_div(vector, vector_length(vector));
 }
 
-bool units_intersect(void *first, void *second) {
+bool units_intersect(void *first, void *second, float padding) {
 
   Homka_Rect rect1 = unit_get_rect(first);
+  rect1.left += padding * SCALE;
+  rect1.right -= padding * SCALE;
+  rect1.top += padding * SCALE;
+  rect1.down -= padding * SCALE;
+
   Homka_Rect rect2 = unit_get_rect(second);
+  rect2.left += padding * SCALE;
+  rect2.right -= padding * SCALE;
+  rect2.top += padding * SCALE;
+  rect2.down -= padding * SCALE;
 
   // if (fabsf(rect1.left - rect2.left) < 0.001 &&
   //     fabsf(rect1.right - rect2.right) < 0.001 &&
