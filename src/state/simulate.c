@@ -39,7 +39,7 @@ static inline long long ns() {
 #define MAX_ENEMIES 3000
 #define MAX_PROJECTILES 300
 
-GlobalState init_global_state() {
+GlobalState init_global_state(Map *map) {
   GlobalState result = {0};
   result.enemies = calloc(sizeof(Enemy), MAX_ENEMIES);
   result.enemies_count = 0;
@@ -49,20 +49,17 @@ GlobalState init_global_state() {
   result.kills = 0;
   result.frame_counter = 0;
 
-  result.player = player_create();
+  VectorU32 map_size = map_get_size(map);
 
-  const int range = 20;
-  const int barrier = 2;
+  result.player = player_create((Vector){map_size.x / 2, map_size.y / 2});
+  printf("MAP: %u %u\n", map_size.x, map_size.y);
+  const int enemies_count = 150;
 
-  for (ssize_t i = -range; i <= range; i++) {
-    for (ssize_t j = -range; j <= range; j++) {
-      if ((i == j && i == 0) || labs(i) <= barrier || labs(j) <= barrier) {
-        continue;
-      }
-
-      result.enemies[result.enemies_count++] =
-          enemy_create((Vector){60.0 * i, 60.0 * j});
-    }
+  for (size_t i = 0; i < enemies_count; i++) {
+    result.enemies[result.enemies_count++] = enemy_create((Vector){0.0, 0.0});
+    VectorU32 random_pos = map_gen_random_position(
+        map, 10, &result.enemies[i].spritesheet.frames[0]);
+    result.enemies[i].position = (Vector){random_pos.x, random_pos.y};
   }
 
   return result;
