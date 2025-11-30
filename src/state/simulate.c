@@ -5,6 +5,35 @@
 #include <stdlib.h>
 #include <sys/random.h>
 
+#include <stdio.h>
+#include <sys/time.h>
+
+typedef struct {
+  long long dec_frame;
+  long long proc_input;
+  long long create_proj;
+  long long update_proj;
+  long long dmg_kill;
+  long long upd_enemy;
+  long long dmg_player;
+} Timings;
+
+static Timings timings = {0};
+
+static inline long long ns() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return (long long)tv.tv_sec * 1000000000LL + (long long)tv.tv_usec * 1000LL;
+}
+
+#define TIME(fn, field)                                                        \
+  do {                                                                         \
+    long long _t0 = ns();                                                      \
+    fn;                                                                        \
+    long long _t1 = ns();                                                      \
+    timings.field += _t1 - _t0;                                                \
+  } while (0)
+
 #include <stdbool.h>
 
 #define MAX_ENEMIES 3000
@@ -272,15 +301,28 @@ static void damage_player(GlobalState *state) {
 }
 
 void make_step(GlobalState *state, Input input) {
-  decrease_frame_counters(state);
-  process_input(state, input);
-  create_projectiles(state);
-  update_projectile_positions(state);
-  damage_and_kill_enemies(state);
-  update_enemies_positions(state);
-  damage_player(state);
+  TIME(decrease_frame_counters(state), dec_frame);
+  TIME(process_input(state, input), proc_input);
+  TIME(create_projectiles(state), create_proj);
+  TIME(update_projectile_positions(state), update_proj);
+  TIME(damage_and_kill_enemies(state), dmg_kill);
+  TIME(update_enemies_positions(state), upd_enemy);
+  TIME(damage_player(state), dmg_player);
 
   state->frame_counter++;
+
+  if (state->frame_counter % 30 == 0) {
+    printf("avg ns per frame:\n");
+    printf("  dec_frame:   %lld\n", timings.dec_frame / 30);
+    printf("  proc_input:  %lld\n", timings.proc_input / 30);
+    printf("  create_proj: %lld\n", timings.create_proj / 30);
+    printf("  upd_proj:    %lld\n", timings.update_proj / 30);
+    printf("  dmg_kill:    %lld\n", timings.dmg_kill / 30);
+    printf("  upd_enemy:   %lld\n", timings.upd_enemy / 30);
+    printf("  dmg_player:  %lld\n", timings.dmg_player / 30);
+
+    timings = (Timings){0};
+  }
 
   return;
 }
