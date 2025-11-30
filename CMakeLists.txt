@@ -39,6 +39,30 @@ target_compile_options(gta_vi PRIVATE ${VENDOR_COMPILE_OPTIONS})
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SDL2 REQUIRED sdl2)
 
+find_package(PkgConfig QUIET)
+pkg_check_modules(SDL2_TTF QUIET sdl2_ttf)
+
+if(NOT SDL2_TTF_FOUND)
+  find_path(
+    SDL2_TTF_INCLUDE_DIRS SDL_ttf.h
+    PATHS /usr/include /usr/local/include
+    PATH_SUFFIXES SDL2)
+
+  find_library(
+    SDL2_TTF_LIBRARIES
+    NAMES SDL2_ttf
+    PATHS /usr/lib /usr/local/lib)
+
+  if(SDL2_TTF_INCLUDE_DIRS AND SDL2_TTF_LIBRARIES)
+    set(SDL2_TTF_FOUND TRUE)
+    message(STATUS "Found SDL2_ttf manually: ${SDL2_TTF_LIBRARIES}")
+  else()
+    message(FATAL_ERROR "SDL2_ttf not found! Please install libsdl2-ttf-dev")
+  endif()
+else()
+  message(STATUS "Found SDL2_ttf via pkg-config")
+endif()
+
 find_library(MATH_LIBRARY m)
 
 add_subdirectory(src)

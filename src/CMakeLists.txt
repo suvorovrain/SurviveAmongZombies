@@ -2,10 +2,12 @@ file(GLOB_RECURSE SRC_FILES "*.c")
 
 add_executable(${PROJECT_NAME} ${SRC_FILES} $<TARGET_OBJECTS:gta_vi>)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE stb gta_vi ${SDL2_LIBRARIES}
-                                              ${MATH_LIBRARY})
+target_link_libraries(
+  ${PROJECT_NAME} PRIVATE stb gta_vi ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES}
+                          ${MATH_LIBRARY})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS}
+                                                   ${SDL2_TTF_INCLUDE_DIRS})
 target_include_directories(
   ${PROJECT_NAME} SYSTEM
   PRIVATE ${CMAKE_SOURCE_DIR}/vendor/GTA-VI/include
@@ -13,7 +15,8 @@ target_include_directories(
 
 target_compile_options(${PROJECT_NAME} PRIVATE ${SRC_COMPILE_OPTIONS})
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE ${SDL2_CFLAGS_OTHER})
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${SDL2_CFLAGS_OTHER}
+                                                   ${SDL2_TTF_CFLAGS_OTHER})
 
 if(PLATFORM_WINDOWS)
   target_compile_definitions(${PROJECT_NAME} PRIVATE OS_WINDOWS)
@@ -23,7 +26,7 @@ elseif(PLATFORM_MACOS)
   target_compile_definitions(${PROJECT_NAME} PRIVATE OS_MACOS)
 endif()
 
-target_link_options(${PROJECT_NAME} PRIVATE ${SDL2_LDFLAGS})
+target_link_options(${PROJECT_NAME} PRIVATE ${SDL2_LDFLAGS} ${SDL2_TTF_LDFLAGS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
                                                  ${CMAKE_BINARY_DIR}/bin)
