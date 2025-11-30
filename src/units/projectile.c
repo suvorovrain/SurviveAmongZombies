@@ -16,7 +16,7 @@ Projectile projectile_create(Player player, Vector movement) {
   result.live_frames_last = 120;
 
   Sprite *frames = load_spritesheet_frames("assets/projectiles/blue.png", size,
-                                           size, 1, SCALE);
+                                           size, 1, SCALE * 0.5);
   result.spritesheet = (SpriteSheet){.frames = frames, .frames_count = 1};
 
   return result;

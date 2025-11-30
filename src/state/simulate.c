@@ -37,7 +37,7 @@ static inline long long ns() {
 #include <stdbool.h>
 
 #define MAX_ENEMIES 3000
-#define MAX_PROJECTILES 300
+#define MAX_PROJECTILES 30000
 
 GlobalState init_global_state(Map *map) {
   GlobalState result = {0};
@@ -53,7 +53,7 @@ GlobalState init_global_state(Map *map) {
 
   result.player = player_create((Vector){map_size.x / 2, map_size.y / 2});
   printf("MAP: %u %u\n", map_size.x, map_size.y);
-  const int enemies_count = 150;
+  const int enemies_count = 700;
 
   for (size_t i = 0; i < enemies_count; i++) {
     result.enemies[result.enemies_count++] = enemy_create((Vector){0.0, 0.0});
@@ -186,7 +186,7 @@ static void damage_and_kill_enemies(GlobalState *state) {
     for (size_t j = 0; j < state->enemies_count; j++) {
       Enemy *enemy = &state->enemies[j];
 
-      if (units_intersect(proj, enemy, 4.0f)) {
+      if (units_intersect(proj, enemy, 1.0f)) {
         enemy->stat_hp -= proj->stat_damage;
         enemy->state = ENEMY_HURTED;
         proj->kills += 1;
@@ -213,6 +213,9 @@ static void damage_and_kill_enemies(GlobalState *state) {
 
     state->enemies_count--;
     i--;
+    state->kills += 1;
+    state->player.stat_experience += 100.0;
+    player_level_up(&(state->player), state);
   }
 
   return;
