@@ -101,6 +101,41 @@ static void update_exp_bar(UIElement *exp_bar, Game *game) {
   }
 }
 
+static UIElement dead_background(Game *game) {
+  UIElement bar = {0};
+  bar.position.screen = (Vector){0.0, 0.0};
+  bar.mode = UI_POS_SCREEN;
+  bar.z_index = 0;
+  Sprite *sprite = malloc(sizeof(Sprite));
+  uint32_t *pixels = calloc(800 * 600, sizeof(uint32_t));
+  for (size_t i = 0; i < 800; i++) {
+    for (size_t j = 0; j < 600; j++) {
+      pixels[j * 800 + i] = 0xCC000000;
+    }
+  }
+  sprite->pixels = pixels;
+  sprite->width = 800;
+  sprite->height = 600;
+
+  bar.sprite = sprite;
+  return bar;
+}
+
+static UIElement dead_screen(Game *game) {
+  UIElement bar = {0};
+  bar.mode = UI_POS_SCREEN;
+  bar.z_index = 0;
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite = load_sprite("assets/end_screen.png", 10.0f);
+  bar.sprite = sprite;
+  Vector pos = {800.0, 600.0};
+  pos = vector_div(pos, 2.0);
+  pos = vector_sub(
+      pos, vector_div((Vector){bar.sprite->width, bar.sprite->height}, 2.0));
+  bar.position.screen = pos;
+  return bar;
+}
+
 GameObject **get_game_objects_from_state(GlobalState *state) {
   GameObject **objects =
       calloc(sizeof(GameObject *),
@@ -166,17 +201,26 @@ Game *game_create() {
   engine_set_player(engine, objects[0]);
   game->player = objects[0];
 
-  game->uis = calloc(sizeof(UIElement), 2);
-  game->ui_count = 2;
+  game->uis = calloc(sizeof(UIElement), 3);
+  game->ui_count = 4;
   game->uis[0] = hp_bar(game);
   game->uis[1] = exp_bar(game);
+  game->uis[2] = dead_background(game);
+  game->uis[3] = dead_screen(game);
 
+  UIElement **batch_ui = calloc(sizeof(UIElement *), 4);
+  batch_ui[0] = &game->uis[0];
+  batch_ui[1] = &game->uis[1];
+  batch_ui[2] = &game->uis[2];
+  batch_ui[3] = &game->uis[3];
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
                                            game->state.enemies_count,
                               .ui_count = 2,
-                              .uis = &game->uis};
-  game->batch.uis[0] = &game->uis[0];
-  game->batch.uis[1] = &game->uis[1];
+                              .uis = batch_ui};
+  // game->batch.uis[0] = &game->uis[0];
+  // game->batch.uis[1] = &game->uis[1];
+  // game->batch.uis[2] = &game->uis[2];
+  // game->batch.uis[3] = &game->uis[3];
   game->engine = engine;
   game->fonts = NULL;
   game->map = map;
@@ -196,18 +240,25 @@ void game_update(Game *game, Input *input) {
   if (!game || !input)
     return;
 
+  if (game->state.status == GAME_DEAD) {
+    game->batch.ui_count = 4;
+
+    return;
+  }
+
   make_step(&game->state, *input);
   GameObject **objects = get_game_objects_from_state(&(game->state));
   update_hp_bar(&(game->uis[0]), game);
   update_exp_bar(&(game->uis[1]), game);
 
   game->uis[0].position.attached.object = objects[0];
-  game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
-                                           game->state.projectiles_count,
-                              .objs = objects,
-                              .ui_count = 2,
-                              .uis = &game->uis};
-  game->batch.uis[0] = &game->uis[0];
-  game->batch.uis[1] = &game->uis[1];
+  game->batch.obj_count =
+      1 + game->state.enemies_count + game->state.projectiles_count;
+  game->batch.objs = objects;
+
+  // game->batch.uis[0] = &game->uis[0];
+  // game->batch.uis[1] = &game->uis[1];
+  // game->batch.uis[2] = &game->uis[2];
+  // game->batch.uis[3] = &game->uis[3];
   engine_set_player(game->engine, game->batch.objs[0]);
 }
