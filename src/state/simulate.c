@@ -210,17 +210,21 @@ static void update_enemies_positions(GlobalState *state) {
     enemy->position = result;
   }
 
+  Homka_Rect rects[state->enemies_count];
+  for (size_t i = 0; i < state->enemies_count; i++) {
+    rects[i] = unit_get_rect(&state->enemies[i]);
+  }
+
   // iteration algorithm for resolve collisions
   for (size_t iteration = 0; iteration < 8; iteration++) {
-
     for (size_t i = 0; i < state->enemies_count; i++) {
       for (size_t j = i + 1; j < state->enemies_count; j++) {
 
         Enemy *a = &state->enemies[i];
         Enemy *b = &state->enemies[j];
 
-        Homka_Rect ra = unit_get_rect(a);
-        Homka_Rect rb = unit_get_rect(b);
+        Homka_Rect ra = rects[i];
+        Homka_Rect rb = rects[j];
 
         if (ra.right <= rb.left || ra.left >= rb.right || ra.down <= rb.top ||
             ra.top >= rb.down) {
@@ -234,10 +238,18 @@ static void update_enemies_positions(GlobalState *state) {
           float half = overlap_x * 0.5f;
           a->position.x -= half;
           b->position.x += half;
+          rects[i].left -= half;
+          rects[i].right -= half;
+          rects[j].left += half;
+          rects[j].right += half;
         } else {
           float half = overlap_y * 0.5f;
           a->position.y -= half;
           b->position.y += half;
+          rects[i].top -= half;
+          rects[i].down -= half;
+          rects[j].top += half;
+          rects[j].down += half;
         }
       }
     }
