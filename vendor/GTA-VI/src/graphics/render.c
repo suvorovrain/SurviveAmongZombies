@@ -9,7 +9,7 @@
 #include <string.h>
 
 // Compare two game objects by their depth (y-coordinate + height)
-int compare_objs_by_depth(const void *a, const void *b) {
+static int compare_objs_by_depth(const void *a, const void *b) {
   const GameObject *obj_a = *(const GameObject **)a;
   const GameObject *obj_b = *(const GameObject **)b;
 
@@ -18,6 +18,13 @@ int compare_objs_by_depth(const void *a, const void *b) {
   float yb = obj_b->position.y + (obj_b->cur_sprite ? obj_b->cur_sprite->height : 0);
 
   return (ya > yb) - (ya < yb);
+}
+
+// Compare two ui elements by their z-index
+static int compare_ui_by_z(const void *a, const void *b) {
+  const UIElement *ui_a = *(const UIElement **)a;
+  const UIElement *ui_b = *(const UIElement **)b;
+  return (ui_a->z_index > ui_b->z_index) - (ui_a->z_index < ui_b->z_index);
 }
 
 // Render shadow for given object onto framebuffer
@@ -56,27 +63,21 @@ static void render_shadow(uint32_t *framebuffer, Camera *camera, GameObject *obj
   }
 }
 
-// Render given game object onto framebuffer considering camera position
-void render_object(uint32_t *framebuffer, GameObject *object, Camera *camera) {
-  if (!framebuffer || !object || !object->cur_sprite) return;
-  Sprite *sprite = object->cur_sprite;
+static void render_sprite(uint32_t *framebuffer, Sprite *sprite, Vector screen_pos, Camera *camera) {
+  if (!framebuffer || !sprite || !camera) return;
 
-  // Render shadow first
-  render_shadow(framebuffer, camera, object);
-
-  Vector obj_screen = camera_world_to_screen(camera, object->position);
-  // Return if object is completely off-screen
-  if (!is_rect_intersect((Rect){obj_screen, sprite->width, sprite->height},
+  // Return if sprite is completely off-screen
+  if (!is_rect_intersect((Rect){screen_pos, sprite->width, sprite->height},
           (Rect){(Vector){0.0f, 0.0f}, camera->size.x, camera->size.y})) {
     return;
   }
 
-  for (int sy = 0; sy < sprite->height; sy++) {
-    int screen_y = obj_screen.y + sy;
+  for (uint32_t sy = 0; sy < sprite->height; sy++) {
+    int screen_y = screen_pos.y + sy;
     if (screen_y < 0 || screen_y >= camera->size.y) { continue; }
 
-    for (int sx = 0; sx < sprite->width; sx++) {
-      int screen_x = obj_screen.x + sx;
+    for (uint32_t sx = 0; sx < sprite->width; sx++) {
+      int screen_x = screen_pos.x + sx;
       if (screen_x < 0 || screen_x >= camera->size.x) { continue; }
 
       uint32_t src = sprite->pixels[sy * sprite->width + sx];
@@ -87,15 +88,48 @@ void render_object(uint32_t *framebuffer, GameObject *object, Camera *camera) {
   }
 }
 
-// Renders multiple game objects
-// Objects must be sorted by depth! (y-coordinate and height)
-void render_objects(uint32_t *framebuffer, GameObject **objects, int count, Camera *camera) {
-  if (!framebuffer || !objects || !camera) return;
+// Render given game object onto framebuffer considering camera position
+static void render_object(uint32_t *framebuffer, GameObject *object, Camera *camera) {
+  if (!framebuffer || !object || !object->cur_sprite) return;
+  Sprite *sprite = object->cur_sprite;
 
-  for (int i = 0; i < count; i++) { render_object(framebuffer, objects[i], camera); }
+  // Render shadow first
+  render_shadow(framebuffer, camera, object);
+
+  Vector obj_screen = camera_world_to_screen(camera, object->position);
+  render_sprite(framebuffer, sprite, obj_screen, camera);
 }
 
-// Load prerendered part of the map into framebuffer based on camera position
+static void render_ui_element(uint32_t *framebuffer, UIElement *ui, Camera *camera) {
+  if (!framebuffer || !ui || !ui->sprite) return;
+
+  Vector screen_pos;
+  if (ui->mode == UI_POS_SCREEN) {
+    screen_pos = ui->position.screen;
+  } else if (ui->mode == UI_POS_ATTACHED) {
+    Vector obj_screen_pos = camera_world_to_screen(camera, ui->position.attached.object->position);
+    screen_pos.x = obj_screen_pos.x + ui->position.attached.offset.x;
+    screen_pos.y = obj_screen_pos.y + ui->position.attached.offset.y;
+  } else {
+    return; // Unknown mode
+  }
+
+  render_sprite(framebuffer, ui->sprite, screen_pos, camera);
+}
+
+void render_batch(uint32_t *framebuffer, RenderBatch *batch, Camera *camera) {
+  if (!framebuffer || !batch || !camera) return;
+
+  if (batch->objs != NULL) {
+    qsort(batch->objs, batch->obj_count, sizeof(GameObject *), compare_objs_by_depth);
+    for (uint32_t i = 0; i < batch->obj_count; i++) { render_object(framebuffer, batch->objs[i], camera); }
+  }
+
+  if (batch->uis == NULL) return;
+  qsort(batch->uis, batch->ui_count, sizeof(UIElement *), compare_ui_by_z);
+  for (uint32_t i = 0; i < batch->ui_count; i++) { render_ui_element(framebuffer, batch->uis[i], camera); }
+}
+
 void load_prerendered(uint32_t *framebuffer, Map *map, Camera *camera) {
   if (!map || !framebuffer || !camera) return;
 
@@ -104,13 +138,13 @@ void load_prerendered(uint32_t *framebuffer, Map *map, Camera *camera) {
   int map_start_y = (int)top_left_world.y;
 
   // Render visible part of the map
-  for (int screen_y = 0; screen_y < camera->size.y; screen_y++) {
-    int map_y = map_start_y + screen_y;
-    if (map_y < 0 || map_y >= map->height_pix) { continue; }
+  for (uint32_t screen_y = 0; screen_y < camera->size.y; screen_y++) {
+    uint32_t map_y = map_start_y + screen_y;
+    if (map_y >= map->height_pix) { continue; }
 
-    for (int screen_x = 0; screen_x < camera->size.x; screen_x++) {
-      int map_x = map_start_x + screen_x;
-      if (map_x < 0 || map_x >= map->width_pix) { continue; }
+    for (uint32_t screen_x = 0; screen_x < camera->size.x; screen_x++) {
+      uint32_t map_x = map_start_x + screen_x;
+      if (map_x >= map->width_pix) { continue; }
 
       int idx = screen_y * (int)camera->size.x + screen_x;
       uint32_t pixel = map->pixels[map_y * map->width_pix + map_x];
