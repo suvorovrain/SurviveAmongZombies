@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../state.h"
-#include "../vendor/GTA-VI/include/engine/types.h"
+#include "engine/types.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
