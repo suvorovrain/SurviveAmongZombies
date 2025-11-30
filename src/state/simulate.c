@@ -251,7 +251,7 @@ static void damage_player(GlobalState *state) {
     Enemy *enemy = &state->enemies[i];
     Player *player = &state->player;
 
-    if (units_intersect(&state->player, &enemy)) {
+    if (units_intersect(player, enemy)) {
       player->stat_hp -= enemy->stat_damage;
       player->state = PLAYER_HURTED;
       player->invincibility_count = 30; // half of second invincible
@@ -267,6 +267,8 @@ void make_step(GlobalState *state, Input input) {
   damage_and_kill_enemies(state);
   update_enemies_positions(state);
   damage_player(state);
+
+  state->frame_counter++;
 
   return;
 }
