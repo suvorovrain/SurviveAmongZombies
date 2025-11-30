@@ -22,16 +22,17 @@ GlobalState init_global_state() {
 
   result.player = player_create();
 
-  const int range = 6;
+  const int range = 20;
+  const int barrier = 2;
 
-  for (float i = -range; i <= range; i++) {
-    for (float j = -range; j <= range; j++) {
-      if (i == j && i == 0) {
+  for (ssize_t i = -range; i <= range; i++) {
+    for (ssize_t j = -range; j <= range; j++) {
+      if ((i == j && i == 0) || labs(i) <= barrier || labs(j) <= barrier) {
         continue;
       }
 
       result.enemies[result.enemies_count++] =
-          enemy_create((Vector){90.0 * i, 90.0 * j});
+          enemy_create((Vector){60.0 * i, 60.0 * j});
     }
   }
 
