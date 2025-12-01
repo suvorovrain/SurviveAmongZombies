@@ -1,0 +1,5 @@
+#pragma once
+
+#define PROJ_EXPLODE_FRAMES_COUNT 3
+#define PLAYER_WALK_FRAME_COUNT 20
+#define ENEMY_WALK_FRAME_COUNT 20

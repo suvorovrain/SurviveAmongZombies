@@ -10,12 +10,11 @@ Enemy enemy_create(Vector position) {
 
   Sprite *frames =
       load_spritesheet_frames("assets/units/imp.png", 16, 15, 1, SCALE);
-  // if (frame.height == 0) {
-  // exit(-1);
-  // }
-  // Sprite *frames = calloc(sizeof(Sprite), 1);
-  // frames[0] = frame;
   result.spritesheet = (SpriteSheet){.frames = frames, .frames_count = 1};
+  Sprite *frames_move =
+      load_spritesheet_frames("assets/units/imp.png", 16, 15, 8, SCALE);
+  result.spritesheet_move =
+      (SpriteSheet){.frames = frames_move, .frames_count = 8};
   result.stat_movespeed = 1.5;
   result.stat_max_hp = 100.0;
   result.stat_hp = 100.0;

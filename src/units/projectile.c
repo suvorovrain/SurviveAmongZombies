@@ -19,6 +19,11 @@ Projectile projectile_create(Player player, Vector movement) {
                                            size, 1, SCALE * 0.5);
   result.spritesheet = (SpriteSheet){.frames = frames, .frames_count = 1};
 
+  Sprite *explode_frames = load_spritesheet_frames(
+      "assets/particles/homka_take.png", 32, 32, 12, SCALE * 0.5);
+  result.explode_spritesheet =
+      (SpriteSheet){.frames = explode_frames, .frames_count = 12};
+
   return result;
 }
 

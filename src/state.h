@@ -16,6 +16,8 @@ typedef struct {
 } SpriteSheet;
 
 typedef enum { UNIT_PLAYER = 0, UNIT_ENEMY, UNIT_PROJECTILE } UnitType;
+typedef enum { DIRECTION_UP = 0, DIRECTION_DOWN } UnitDirectionFace;
+typedef enum { DIRECTION_LEFT = 0, DIRECTION_RIGHT } UnitDirectionSide;
 
 typedef enum { PLAYER_WALK = 0, PLAYER_HURTED, PLAYER_IDLE } PlayerState;
 
@@ -37,6 +39,9 @@ typedef struct {
   double stat_piercing;
   // internal state (don't be used for render)
   uint64_t invincibility_count; // after getting damage we has invincibility
+  UnitDirectionFace direction_face;
+  UnitDirectionSide direction_side;
+  SpriteSheet spritesheet_move;
 } Player;
 
 typedef enum { ENEMY_WALK = 0, ENEMY_IDLE, ENEMY_HURTED } EnemyState;
@@ -52,6 +57,8 @@ typedef struct {
   double stat_max_hp;
   double stat_hp;
   double stat_damage;
+  // internal state (don't be user for render)
+  SpriteSheet spritesheet_move;
 } Enemy;
 
 typedef enum { PROJ_WALK = 0, PROJ_EXPLODE } ProjState;
@@ -68,6 +75,8 @@ typedef struct {
   // internal state
   uint64_t live_frames_last; // count of frames that projectile can be alive
   uint64_t kills;
+  uint64_t explode_frame; // frame when projectile get explode state
+  SpriteSheet explode_spritesheet;
 } Projectile;
 
 // Is player alive (so game too) or player already dead and game at pause

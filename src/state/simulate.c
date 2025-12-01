@@ -1,4 +1,5 @@
 // #include "input.h"
+#include "../config.h"
 #include "../game.h"
 #include "../units/units.h"
 #include "engine/coordinates.h"
@@ -112,14 +113,22 @@ static void process_input(GlobalState *state, Input input) {
   Player *player = &state->player;
   Vector movement = {0.0, 0.0};
 
-  if (input.w)
+  if (input.w) {
     movement.y = -1;
-  if (input.s)
+    player->direction_face = DIRECTION_UP;
+  }
+  if (input.s) {
     movement.y = 1;
-  if (input.d)
+    player->direction_face = DIRECTION_DOWN;
+  }
+  if (input.d) {
     movement.x = 1;
-  if (input.a)
+    player->direction_side = DIRECTION_RIGHT;
+  }
+  if (input.a) {
     movement.x = -1;
+    player->direction_side = DIRECTION_LEFT;
+  }
 
   if (movement.x == 0.0 && movement.y == 0.0) {
     return;
@@ -196,6 +205,10 @@ static void update_projectile_positions(GlobalState *state) {
   for (size_t i = 0; i < state->projectiles_count; i++) {
     Projectile *proj = &state->projectiles[i];
 
+    if (state->projectiles[i].state == PROJ_EXPLODE) {
+      continue;
+    }
+
     Vector movement = vector_multiply(proj->movement, proj->stat_movespeed);
     Vector result = vector_add(proj->position, movement);
 
@@ -223,7 +236,10 @@ static void damage_and_kill_enemies(GlobalState *state) {
 
         if (proj->kills == (uint64_t)state->player.stat_piercing) {
           proj->state = PROJ_EXPLODE;
-          proj->live_frames_last = 1;
+          proj->explode_frame = state->frame_counter;
+          proj->live_frames_last = 12 * PROJ_EXPLODE_FRAMES_COUNT;
+          proj->position = vector_add(
+              proj->position, (Vector){-8.0 * SCALE * 0.5, -8.0 * SCALE * 0.5});
         }
       }
     }
@@ -343,6 +359,51 @@ static void damage_player(GlobalState *state) {
   }
 }
 
+static void update_animations(GlobalState *state) {
+  for (size_t i = 0; i < state->projectiles_count; i++) {
+    Projectile *proj = &state->projectiles[i];
+
+    if (proj->state == PROJ_WALK)
+      continue;
+
+    uint64_t frames_diff = state->frame_counter - proj->explode_frame;
+    if (frames_diff / 4 > proj->explode_spritesheet.frames_count) {
+      fprintf(stderr, "Wrong explode animation calculation\n");
+      exit(-1);
+    }
+
+    proj->spritesheet.frames[0] =
+        proj->explode_spritesheet.frames[frames_diff / 4];
+  }
+
+  Player *player = &state->player;
+  size_t frame = 0;
+  if (player->direction_face == DIRECTION_UP)
+    frame += 8;
+  if (player->direction_side == DIRECTION_LEFT)
+    frame += 4;
+
+  frame += (state->frame_counter % (PLAYER_WALK_FRAME_COUNT * 4)) /
+           PLAYER_WALK_FRAME_COUNT;
+
+  player->spritesheet.frames[0] = player->spritesheet_move.frames[frame];
+
+  for (size_t i = 0; i < state->enemies_count; i++) {
+    Enemy *enemy = &state->enemies[i];
+
+    Vector movement = vector_from_to(enemy, &state->player);
+    size_t frame_enemy = 0;
+
+    if (movement.y < 0) {
+      frame_enemy += 4;
+    }
+
+    frame_enemy += (state->frame_counter % (ENEMY_WALK_FRAME_COUNT * 2)) /
+                   ENEMY_WALK_FRAME_COUNT;
+    enemy->spritesheet.frames[0] = enemy->spritesheet_move.frames[frame_enemy];
+  }
+}
+
 void make_step(GlobalState *state, Input input, Game *game) {
   TIME(decrease_frame_counters(state), dec_frame);
   spawn_enemies(state, game);
@@ -352,6 +413,7 @@ void make_step(GlobalState *state, Input input, Game *game) {
   TIME(damage_and_kill_enemies(state), dmg_kill);
   TIME(update_enemies_positions(state), upd_enemy);
   TIME(damage_player(state), dmg_player);
+  update_animations(state);
 
   state->frame_counter++;
 
