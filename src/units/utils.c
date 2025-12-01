@@ -82,6 +82,14 @@ Vector vector_sub(Vector first, Vector second) {
   return (Vector){first.x - second.x, first.y - second.y};
 }
 
+Vector vector_rotate(Vector vector, float angle) {
+  float x = vector.x;
+  float y = vector.y;
+
+  return (Vector){x * cosf(angle) - y * sinf(angle),
+                  x * sinf(angle) + y * cosf(angle)};
+}
+
 Vector vector_from_to(void *first, void *second) {
   return vector_sub(unit_get_position(second), unit_get_position(first));
 }

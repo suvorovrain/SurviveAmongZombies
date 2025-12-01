@@ -83,6 +83,7 @@ typedef struct {
   GameStatus status;
   // internal state (don't be used for render)
   uint64_t frame_counter; // count of frames lasted from begin of game
+  float enemy_factor;
 } GlobalState;
 
 #endif

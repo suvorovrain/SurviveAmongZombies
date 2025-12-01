@@ -246,7 +246,7 @@ void game_update(Game *game, Input *input) {
     return;
   }
 
-  make_step(&game->state, *input);
+  make_step(&game->state, *input, game);
   GameObject **objects = get_game_objects_from_state(&(game->state));
   update_hp_bar(&(game->uis[0]), game);
   update_exp_bar(&(game->uis[1]), game);
