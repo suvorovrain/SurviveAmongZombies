@@ -135,6 +135,70 @@ static UIElement dead_screen(Game *game) {
   return bar;
 }
 
+static UIElement level_ui(Game *game) {
+  UIElement ui = {0};
+  ui.mode = UI_POS_SCREEN;
+  ui.position.screen = (Vector){10.0f, 50.0f};
+  ui.z_index = 0;
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite = text_sprite("Level: not initialized", game->fonts[0],
+                        (SDL_Color){255, 255, 255, 255});
+  ui.sprite = sprite;
+  return ui;
+}
+
+static void update_level_ui(UIElement *ui, Game *game) {
+  char text[100];
+  snprintf(text, 100, "Level: %d", (int32_t)game->state.player.stat_level);
+  free_sprite(ui->sprite);
+  *ui->sprite =
+      text_sprite(text, game->fonts[0], (SDL_Color){255, 255, 255, 255});
+}
+
+static UIElement kills_ui(Game *game) {
+  UIElement ui = {0};
+  ui.mode = UI_POS_SCREEN;
+  ui.position.screen = (Vector){10.0f, 80.0f};
+  ui.z_index = 0;
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite = text_sprite("Kills: not initialized", game->fonts[0],
+                        (SDL_Color){255, 255, 255, 255});
+  ui.sprite = sprite;
+  return ui;
+}
+
+static void update_kills_ui(UIElement *ui, Game *game) {
+  char text[100];
+  snprintf(text, 100, "Kills: %ld", (int64_t)game->state.kills);
+  free_sprite(ui->sprite);
+  *ui->sprite =
+      text_sprite(text, game->fonts[0], (SDL_Color){255, 255, 255, 255});
+}
+
+static UIElement time_ui(Game *game) {
+  UIElement ui = {0};
+  ui.mode = UI_POS_SCREEN;
+  ui.position.screen = (Vector){10.0f, 110.0f};
+  ui.z_index = 0;
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite = text_sprite("Time: not initialized", game->fonts[0],
+                        (SDL_Color){255, 255, 255, 255});
+  ui.sprite = sprite;
+  return ui;
+}
+
+static void update_time_ui(UIElement *ui, Game *game) {
+  char text[100];
+  uint32_t seconds = game->state.frame_counter / 60 % 60;
+  uint32_t mins = game->state.frame_counter / 60 / 60;
+
+  snprintf(text, 100, "Time: %1d%1d:%1d%1d", mins / 10, mins % 10, seconds / 10,
+           seconds % 10);
+  free_sprite(ui->sprite);
+  *ui->sprite =
+      text_sprite(text, game->fonts[0], (SDL_Color){255, 255, 255, 255});
+}
+
 GameObject **get_game_objects_from_state(GlobalState *state) {
   GameObject **objects =
       calloc(sizeof(GameObject *),
@@ -194,31 +258,49 @@ Game *game_create() {
   };
   engine_set_map(engine, map);
 
+  // Load fonts
+  if (TTF_Init() != 0) {
+    fprintf(stderr, "Failed to initialize TTF: %s\n", TTF_GetError());
+    game_free(game);
+    return NULL;
+  }
+  game->fonts = calloc(sizeof(TTF_Font *), 1);
+  game->fonts[0] = TTF_OpenFont("fonts/DejaVuSans.ttf", 20);
+  if (!game->fonts[0]) {
+    game_free(game);
+    return NULL;
+  }
+
   GlobalState globalState = init_global_state(map);
   GameObject **objects = get_game_objects_from_state(&globalState);
 
   engine_set_player(engine, objects[0]);
   game->player = objects[0];
 
-  game->ui_count = 4;
+  game->ui_count = 7;
   game->uis = calloc(sizeof(UIElement), game->ui_count);
   game->uis[0] = hp_bar(game);
   game->uis[1] = exp_bar(game);
-  game->uis[2] = dead_background(game);
-  game->uis[3] = dead_screen(game);
+  game->uis[2] = level_ui(game);
+  game->uis[3] = kills_ui(game);
+  game->uis[4] = time_ui(game);
+  game->uis[5] = dead_background(game);
+  game->uis[6] = dead_screen(game);
 
-  UIElement **batch_ui = calloc(sizeof(UIElement *), 4);
+  UIElement **batch_ui = calloc(sizeof(UIElement *), game->ui_count);
   batch_ui[0] = &game->uis[0];
   batch_ui[1] = &game->uis[1];
   batch_ui[2] = &game->uis[2];
   batch_ui[3] = &game->uis[3];
+  batch_ui[4] = &game->uis[4];
+  batch_ui[5] = &game->uis[5];
+  batch_ui[6] = &game->uis[6];
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
                                            game->state.enemies_count,
                               .objs = objects,
-                              .ui_count = 2,
+                              .ui_count = 5,
                               .uis = batch_ui};
   game->engine = engine;
-  game->fonts = NULL;
   game->map = map;
   game->state = globalState;
 
@@ -237,7 +319,7 @@ void game_update(Game *game, Input *input) {
     return;
 
   if (game->state.status == GAME_DEAD) {
-    game->batch.ui_count = 4;
+    game->batch.ui_count = 7;
 
     return;
   }
@@ -246,6 +328,9 @@ void game_update(Game *game, Input *input) {
   GameObject **objects = get_game_objects_from_state(&(game->state));
   update_hp_bar(&(game->uis[0]), game);
   update_exp_bar(&(game->uis[1]), game);
+  update_level_ui(&(game->uis[2]), game);
+  update_kills_ui(&(game->uis[3]), game);
+  update_time_ui(&(game->uis[4]), game);
 
   game->uis[0].position.attached.object = objects[0];
   game->batch.obj_count =

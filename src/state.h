@@ -37,6 +37,9 @@ typedef struct {
   double stat_damage;
   double stat_proj_count;
   double stat_piercing;
+  // bosts
+  double boost_attack_speed_percent;
+  double boost_piercing_percent;
   // internal state (don't be used for render)
   uint64_t invincibility_count; // after getting damage we has invincibility
   UnitDirectionFace direction_face;
