@@ -1,7 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "dyn_objs.h"
 #include "engine/engine.h"
 #include "engine/types.h"
 #include "state.h"

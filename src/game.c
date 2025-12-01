@@ -1,5 +1,4 @@
 #include "game.h"
-#include "dyn_objs.h"
 #include "state/state.h"
 #include "static_objs.h"
 #include "units/units.h"
