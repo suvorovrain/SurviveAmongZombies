@@ -47,7 +47,8 @@ void camera_update(Camera *camera, float delta_time) {
 bool camera_is_visible(const Camera *camera, Vector pos) {
   if (!camera) return false;
 
-  return !(pos.x < 0 || pos.x >= camera->size.x || pos.y < 0 || pos.y >= camera->size.y);
+  return !(pos.x - camera->position.x < 0 || pos.x - camera->position.x >= camera->size.x ||
+      pos.y - camera->position.y < 0 || pos.y - camera->position.y >= camera->size.y);
 }
 
 // Convert world coordinates to screen coordinates relative to camera

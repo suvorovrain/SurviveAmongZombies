@@ -35,6 +35,10 @@ struct Engine {
   float ema_delta_time;
 };
 
+bool is_visible(Engine *engine, Vector pos) {
+  return camera_is_visible(engine->camera, pos);
+}
+
 Engine *engine_create(int width, int height, const char *title) {
   if (!title || width <= 0 || height <= 0) return NULL;
   Engine *e = calloc(1, sizeof(Engine));
