@@ -30,9 +30,9 @@ static UIElement hp_bar(Game *game) {
 }
 
 static void update_hp_bar(UIElement *hp_bar, Game *game) {
-  float percent = 100.0;
+  float percent = 100.0f;
   if (game->state.player.stat_hp < 0) {
-    percent = 0.0;
+    percent = 0.0f;
   } else {
     percent = game->state.player.stat_hp / game->state.player.stat_max_hp;
   }
@@ -69,9 +69,9 @@ static UIElement exp_bar(Game *game) {
 }
 
 static void update_exp_bar(UIElement *exp_bar, Game *game) {
-  float percent = 100.0;
+  float percent = 100.0f;
   if (game->state.player.stat_experience == 0) {
-    percent = 0.0;
+    percent = 0.0f;
   } else {
     percent = game->state.player.stat_experience / 1000.0;
   }
@@ -81,10 +81,10 @@ static void update_exp_bar(UIElement *exp_bar, Game *game) {
   float size = 36 * EXP_BAR_SCALE;
   int32_t width_pixels = (int32_t)(size * percent);
 
-  uint32_t x_left = (29.0 * EXP_BAR_SCALE);
-  uint32_t x_right = (65 * EXP_BAR_SCALE - 1);
-  uint32_t y_top = EXP_BAR_SCALE;
-  uint32_t y_down = (9 * EXP_BAR_SCALE - 1);
+  uint32_t x_left = (uint32_t)(29.0 * EXP_BAR_SCALE);
+  uint32_t x_right = (uint32_t)(65 * EXP_BAR_SCALE - 1);
+  uint32_t y_top = (uint32_t)EXP_BAR_SCALE;
+  uint32_t y_down = (uint32_t)(9 * EXP_BAR_SCALE - 1);
 
   for (uint32_t x = x_left; x <= x_left + width_pixels; x++) {
     for (uint32_t y = y_top; y <= y_down; y++) {
@@ -107,7 +107,7 @@ static UIElement dead_background(Game *game) {
   bar.mode = UI_POS_SCREEN;
   bar.z_index = 0;
   Sprite *sprite = malloc(sizeof(Sprite));
-  uint32_t *pixels = calloc(800 * 600, sizeof(uint32_t));
+  uint32_t *pixels = calloc((size_t)(800 * 600), sizeof(uint32_t));
   for (size_t i = 0; i < 800; i++) {
     for (size_t j = 0; j < 600; j++) {
       pixels[j * 800 + i] = 0xCC000000;
@@ -215,6 +215,7 @@ Game *game_create() {
   batch_ui[3] = &game->uis[3];
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
                                            game->state.enemies_count,
+                              .objs = objects,
                               .ui_count = 2,
                               .uis = batch_ui};
   // game->batch.uis[0] = &game->uis[0];
