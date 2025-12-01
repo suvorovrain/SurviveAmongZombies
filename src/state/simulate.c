@@ -252,7 +252,6 @@ static void update_enemies_positions(GlobalState *state) {
   const size_t enemy_n = state->enemies_count;
   // iteration algorithm for resolve collisions
   for (size_t iteration = 0; iteration < 8; iteration++) {
-#pragma omp parallel for
     for (size_t i = 0; i < enemy_n; i++) {
       for (size_t j = i + 1; j < enemy_n; j++) {
         Homka_Rect ra = rects[i];
