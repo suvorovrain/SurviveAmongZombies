@@ -8,12 +8,13 @@ Enemy enemy_create(Vector position) {
   result.movement = (Vector){0.0, 0.0};
   result.state = ENEMY_IDLE;
 
-  Sprite frame = load_sprite("assets/units/imp.png", 1.0f);
-  if (frame.height == 0) {
-    exit(-1);
-  }
-  Sprite *frames = calloc(sizeof(Sprite), 1);
-  frames[0] = frame;
+  Sprite *frames =
+      load_spritesheet_frames("assets/units/imp.png", 16, 15, 1, SCALE);
+  // if (frame.height == 0) {
+  // exit(-1);
+  // }
+  // Sprite *frames = calloc(sizeof(Sprite), 1);
+  // frames[0] = frame;
   result.spritesheet = (SpriteSheet){.frames = frames, .frames_count = 1};
   result.stat_movespeed = 1.5;
   result.stat_max_hp = 100.0;
