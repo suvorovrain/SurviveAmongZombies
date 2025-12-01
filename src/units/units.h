@@ -40,4 +40,6 @@ Vector vector_multiply(Vector vector, float value);
 Vector vector_div(Vector vector, float num);
 Vector vector_add(Vector first, Vector second);
 Vector vector_sub(Vector first, Vector second);
+// angle in radians
+Vector vector_rotate(Vector vector, float angle);
 bool units_intersect(void *first, void *second, float padding);

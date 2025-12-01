@@ -1,11 +1,12 @@
 // #include "input.h"
+#include "../game.h"
 #include "../units/units.h"
+#include "math.h"
 #include "state.h"
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/random.h>
-
-#include <stdio.h>
 #include <sys/time.h>
 
 typedef struct {
@@ -47,13 +48,14 @@ GlobalState init_global_state(Map *map) {
   result.projectiles_count = 0;
   result.status = GAME_ALIVE;
   result.kills = 0;
+  result.enemy_factor = 5.0f;
   result.frame_counter = 0;
 
   VectorU32 map_size = map_get_size(map);
 
   result.player = player_create((Vector){map_size.x / 2, map_size.y / 2});
   printf("MAP: %u %u\n", map_size.x, map_size.y);
-  const int enemies_count = 700;
+  const int enemies_count = 0;
 
   for (size_t i = 0; i < enemies_count; i++) {
     result.enemies[result.enemies_count++] = enemy_create((Vector){0.0, 0.0});
@@ -79,6 +81,29 @@ static void decrease_frame_counters(GlobalState *state) {
       state->projectiles_count--;
       i--;
     }
+  }
+}
+
+// generate enemies every second
+static void spawn_enemies(GlobalState *state, Game *game) {
+  if (state->frame_counter % 60 != 0) {
+    return;
+  }
+
+  const float radius = 500.0;
+
+  // spawn enemies at radius of circle
+  for (size_t i = 0; i < (size_t)state->enemy_factor; i++) {
+    Vector norm_vector = (Vector){1.0, 0.0};
+    // [0; 2*PI)
+    float random_angle = ((float)rand() / (float)RAND_MAX) * 3.14159 * 2;
+    Vector vector_radius =
+        vector_multiply(vector_rotate(norm_vector, random_angle), radius);
+
+    Enemy new_enemy =
+        enemy_create(vector_add(state->player.position, vector_radius));
+
+    state->enemies[state->enemies_count++] = new_enemy;
   }
 }
 
