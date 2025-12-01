@@ -50,7 +50,7 @@ GlobalState init_global_state(Map *map) {
   result.projectiles_count = 0;
   result.status = GAME_ALIVE;
   result.kills = 0;
-  result.enemy_factor = 5.0f;
+  result.enemy_factor = 3.0f;
   result.frame_counter = 0;
 
   VectorU32 map_size = map_get_size(map);
@@ -138,7 +138,11 @@ static void process_input(GlobalState *state, Input input) {
 // TODO: attack speed
 // create projectile each 3 seconds
 static void create_projectiles(GlobalState *state, Game *game) {
-  if (state->frame_counter % (int)(state->player.stat_attack_speed * 60) != 0) {
+  if (state->frame_counter %
+          (int)((state->player.stat_attack_speed /
+                 (state->player.boost_attack_speed_percent)) *
+                60) !=
+      0) {
     return;
   }
 
@@ -226,7 +230,8 @@ static void damage_and_kill_enemies(GlobalState *state) {
         enemy->state = ENEMY_HURTED;
         proj->kills += 1;
 
-        if (proj->kills == (uint64_t)state->player.stat_piercing) {
+        if (proj->kills == (uint64_t)(state->player.stat_piercing *
+                                      state->player.boost_piercing_percent)) {
           proj->state = PROJ_EXPLODE;
           proj->explode_frame = state->frame_counter;
           proj->live_frames_last = 12 * PROJ_EXPLODE_FRAMES_COUNT;
@@ -396,16 +401,24 @@ static void update_animations(GlobalState *state) {
   }
 }
 
+void increase_dificilty(GlobalState *state) {
+  // Each 7 second more by 5% to enemy spawn
+  if (state->frame_counter % 60 * 7 == 0) {
+    state->enemy_factor *= 1.05;
+  }
+}
+
 void make_step(GlobalState *state, Input input, Game *game) {
   TIME(decrease_frame_counters(state), dec_frame);
   spawn_enemies(state, game);
   TIME(process_input(state, input), proc_input);
   TIME(create_projectiles(state, game), create_proj);
   TIME(update_projectile_positions(state), update_proj);
-  TIME(damage_and_kill_enemies(state), dmg_kill);
+  // TIME(damage_and_kill_enemies(state), dmg_kill);
   TIME(update_enemies_positions(state), upd_enemy);
   TIME(damage_player(state), dmg_player);
   update_animations(state);
+  increase_dificilty(state);
 
   state->frame_counter++;
 
