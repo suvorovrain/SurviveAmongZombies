@@ -15,10 +15,13 @@
 #include <engine/map.h>
 #include <math.h>
 #include <stdio.h>
+#include <time.h>
 
 static void update(Input *input, void *user_data);
 
 int main(void) {
+  srand(time(NULL));
+
 #ifdef OS_WINDOWS
   printf("Running on Windows\n");
 #elif defined(OS_LINUX)
