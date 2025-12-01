@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../game.h"
 #include "../state.h"
 #include "engine/types.h"
 #include <math.h>
@@ -19,8 +20,8 @@ typedef struct Rect {
 Projectile projectile_create();
 void projectile_free();
 
-Player player_create();
-Enemy enemy_create();
+Player player_create(Vector position);
+Enemy enemy_create(Vector position);
 
 // get unit hitbox size. Generic function
 Vector unit_get_size(void *unit);
