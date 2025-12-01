@@ -56,14 +56,6 @@ GlobalState init_global_state(Map *map) {
   VectorU32 map_size = map_get_size(map);
 
   result.player = player_create((Vector){map_size.x / 2, map_size.y / 2});
-  printf("MAP: %u %u\n", map_size.x, map_size.y);
-  const int enemies_count = 0;
-
-  for (size_t i = 0; i < enemies_count; i++) {
-    result.enemies[result.enemies_count++] = enemy_create((Vector){0.0, 0.0});
-    VectorU32 random_pos = map_gen_random_position(map, 10);
-    result.enemies[i].position = (Vector){random_pos.x, random_pos.y};
-  }
 
   return result;
 }

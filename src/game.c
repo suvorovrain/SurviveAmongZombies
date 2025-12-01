@@ -9,8 +9,8 @@
 #include <stb_ds.h>
 #include <stdlib.h>
 
-#define MAP_WIDTH 40
-#define MAP_HEIGHT 40
+#define MAP_WIDTH 150
+#define MAP_HEIGHT 150
 #define STATIC_OBJ_COUNT 100
 
 void game_free(Game *game);
@@ -200,8 +200,8 @@ Game *game_create() {
   engine_set_player(engine, objects[0]);
   game->player = objects[0];
 
-  game->uis = calloc(sizeof(UIElement), 3);
   game->ui_count = 4;
+  game->uis = calloc(sizeof(UIElement), game->ui_count);
   game->uis[0] = hp_bar(game);
   game->uis[1] = exp_bar(game);
   game->uis[2] = dead_background(game);
@@ -217,10 +217,6 @@ Game *game_create() {
                               .objs = objects,
                               .ui_count = 2,
                               .uis = batch_ui};
-  // game->batch.uis[0] = &game->uis[0];
-  // game->batch.uis[1] = &game->uis[1];
-  // game->batch.uis[2] = &game->uis[2];
-  // game->batch.uis[3] = &game->uis[3];
   game->engine = engine;
   game->fonts = NULL;
   game->map = map;
@@ -256,9 +252,5 @@ void game_update(Game *game, Input *input) {
       1 + game->state.enemies_count + game->state.projectiles_count;
   game->batch.objs = objects;
 
-  // game->batch.uis[0] = &game->uis[0];
-  // game->batch.uis[1] = &game->uis[1];
-  // game->batch.uis[2] = &game->uis[2];
-  // game->batch.uis[3] = &game->uis[3];
   engine_set_player(game->engine, game->batch.objs[0]);
 }
