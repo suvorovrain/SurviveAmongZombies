@@ -1,6 +1,7 @@
 // #include "input.h"
 #include "../game.h"
 #include "../units/units.h"
+#include "engine/coordinates.h"
 #include "math.h"
 #include "state.h"
 #include <math.h>
@@ -135,7 +136,7 @@ static void process_input(GlobalState *state, Input input) {
 
 // TODO: attack speed
 // create projectile each 3 seconds
-static void create_projectiles(GlobalState *state) {
+static void create_projectiles(GlobalState *state, Game *game) {
   if (state->frame_counter % (int)(state->player.stat_attack_speed * 60) != 0) {
     return;
   }
@@ -174,6 +175,10 @@ static void create_projectiles(GlobalState *state) {
   }
 
   for (size_t i = 0; i < state->player.stat_proj_count; i++) {
+    if (!is_visible(game->engine, closests[i].position)) {
+      continue;
+    }
+
     Vector movement = vector_from_to(&state->player, &closests[i]);
     movement = vector_normalize(movement);
 
@@ -338,10 +343,11 @@ static void damage_player(GlobalState *state) {
   }
 }
 
-void make_step(GlobalState *state, Input input) {
+void make_step(GlobalState *state, Input input, Game *game) {
   TIME(decrease_frame_counters(state), dec_frame);
+  spawn_enemies(state, game);
   TIME(process_input(state, input), proc_input);
-  TIME(create_projectiles(state), create_proj);
+  TIME(create_projectiles(state, game), create_proj);
   TIME(update_projectile_positions(state), update_proj);
   TIME(damage_and_kill_enemies(state), dmg_kill);
   TIME(update_enemies_positions(state), upd_enemy);
