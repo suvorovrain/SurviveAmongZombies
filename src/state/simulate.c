@@ -304,7 +304,7 @@ static void damage_player(GlobalState *state) {
     if (units_intersect(player, enemy, 5.0f)) {
       player->stat_hp -= enemy->stat_damage;
       player->state = PLAYER_HURTED;
-      player->invincibility_count = 15; // half of second invincible
+      player->invincibility_count = 25; // time for invincible
 
       if (player->stat_hp < 0.0) {
         state->status = GAME_DEAD;
