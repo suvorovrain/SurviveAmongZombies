@@ -1,6 +1,7 @@
 #ifndef ENGINE_COORDINATES_H
 #define ENGINE_COORDINATES_H
 
+#include <engine/engine.h>
 #include <engine/map.h>
 #include <engine/types.h>
 
@@ -11,5 +12,8 @@ Vector tile_to_world(Map *map, int x, int y);
 // Convert world coordinates to isometric tile coordinates.
 // Accepts map and world position.
 Vector world_to_tile(Map *map, float x, float y);
+
+// Is position visible in camera
+bool is_visible(Engine *engine, Vector pos);
 
 #endif
