@@ -209,14 +209,14 @@ GameObject **get_game_objects_from_state(GlobalState *state) {
 
   GameObject *player = calloc(sizeof(GameObject), 1);
   player->position = state->player.position;
-  player->cur_sprite = &state->player.spritesheet.frames[0];
+  player->cur_sprite = &state->player.current_sprite;
 
   objects[0] = player;
 
   for (size_t i = 0; i < state->enemies_count; i++) {
     GameObject *enemy = calloc(sizeof(GameObject), 1);
     enemy->position = state->enemies[i].position;
-    enemy->cur_sprite = &state->enemies[i].spritesheet.frames[0];
+    enemy->cur_sprite = &state->enemies[i].current_sprite;
 
     objects[i + 1] = enemy;
   }
@@ -224,7 +224,7 @@ GameObject **get_game_objects_from_state(GlobalState *state) {
   for (size_t i = 0; i < state->projectiles_count; i++) {
     GameObject *projectile = calloc(sizeof(GameObject), 1);
     projectile->position = state->projectiles[i].position;
-    projectile->cur_sprite = &state->projectiles[i].spritesheet.frames[0];
+    projectile->cur_sprite = &state->projectiles[i].current_sprite;
 
     objects[i + state->enemies_count + 1] = projectile;
   }

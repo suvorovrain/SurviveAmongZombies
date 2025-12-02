@@ -4,6 +4,7 @@
 #include "engine/input.h"
 #include "engine/map.h"
 #include "game.h"
+#include "sprite_manager/sprite_manager.h"
 #include "state/state.h"
 #include "static_objs.h"
 #include "stb_ds.h"
@@ -30,12 +31,11 @@ int main(void) {
   printf("Running on macOS\n");
 #endif
 
-  // Game *game = game_create();
-  // if (!game) {
-  //   return 1;
-  // }
-
+  sm_init();
   Game *game = game_create();
+  if (!game) {
+    return 1;
+  }
 
   while (engine_begin_frame(game->engine, update, game)) {
     engine_render(game->engine, &(game->batch));
@@ -43,6 +43,7 @@ int main(void) {
     engine_end_frame(game->engine);
   }
 
+  // sm_free();
   // game_free(game);
   return 0;
 }

@@ -364,13 +364,12 @@ static void update_animations(GlobalState *state) {
       continue;
 
     uint64_t frames_diff = state->frame_counter - proj->explode_frame;
-    if (frames_diff / 4 > proj->explode_spritesheet.frames_count) {
+    if (frames_diff / 4 > proj->spritesheet_explode.frames_count) {
       fprintf(stderr, "Wrong explode animation calculation\n");
       exit(-1);
     }
 
-    proj->spritesheet.frames[0] =
-        proj->explode_spritesheet.frames[frames_diff / 4];
+    proj->current_sprite = proj->spritesheet_explode.frames[frames_diff / 4];
   }
 
   Player *player = &state->player;
@@ -383,7 +382,7 @@ static void update_animations(GlobalState *state) {
   frame += (state->frame_counter % (PLAYER_WALK_FRAME_COUNT * 4)) /
            PLAYER_WALK_FRAME_COUNT;
 
-  player->spritesheet.frames[0] = player->spritesheet_move.frames[frame];
+  player->current_sprite = player->spritesheet_move.frames[frame];
 
   for (size_t i = 0; i < state->enemies_count; i++) {
     Enemy *enemy = &state->enemies[i];
@@ -397,7 +396,7 @@ static void update_animations(GlobalState *state) {
 
     frame_enemy += (state->frame_counter % (ENEMY_WALK_FRAME_COUNT * 2)) /
                    ENEMY_WALK_FRAME_COUNT;
-    enemy->spritesheet.frames[0] = enemy->spritesheet_move.frames[frame_enemy];
+    enemy->current_sprite = enemy->spritesheet_move.frames[frame_enemy];
   }
 }
 
@@ -414,7 +413,7 @@ void make_step(GlobalState *state, Input input, Game *game) {
   TIME(process_input(state, input), proc_input);
   TIME(create_projectiles(state, game), create_proj);
   TIME(update_projectile_positions(state), update_proj);
-  // TIME(damage_and_kill_enemies(state), dmg_kill);
+  TIME(damage_and_kill_enemies(state), dmg_kill);
   TIME(update_enemies_positions(state), upd_enemy);
   TIME(damage_player(state), dmg_player);
   update_animations(state);

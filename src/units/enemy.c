@@ -10,30 +10,22 @@ Enemy enemy_create(Vector position) {
 
   size_t random = rand() % 3;
 
-  char *path;
-  int height;
+  SpriteType type;
   switch (random) {
   case 0:
-    path = "assets/units/imp.png";
-    height = 15;
+    type = SPRITE_GOBLIN;
     break;
   case 1:
-    path = "assets/units/slime.png";
-    height = 13;
+    type = SPRITE_SLIME;
     break;
   case 2:
-    path = "assets/units/goblin.png";
-    height = 16;
-    break;
-  default:
+    type = SPRITE_IMP;
     break;
   }
 
-  Sprite *frames = load_spritesheet_frames(path, 16, height, 1, SCALE);
-  result.spritesheet = (SpriteSheet){.frames = frames, .frames_count = 1};
-  Sprite *frames_move = load_spritesheet_frames(path, 16, height, 8, SCALE);
-  result.spritesheet_move =
-      (SpriteSheet){.frames = frames_move, .frames_count = 8};
+  result.spritesheet_move = sm_get_spritesheet(type);
+  result.current_sprite = result.spritesheet_move.frames[0];
+
   result.stat_movespeed = 1.5;
   result.stat_max_hp = 100.0;
   result.stat_hp = 100.0;
