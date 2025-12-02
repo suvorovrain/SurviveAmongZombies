@@ -18,6 +18,14 @@ typedef struct Game {
   Engine *engine;
 } Game;
 
+enum {
+  FONT_DEJAVU = 0,
+  FONT_PIXELOID_MONO,
+  FONT_PIXELOID_SANS,
+  FONT_PIXELOID_SANS_BOLD,
+  FONT_COUNT
+};
+
 Game *game_create();
 void game_free(Game *game);
 void game_update(Game *game, Input *input);

@@ -264,9 +264,16 @@ Game *game_create() {
     game_free(game);
     return NULL;
   }
-  game->fonts = calloc(sizeof(TTF_Font *), 1);
-  game->fonts[0] = TTF_OpenFont("fonts/DejaVuSans.ttf", 20);
-  if (!game->fonts[0]) {
+  game->fonts = calloc(sizeof(TTF_Font *), FONT_COUNT);
+  game->fonts[FONT_DEJAVU] = TTF_OpenFont("fonts/DejaVuSans.ttf", 20);
+  game->fonts[FONT_PIXELOID_MONO] = TTF_OpenFont("fonts/PixeloidMono.ttf", 20);
+  game->fonts[FONT_PIXELOID_SANS] = TTF_OpenFont("fonts/PixeloidSans.ttf", 20);
+  game->fonts[FONT_PIXELOID_SANS_BOLD] =
+      TTF_OpenFont("fonts/PixeloidSansBold.ttf", 20);
+
+  if (!game->fonts[FONT_DEJAVU] || !game->fonts[FONT_PIXELOID_MONO] ||
+      !game->fonts[FONT_PIXELOID_SANS] ||
+      !game->fonts[FONT_PIXELOID_SANS_BOLD]) {
     game_free(game);
     return NULL;
   }
