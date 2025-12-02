@@ -141,8 +141,9 @@ static UIElement level_ui(Game *game) {
   ui.position.screen = (Vector){10.0f, 50.0f};
   ui.z_index = 0;
   Sprite *sprite = malloc(sizeof(Sprite));
-  *sprite = text_sprite("Level: not initialized", game->fonts[0],
-                        (SDL_Color){255, 255, 255, 255});
+  *sprite =
+      text_sprite("Level: not initialized", game->fonts[FONT_PIXELOID_SANS],
+                  (SDL_Color){255, 255, 255, 255});
   ui.sprite = sprite;
   return ui;
 }
@@ -151,18 +152,19 @@ static void update_level_ui(UIElement *ui, Game *game) {
   char text[100];
   snprintf(text, 100, "Level: %d", (int32_t)game->state.player.stat_level);
   free_sprite(ui->sprite);
-  *ui->sprite =
-      text_sprite(text, game->fonts[0], (SDL_Color){255, 255, 255, 255});
+  *ui->sprite = text_sprite(text, game->fonts[FONT_PIXELOID_SANS],
+                            (SDL_Color){255, 255, 255, 255});
 }
 
 static UIElement kills_ui(Game *game) {
   UIElement ui = {0};
   ui.mode = UI_POS_SCREEN;
-  ui.position.screen = (Vector){10.0f, 80.0f};
+  ui.position.screen = (Vector){10.0f, 75.0f};
   ui.z_index = 0;
   Sprite *sprite = malloc(sizeof(Sprite));
-  *sprite = text_sprite("Kills: not initialized", game->fonts[0],
-                        (SDL_Color){255, 255, 255, 255});
+  *sprite =
+      text_sprite("Kills: not initialized", game->fonts[FONT_PIXELOID_SANS],
+                  (SDL_Color){255, 255, 255, 255});
   ui.sprite = sprite;
   return ui;
 }
@@ -171,18 +173,19 @@ static void update_kills_ui(UIElement *ui, Game *game) {
   char text[100];
   snprintf(text, 100, "Kills: %ld", (int64_t)game->state.kills);
   free_sprite(ui->sprite);
-  *ui->sprite =
-      text_sprite(text, game->fonts[0], (SDL_Color){255, 255, 255, 255});
+  *ui->sprite = text_sprite(text, game->fonts[FONT_PIXELOID_SANS],
+                            (SDL_Color){255, 255, 255, 255});
 }
 
 static UIElement time_ui(Game *game) {
   UIElement ui = {0};
   ui.mode = UI_POS_SCREEN;
-  ui.position.screen = (Vector){10.0f, 110.0f};
+  ui.position.screen = (Vector){10.0f, 100.0f};
   ui.z_index = 0;
   Sprite *sprite = malloc(sizeof(Sprite));
-  *sprite = text_sprite("Time: not initialized", game->fonts[0],
-                        (SDL_Color){255, 255, 255, 255});
+  *sprite =
+      text_sprite("Time: not initialized", game->fonts[FONT_PIXELOID_SANS],
+                  (SDL_Color){255, 255, 255, 255});
   ui.sprite = sprite;
   return ui;
 }
@@ -195,8 +198,8 @@ static void update_time_ui(UIElement *ui, Game *game) {
   snprintf(text, 100, "Time: %1d%1d:%1d%1d", mins / 10, mins % 10, seconds / 10,
            seconds % 10);
   free_sprite(ui->sprite);
-  *ui->sprite =
-      text_sprite(text, game->fonts[0], (SDL_Color){255, 255, 255, 255});
+  *ui->sprite = text_sprite(text, game->fonts[FONT_PIXELOID_SANS],
+                            (SDL_Color){255, 255, 255, 255});
 }
 
 GameObject **get_game_objects_from_state(GlobalState *state) {
