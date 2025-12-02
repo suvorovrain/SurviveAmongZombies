@@ -22,18 +22,18 @@ static Vector unit_get_position(void *unit) {
 }
 
 // get position from generic object
-static SpriteSheet unit_get_spritesheet(void *unit) {
+static Sprite unit_get_sprite(void *unit) {
   UnitType type = ((Player *)unit)->type;
 
   switch (type) {
   case UNIT_PLAYER:
-    return ((Player *)unit)->spritesheet;
+    return ((Player *)unit)->current_sprite;
     break;
   case UNIT_ENEMY:
-    return ((Enemy *)unit)->spritesheet;
+    return ((Enemy *)unit)->current_sprite;
     break;
   case UNIT_PROJECTILE:
-    return ((Projectile *)unit)->spritesheet;
+    return ((Projectile *)unit)->current_sprite;
     break;
   default:
     fprintf(stderr, "Wrong unit type\n");
@@ -43,8 +43,8 @@ static SpriteSheet unit_get_spritesheet(void *unit) {
 }
 
 Vector unit_get_size(void *unit) {
-  SpriteSheet spritesheet = unit_get_spritesheet(unit);
-  Vector size = {spritesheet.frames->width, spritesheet.frames->height};
+  Sprite sprite = unit_get_sprite(unit);
+  Vector size = {sprite.width, sprite.height};
 
   return size;
 }

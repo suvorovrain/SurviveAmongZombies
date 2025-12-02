@@ -27,7 +27,7 @@ typedef struct {
   Vector movement;
   PlayerState state;
   // spritesheet for current state
-  SpriteSheet spritesheet;
+  Sprite current_sprite;
   double stat_movespeed;
   double stat_max_hp;
   double stat_hp;
@@ -55,7 +55,7 @@ typedef struct {
   Vector movement;
   EnemyState state;
   // spritesheet for current state
-  SpriteSheet spritesheet;
+  Sprite current_sprite;
   double stat_movespeed;
   double stat_max_hp;
   double stat_hp;
@@ -72,14 +72,15 @@ typedef struct {
   Vector movement;
   ProjState state;
   // spritesheet for current state
-  SpriteSheet spritesheet;
+  Sprite current_sprite;
   double stat_movespeed;
   double stat_damage;
   // internal state
   uint64_t live_frames_last; // count of frames that projectile can be alive
   uint64_t kills;
   uint64_t explode_frame; // frame when projectile get explode state
-  SpriteSheet explode_spritesheet;
+  SpriteSheet spritesheet_move;
+  SpriteSheet spritesheet_explode;
 } Projectile;
 
 // Is player alive (so game too) or player already dead and game at pause
