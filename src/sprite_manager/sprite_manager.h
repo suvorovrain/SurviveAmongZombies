@@ -10,6 +10,7 @@ typedef enum {
   SPRITE_IMP,
   SPRITE_PROJECTILE,
   SPRITE_PROJECTILE_EXPLODE,
+  SPRITE_LEVEL_MENU,
   SPRITE_COUNT
 } SpriteType;
 
@@ -17,5 +18,7 @@ typedef enum {
 void sm_init();
 // get spritesheet by key
 SpriteSheet sm_get_spritesheet(SpriteType type);
+// get sprite by key
+Sprite sm_get_sprite(SpriteType type);
 // delete all sprite from memory
 void sm_free();

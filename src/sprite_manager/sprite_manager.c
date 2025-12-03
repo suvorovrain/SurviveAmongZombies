@@ -49,6 +49,12 @@ static void sm_load_descriptions() {
                           .width = 32,
                           .count = 12,
                           .scale = SCALE * 0.5f};
+  sprite_descriptions[SPRITE_LEVEL_MENU] =
+      (SpriteDescription){.path = "assets/level_menu.png",
+                          .height = 90,
+                          .width = 90,
+                          .count = 1,
+                          .scale = 2.0f};
 }
 
 static void sm_load_sprite(SpriteType type) {
@@ -78,6 +84,7 @@ void sm_init() {
 }
 
 SpriteSheet sm_get_spritesheet(SpriteType type) { return spritesheets[type]; }
+Sprite sm_get_sprite(SpriteType type) { return spritesheets[type].frames[0]; }
 
 void sm_free() {
   for (size_t i = 0; i < SPRITE_COUNT; i++) {
