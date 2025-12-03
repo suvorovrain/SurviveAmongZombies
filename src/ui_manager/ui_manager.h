@@ -9,6 +9,7 @@ typedef enum {
   UI_LEVEL,
   UI_KILLS,
   UI_TIME,
+  UI_PAUSE,
   UI_COUNT
 } UIType;
 

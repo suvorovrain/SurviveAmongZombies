@@ -16,6 +16,7 @@ typedef struct Game {
 
   Map *map;
   Engine *engine;
+  size_t pause_frame // when pause button was pressed (20 frames gap)
 } Game;
 
 enum {

@@ -199,12 +199,31 @@ static void update_time_ui(UIElement *ui, Game *game) {
                             (SDL_Color){255, 255, 255, 255});
 }
 
+static UIElement pause_text_ui(Game *game) {
+  UIElement ui = {0};
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite = text_sprite("PAUSE", game->fonts[FONT_PIXELOID_SANS_BOLD],
+                        (SDL_Color){0x4D, 0x6D, 0xF3, 0xFF});
+  ui.sprite = sprite;
+
+  ui.mode = UI_POS_SCREEN;
+  Vector pos = {800.0, 600.0};
+  pos = vector_div(pos, 2.0);
+  pos = vector_sub(
+      pos, vector_div((Vector){ui.sprite->width, ui.sprite->height}, 2.0));
+  ui.position.screen = pos;
+  ui.z_index = 3;
+
+  return ui;
+}
+
 void um_ui_init(Game *game) {
   uis[UI_HP_BAR] = hp_bar(game);
   uis[UI_EXP_BAR] = exp_bar(game);
   uis[UI_LEVEL] = level_ui(game);
   uis[UI_KILLS] = kills_ui(game);
   uis[UI_TIME] = time_ui(game);
+  uis[UI_PAUSE] = pause_text_ui(game);
   uis[UI_DEAD_BACKGROUND] = dead_background(game);
   uis[UI_DEAD_SCREEN] = dead_screen(game);
 
