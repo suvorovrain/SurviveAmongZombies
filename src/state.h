@@ -84,7 +84,7 @@ typedef struct {
 } Projectile;
 
 // Is player alive (so game too) or player already dead and game at pause
-typedef enum { GAME_ALIVE = 0, GAME_DEAD } GameStatus;
+typedef enum { GAME_ALIVE = 0, GAME_DEAD, GAME_PAUSE } GameStatus;
 
 typedef struct {
   Player player;

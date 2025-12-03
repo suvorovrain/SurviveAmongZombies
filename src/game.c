@@ -86,7 +86,7 @@ Game *game_create() {
   game->fonts[FONT_PIXELOID_MONO] = TTF_OpenFont("fonts/PixeloidMono.ttf", 20);
   game->fonts[FONT_PIXELOID_SANS] = TTF_OpenFont("fonts/PixeloidSans.ttf", 20);
   game->fonts[FONT_PIXELOID_SANS_BOLD] =
-      TTF_OpenFont("fonts/PixeloidSansBold.ttf", 20);
+      TTF_OpenFont("fonts/PixeloidSansBold.ttf", 120);
 
   if (!game->fonts[FONT_DEJAVU] || !game->fonts[FONT_PIXELOID_MONO] ||
       !game->fonts[FONT_PIXELOID_SANS] ||
@@ -104,6 +104,7 @@ Game *game_create() {
   um_ui_init(game);
   um_ui_disable(UI_DEAD_BACKGROUND);
   um_ui_disable(UI_DEAD_SCREEN);
+  um_ui_disable(UI_PAUSE);
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
                                            game->state.enemies_count,
                               .objs = objects,
@@ -131,11 +132,43 @@ void game_update(Game *game, Input *input) {
     return;
   }
 
+  if (game->state.status == GAME_PAUSE) {
+    if (game->pause_frame != 0) {
+      game->pause_frame -= 1;
+      return;
+    }
+
+    if (input->p) {
+      game->state.status = GAME_ALIVE;
+      game->pause_frame = 20;
+      um_ui_disable(UI_DEAD_BACKGROUND);
+      um_ui_disable(UI_PAUSE);
+      return;
+    }
+
+    return;
+  }
+
+  // TODO: pause after game_dead (i thinks it's reallllly hard to catch)
+  if (input->p && game->pause_frame == 0) {
+    game->state.status = GAME_PAUSE;
+    game->pause_frame = 20;
+    um_ui_enable(UI_PAUSE);
+    um_ui_enable(UI_DEAD_BACKGROUND);
+    game->batch.ui_count = um_ui_get_uis_count();
+    game->batch.uis = um_ui_get_uis();
+    return;
+  }
+
   make_step(&game->state, *input, game);
   GameObject **objects = get_game_objects_from_state(&(game->state));
   game->batch.obj_count =
       1 + game->state.enemies_count + game->state.projectiles_count;
   game->batch.objs = objects;
+
+  if (game->pause_frame != 0) {
+    game->pause_frame -= 1;
+  }
 
   if (game->state.status == GAME_DEAD) {
     um_ui_enable(UI_DEAD_BACKGROUND);
