@@ -89,8 +89,49 @@ void sm_init() {
   return;
 }
 
+Sprite sm_rotate_sprite(Sprite sprite, double angle) {
+  if (sprite.pixels == NULL) {
+    fprintf(stderr, "Pixels is NULL\n");
+    exit(-1);
+  }
+
+  printf("angle %lf\n", angle);
+
+  Sprite new_sprite;
+  new_sprite.pixels = calloc(sprite.width * sprite.height, sizeof(uint32_t));
+  new_sprite.width = sprite.width;
+  new_sprite.height = sprite.height;
+
+  Vector centre =
+      (Vector){(float)sprite.width / 2.0f, (float)sprite.height / 2.0f};
+  for (size_t x_input = 0; x_input < sprite.width; x_input++) {
+    for (size_t y_input = 0; y_input < sprite.height; y_input++) {
+      Vector vec = vector_sub((Vector){(float)x_input, (float)y_input}, centre);
+      Vector vec_rotated = vector_rotate(vec, -angle);
+      Vector new_pos = vector_add(centre, vec_rotated);
+
+      ssize_t x_out = (ssize_t)new_pos.x;
+      x_out = x_out < 0 ? 0 : x_out;
+      x_out = x_out >= sprite.width ? sprite.width - 1 : x_out;
+      ssize_t y_out = (ssize_t)new_pos.y;
+      y_out = y_out < 0 ? 0 : y_out;
+      y_out = y_out >= sprite.height ? sprite.height - 1 : y_out;
+
+      // printf("x_out: %ld y_out: %ld\n", x_out, y_out);
+
+      new_sprite.pixels[y_input * sprite.width + x_input] =
+          sprite.pixels[y_out * sprite.width + x_out];
+    }
+  }
+
+  return new_sprite;
+}
+
 SpriteSheet sm_get_spritesheet(SpriteType type) { return spritesheets[type]; }
 Sprite sm_get_sprite(SpriteType type) { return spritesheets[type].frames[0]; }
+Sprite sm_get_rotated_sprite(SpriteType type, double angle) {
+  return sm_rotate_sprite(spritesheets[type].frames[0], angle);
+}
 Sprite *sm_get_sprite_pointer(SpriteType type) {
   return &spritesheets[type].frames[0];
 }
