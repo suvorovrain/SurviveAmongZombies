@@ -392,6 +392,7 @@ static void damage_player(GlobalState *state) {
 }
 
 static void update_animations(GlobalState *state) {
+  // Projectiles
   for (size_t i = 0; i < state->projectiles_count; i++) {
     Projectile *proj = &state->projectiles[i];
 
@@ -407,6 +408,7 @@ static void update_animations(GlobalState *state) {
     proj->current_sprite = proj->spritesheet_explode.frames[frames_diff / 4];
   }
 
+  // Player
   Player *player = &state->player;
   size_t frame = 0;
   if (player->direction_face == DIRECTION_UP)
@@ -419,6 +421,7 @@ static void update_animations(GlobalState *state) {
 
   player->current_sprite = player->spritesheet_move.frames[frame];
 
+  // Enemies
   for (size_t i = 0; i < state->enemies_count; i++) {
     Enemy *enemy = &state->enemies[i];
 
@@ -434,6 +437,7 @@ static void update_animations(GlobalState *state) {
     enemy->current_sprite = enemy->spritesheet_move.frames[frame_enemy];
   }
 
+  // Exp Crystal
   for (size_t i = 0; i < state->exp_crystal_count; i++) {
     ExpCrystal *crystal = &state->exp_crystal[i];
 
