@@ -22,6 +22,7 @@ Projectile projectile_create();
 void projectile_free();
 
 Player player_create(Vector position);
+void player_level_up(Player *player, Game *game, LevelUpStat stat);
 Enemy enemy_create(Vector position);
 
 // get unit hitbox size. Generic function

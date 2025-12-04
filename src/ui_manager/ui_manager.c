@@ -68,8 +68,12 @@ static void update_exp_bar(UIElement *exp_bar, Game *game) {
   float percent = 100.0f;
   if (game->state.player.stat_experience == 0) {
     percent = 0.0f;
+  } else if (game->state.player.stat_experience >=
+             game->state.player.stat_experience_for_lvlup) {
+    percent = 1.0f;
   } else {
-    percent = game->state.player.stat_experience / 1000.0;
+    percent = game->state.player.stat_experience /
+              game->state.player.stat_experience_for_lvlup;
   }
 
   // printf("PERCENT EXP %f\n", percent);
@@ -82,17 +86,15 @@ static void update_exp_bar(UIElement *exp_bar, Game *game) {
   uint32_t y_top = (uint32_t)EXP_BAR_SCALE;
   uint32_t y_down = (uint32_t)(9 * EXP_BAR_SCALE - 1);
 
-  for (uint32_t x = x_left; x <= x_left + width_pixels; x++) {
+  for (uint32_t x = x_left; x <= x_left + width_pixels || x <= x_right; x++) {
     for (uint32_t y = y_top; y <= y_down; y++) {
-      *(exp_bar->sprite->pixels + y * (66 * (uint32_t)EXP_BAR_SCALE) + x) =
-          0xFF4D6DF3;
+      *(exp_bar->sprite->pixels + y * exp_bar->sprite->width + x) = 0xFF4D6DF3;
     }
   }
 
   for (uint32_t x = x_left + width_pixels; x <= x_right; x++) {
     for (uint32_t y = y_top; y <= y_down; y++) {
-      *(exp_bar->sprite->pixels + y * (66 * (uint32_t)EXP_BAR_SCALE) + x) =
-          0xFFFFFFFF;
+      *(exp_bar->sprite->pixels + y * exp_bar->sprite->width + x) = 0xFFFFFFFF;
     }
   }
 }
@@ -212,6 +214,111 @@ static UIElement pause_text_ui(Game *game) {
   pos = vector_sub(
       pos, vector_div((Vector){ui.sprite->width, ui.sprite->height}, 2.0));
   ui.position.screen = pos;
+
+  ui.z_index = 3;
+
+  return ui;
+}
+
+static UIElement level_menu_ui(Game *game) {
+  UIElement ui = {0};
+  ui.sprite = sm_get_sprite_pointer(SPRITE_LEVEL_MENU);
+
+  ui.mode = UI_POS_SCREEN;
+  Vector pos = {800.0, 600.0};
+  pos = vector_div(pos, 2.0);
+  pos = vector_sub(
+      pos, vector_div((Vector){ui.sprite->width, ui.sprite->height}, 2.0));
+  ui.position.screen = pos;
+
+  return ui;
+}
+
+static UIElement level_menu_first_ui(Game *game) {
+  UIElement ui = {0};
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite =
+      text_sprite("12345678901234567890", game->fonts[FONT_LEVEL_MENU_OPTION],
+                  (SDL_Color){0x4D, 0x6D, 0xF3, 0xFF});
+  ui.sprite = sprite;
+
+  ui.mode = UI_POS_SCREEN;
+  Vector pos = {280.0, 180.0};
+
+  ui.position.screen = pos;
+
+  ui.z_index = 3;
+
+  return ui;
+}
+
+static void update_level_menu_option(UIElement *ui, Game *game,
+                                     LevelUpStat stat) {
+  char text[100];
+
+  switch (stat) {
+  case LVLUP_ATK_SPD:
+    snprintf(text, 100, "+%.0f%% Increased ATK speed", lvlup_atk_speed_percent);
+    break;
+  case LVLUP_PROJ_COUNT:
+    snprintf(text, 100, "+%.1f Projectile count", lvlup_proj_count);
+    break;
+  case LVLUP_PIERCE:
+    snprintf(text, 100, "+%.1f Projectile pierce", lvlup_pierce_count);
+    break;
+  case LVLUP_MOVEMENT:
+    snprintf(text, 100, "+%.0f%% Increased movement speed",
+             lvlup_movement_percent);
+    break;
+  case LVLUP_EXP:
+    snprintf(text, 100, "+%.0f%% Increased EXP", lvlup_exp_percent);
+    break;
+  case LVLUP_MAXHP:
+    snprintf(text, 100, "+%.0f Max HP", lvlup_maxhp_count);
+    break;
+  case LVLUP_DMG:
+    snprintf(text, 100, "+%.0f%% Increased DMG", lvlup_dmg_percent);
+    break;
+  default:
+    break;
+  }
+
+  free_sprite(ui->sprite);
+  *ui->sprite = text_sprite(text, game->fonts[FONT_LEVEL_MENU_OPTION],
+                            (SDL_Color){0x4D, 0x6D, 0xF3, 0xFF});
+}
+
+static UIElement level_menu_second_ui(Game *game) {
+  UIElement ui = {0};
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite = text_sprite("10% increased attack speed",
+                        game->fonts[FONT_LEVEL_MENU_OPTION],
+                        (SDL_Color){0x4D, 0x6D, 0xF3, 0xFF});
+  ui.sprite = sprite;
+
+  ui.mode = UI_POS_SCREEN;
+  Vector pos = {280.0, 295.0};
+
+  ui.position.screen = pos;
+
+  ui.z_index = 3;
+
+  return ui;
+}
+
+static UIElement level_menu_third_ui(Game *game) {
+  UIElement ui = {0};
+  Sprite *sprite = malloc(sizeof(Sprite));
+  *sprite =
+      text_sprite("+1 projectile count", game->fonts[FONT_LEVEL_MENU_OPTION],
+                  (SDL_Color){0x4D, 0x6D, 0xF3, 0xFF});
+  ui.sprite = sprite;
+
+  ui.mode = UI_POS_SCREEN;
+  Vector pos = {280.0, 410.0};
+
+  ui.position.screen = pos;
+
   ui.z_index = 3;
 
   return ui;
@@ -226,6 +333,10 @@ void um_ui_init(Game *game) {
   uis[UI_PAUSE] = pause_text_ui(game);
   uis[UI_DEAD_BACKGROUND] = dead_background(game);
   uis[UI_DEAD_SCREEN] = dead_screen(game);
+  uis[UI_LEVEL_MENU_FIRST] = level_menu_first_ui(game);
+  uis[UI_LEVEL_MENU_SECOND] = level_menu_second_ui(game);
+  uis[UI_LEVEL_MENU_THIRD] = level_menu_third_ui(game);
+  uis[UI_LEVEL_MENU] = level_menu_ui(game);
 
   for (size_t i = 0; i < UI_COUNT; i++) {
     enable_flags[i] = true;
@@ -246,6 +357,15 @@ void um_ui_update(Game *game) {
     update_kills_ui(&uis[UI_KILLS], game);
   if (enable_flags[UI_TIME])
     update_time_ui(&uis[UI_TIME], game);
+  if (enable_flags[UI_LEVEL_MENU_FIRST])
+    update_level_menu_option(&uis[UI_LEVEL_MENU_FIRST], game,
+                             game->level_menu_first);
+  if (enable_flags[UI_LEVEL_MENU_SECOND])
+    update_level_menu_option(&uis[UI_LEVEL_MENU_SECOND], game,
+                             game->level_menu_second);
+  if (enable_flags[UI_LEVEL_MENU_THIRD])
+    update_level_menu_option(&uis[UI_LEVEL_MENU_THIRD], game,
+                             game->level_menu_third);
 
   return;
 }

@@ -87,10 +87,13 @@ Game *game_create() {
   game->fonts[FONT_PIXELOID_SANS] = TTF_OpenFont("fonts/PixeloidSans.ttf", 20);
   game->fonts[FONT_PIXELOID_SANS_BOLD] =
       TTF_OpenFont("fonts/PixeloidSansBold.ttf", 120);
+  game->fonts[FONT_LEVEL_MENU_OPTION] =
+      TTF_OpenFont("fonts/PixeloidMono.ttf", 16);
 
   if (!game->fonts[FONT_DEJAVU] || !game->fonts[FONT_PIXELOID_MONO] ||
       !game->fonts[FONT_PIXELOID_SANS] ||
-      !game->fonts[FONT_PIXELOID_SANS_BOLD]) {
+      !game->fonts[FONT_PIXELOID_SANS_BOLD] ||
+      !game->fonts[FONT_LEVEL_MENU_OPTION]) {
     game_free(game);
     return NULL;
   }
@@ -105,6 +108,10 @@ Game *game_create() {
   um_ui_disable(UI_DEAD_BACKGROUND);
   um_ui_disable(UI_DEAD_SCREEN);
   um_ui_disable(UI_PAUSE);
+  um_ui_disable(UI_LEVEL_MENU);
+  um_ui_disable(UI_LEVEL_MENU_FIRST);
+  um_ui_disable(UI_LEVEL_MENU_SECOND);
+  um_ui_disable(UI_LEVEL_MENU_THIRD);
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
                                            game->state.enemies_count,
                               .objs = objects,
@@ -149,6 +156,32 @@ void game_update(Game *game, Input *input) {
     return;
   }
 
+  if (game->state.status == GAME_LEVEL_UP) {
+    if (game->pause_frame != 0) {
+      game->pause_frame -= 1;
+      return;
+    }
+
+    if (input->z || input->x || input->c) {
+      game->state.status = GAME_ALIVE;
+      game->pause_frame = 0;
+      um_ui_disable(UI_LEVEL_MENU);
+      um_ui_disable(UI_LEVEL_MENU_FIRST);
+      um_ui_disable(UI_LEVEL_MENU_SECOND);
+      um_ui_disable(UI_LEVEL_MENU_THIRD);
+    }
+
+    if (input->z) {
+      player_level_up(&game->state.player, game, game->level_menu_first);
+    } else if (input->x) {
+      player_level_up(&game->state.player, game, game->level_menu_second);
+    } else if (input->c) {
+      player_level_up(&game->state.player, game, game->level_menu_third);
+    }
+
+    return;
+  }
+
   // TODO: pause after game_dead (i thinks it's reallllly hard to catch)
   if (input->p && game->pause_frame == 0) {
     game->state.status = GAME_PAUSE;
@@ -173,6 +206,13 @@ void game_update(Game *game, Input *input) {
   if (game->state.status == GAME_DEAD) {
     um_ui_enable(UI_DEAD_BACKGROUND);
     um_ui_enable(UI_DEAD_SCREEN);
+  }
+
+  if (game->state.status == GAME_LEVEL_UP) {
+    um_ui_enable(UI_LEVEL_MENU);
+    um_ui_enable(UI_LEVEL_MENU_FIRST);
+    um_ui_enable(UI_LEVEL_MENU_SECOND);
+    um_ui_enable(UI_LEVEL_MENU_THIRD);
   }
 
   um_ui_update(game);
