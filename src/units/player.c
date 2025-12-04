@@ -42,7 +42,13 @@ void player_level_up(Player *player, Game *game, LevelUpStat stat) {
 
   player->stat_level += 1;
   player->stat_experience -= player->stat_experience_for_lvlup;
-  player->stat_experience_for_lvlup *= 1.1;
+  if (player->stat_level < 20) {
+    player->stat_experience_for_lvlup += 10.0;
+  } else if (player->stat_level < 40) {
+    player->stat_experience_for_lvlup += 13.0;
+  } else {
+    player->stat_experience_for_lvlup += 16.0;
+  }
 
   switch (stat) {
   case LVLUP_ATK_SPD:

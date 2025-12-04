@@ -467,7 +467,7 @@ static void collect_crystals(GlobalState *state, Game *game) {
       state->exp_crystal_count--;
 
       state->player.stat_experience +=
-          100.0 * state->player.boost_experience_percent;
+          2.0 * state->player.boost_experience_percent;
 
       if (state->player.stat_experience >=
           state->player.stat_experience_for_lvlup) {
