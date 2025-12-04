@@ -18,7 +18,7 @@ Player player_create(Vector position) {
   result.stat_attack_speed = 0.75;
   result.stat_experience = 1.0;
   result.stat_experience_for_lvlup = 1000.0;
-  result.stat_piercing = 3.0;
+  result.stat_piercing = 1.5;
   result.stat_damage = 30.0;
   result.stat_proj_count = 2.0;
 
