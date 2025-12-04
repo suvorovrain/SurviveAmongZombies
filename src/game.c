@@ -17,9 +17,9 @@
 void game_free(Game *game);
 
 GameObject **get_game_objects_from_state(GlobalState *state) {
-  GameObject **objects =
-      calloc(sizeof(GameObject *),
-             state->enemies_count + state->projectiles_count + 1);
+  GameObject **objects = calloc(
+      sizeof(GameObject *), state->enemies_count + state->projectiles_count +
+                                state->exp_crystal_count + 1);
 
   GameObject *player = calloc(sizeof(GameObject), 1);
   player->position = state->player.position;
@@ -41,6 +41,15 @@ GameObject **get_game_objects_from_state(GlobalState *state) {
     projectile->cur_sprite = &state->projectiles[i].current_sprite;
 
     objects[i + state->enemies_count + 1] = projectile;
+  }
+
+  for (size_t i = 0; i < state->exp_crystal_count; i++) {
+    GameObject *exp_crystal = calloc(sizeof(GameObject), 1);
+    exp_crystal->position = state->exp_crystal[i].position;
+    exp_crystal->cur_sprite = &state->exp_crystal[i].current_sprite;
+
+    objects[i + state->enemies_count + state->projectiles_count + 1] =
+        exp_crystal;
   }
 
   return objects;
@@ -113,7 +122,8 @@ Game *game_create() {
   um_ui_disable(UI_LEVEL_MENU_SECOND);
   um_ui_disable(UI_LEVEL_MENU_THIRD);
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
-                                           game->state.enemies_count,
+                                           game->state.enemies_count +
+                                           game->state.exp_crystal_count,
                               .objs = objects,
                               .ui_count = um_ui_get_uis_count(),
                               .uis = um_ui_get_uis()};
@@ -195,8 +205,9 @@ void game_update(Game *game, Input *input) {
 
   make_step(&game->state, *input, game);
   GameObject **objects = get_game_objects_from_state(&(game->state));
-  game->batch.obj_count =
-      1 + game->state.enemies_count + game->state.projectiles_count;
+  game->batch.obj_count = 1 + game->state.enemies_count +
+                          game->state.projectiles_count +
+                          game->state.exp_crystal_count;
   game->batch.objs = objects;
 
   if (game->pause_frame != 0) {

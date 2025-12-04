@@ -41,6 +41,7 @@ static inline long long ns() {
 
 #define MAX_ENEMIES 3000
 #define MAX_PROJECTILES 30000
+#define MAX_EXP_CRYSTALS 3000
 
 GlobalState init_global_state(Map *map) {
   GlobalState result = {0};
@@ -48,6 +49,8 @@ GlobalState init_global_state(Map *map) {
   result.enemies_count = 0;
   result.projectiles = calloc(sizeof(Projectile), MAX_PROJECTILES);
   result.projectiles_count = 0;
+  result.exp_crystal = calloc(sizeof(ExpCrystal), MAX_EXP_CRYSTALS);
+  result.exp_crystal_count = 0;
   result.status = GAME_ALIVE;
   result.kills = 0;
   result.enemy_factor = 3.0f;
@@ -255,6 +258,7 @@ static void damage_and_kill_enemies(GlobalState *state, Game *game) {
 
   for (size_t i = 0; i < state->enemies_count; i++) {
     Enemy *enemy = &state->enemies[i];
+    Vector enemy_pos = enemy->position;
 
     if (enemy->stat_hp > 0) {
       continue;
@@ -268,24 +272,28 @@ static void damage_and_kill_enemies(GlobalState *state, Game *game) {
     state->enemies_count--;
     i--;
     state->kills += 1;
-    state->player.stat_experience +=
-        100.0 * state->player.boost_experience_percent;
 
-    if (state->player.stat_experience >=
-        state->player.stat_experience_for_lvlup) {
-      state->status = GAME_LEVEL_UP;
+    state->exp_crystal[state->exp_crystal_count++] =
+        exp_crystal_create(enemy_pos);
 
-      game->level_menu_first = rand() % LVLUP_COUNT;
+    // state->player.stat_experience +=
+    //     100.0 * state->player.boost_experience_percent;
 
-      do {
-        game->level_menu_second = rand() % LVLUP_COUNT;
-      } while (game->level_menu_second == game->level_menu_first);
+    // if (state->player.stat_experience >=
+    //     state->player.stat_experience_for_lvlup) {
+    //   state->status = GAME_LEVEL_UP;
 
-      do {
-        game->level_menu_third = rand() % LVLUP_COUNT;
-      } while (game->level_menu_third == game->level_menu_first ||
-               game->level_menu_third == game->level_menu_second);
-    }
+    //   game->level_menu_first = rand() % LVLUP_COUNT;
+
+    //   do {
+    //     game->level_menu_second = rand() % LVLUP_COUNT;
+    //   } while (game->level_menu_second == game->level_menu_first);
+
+    //   do {
+    //     game->level_menu_third = rand() % LVLUP_COUNT;
+    //   } while (game->level_menu_third == game->level_menu_first ||
+    //            game->level_menu_third == game->level_menu_second);
+    // }
   }
 
   return;
@@ -425,6 +433,56 @@ static void update_animations(GlobalState *state) {
                    ENEMY_WALK_FRAME_COUNT;
     enemy->current_sprite = enemy->spritesheet_move.frames[frame_enemy];
   }
+
+  for (size_t i = 0; i < state->exp_crystal_count; i++) {
+    ExpCrystal *crystal = &state->exp_crystal[i];
+
+    size_t frame = (state->frame_counter % (EXP_CRYSTAL_FRAME_COUNT * 4)) /
+                   EXP_CRYSTAL_FRAME_COUNT;
+
+    if (crystal->current_sprite.pixels ==
+        crystal->spritesheet.frames[frame].pixels)
+      continue;
+
+    crystal->current_sprite = crystal->spritesheet.frames[frame];
+    crystal->position =
+        vector_add(crystal->position,
+                   (Vector){0.0f, 8.0f * (frame == 0 || frame == 1 ? -1 : 1)});
+  }
+}
+
+static void collect_crystals(GlobalState *state, Game *game) {
+  for (size_t i = 0; i < state->exp_crystal_count; i++) {
+    ExpCrystal *crystal = &state->exp_crystal[i];
+
+    float distance = vector_length(vector_from_to(crystal, &state->player));
+
+    if (distance < 40.0f) {
+      for (size_t j = i + 1; j < state->exp_crystal_count; j++) {
+        state->exp_crystal[j - 1] = state->exp_crystal[j];
+      }
+      state->exp_crystal_count--;
+
+      state->player.stat_experience +=
+          100.0 * state->player.boost_experience_percent;
+
+      if (state->player.stat_experience >=
+          state->player.stat_experience_for_lvlup) {
+        state->status = GAME_LEVEL_UP;
+
+        game->level_menu_first = rand() % LVLUP_COUNT;
+
+        do {
+          game->level_menu_second = rand() % LVLUP_COUNT;
+        } while (game->level_menu_second == game->level_menu_first);
+
+        do {
+          game->level_menu_third = rand() % LVLUP_COUNT;
+        } while (game->level_menu_third == game->level_menu_first ||
+                 game->level_menu_third == game->level_menu_second);
+      }
+    }
+  }
 }
 
 void increase_dificilty(GlobalState *state) {
@@ -445,6 +503,7 @@ void make_step(GlobalState *state, Input input, Game *game) {
   TIME(damage_player(state), dmg_player);
   update_animations(state);
   increase_dificilty(state);
+  collect_crystals(state, game);
 
   state->frame_counter++;
 
