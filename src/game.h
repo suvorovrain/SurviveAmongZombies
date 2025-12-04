@@ -17,13 +17,8 @@ typedef enum {
   LVLUP_COUNT
 } LevelUpStat;
 
-#define lvlup_atk_speed_percent (10.0f)
-#define lvlup_proj_count (1.0f)
-#define lvlup_pierce_count (1.0f)
-#define lvlup_movement_percent (10.0f)
-#define lvlup_exp_percent (10.0f)
-#define lvlup_maxhp_count (10.0f)
-#define lvlup_dmg_percent (10.0f)
+extern const float lvlup_values[LVLUP_COUNT];
+extern const size_t lvlup_pool_values[LVLUP_COUNT];
 
 typedef struct Game {
   GlobalState state;

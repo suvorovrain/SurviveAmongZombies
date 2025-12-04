@@ -57,9 +57,11 @@ typedef struct {
 } Player;
 
 typedef enum { ENEMY_WALK = 0, ENEMY_IDLE, ENEMY_HURTED } EnemyState;
+typedef enum { ENEMY_IMP = 0, ENEMY_GOBLIN, ENEMY_SLIME } EnemyType;
 
 typedef struct {
   UnitType type; // must be UNIT_PLAYER
+  EnemyType type_enemy;
   Vector position;
   Vector movement;
   EnemyState state;

@@ -89,7 +89,27 @@ static void spawn_enemies(GlobalState *state, Game *game) {
 
   printf("count: %ld, factor: %f\n", state->enemies_count, state->enemy_factor);
 
-  if (state->enemies_count > 200) {
+  size_t max_enemies = 0;
+  EnemyType type_enemy = ENEMY_SLIME;
+
+  if (state->frame_counter < (60 * 30 * 1)) {
+    type_enemy = ENEMY_SLIME;
+    max_enemies = 15;
+  } else if (state->frame_counter < (60 * 30 * 2)) {
+    type_enemy = rand() % 2 == 0 ? ENEMY_SLIME : ENEMY_IMP;
+    max_enemies = 30;
+  } else if (state->frame_counter < (60 * 30 * 3)) {
+    type_enemy = ENEMY_SLIME;
+    max_enemies = 50;
+  } else if (state->frame_counter < (60 * 30 * 4)) {
+    type_enemy = ENEMY_GOBLIN;
+    max_enemies = 40;
+  } else {
+    type_enemy = rand() % 3;
+    max_enemies = 150;
+  }
+
+  if (state->enemies_count > max_enemies) {
     return;
   }
 
@@ -103,8 +123,8 @@ static void spawn_enemies(GlobalState *state, Game *game) {
     Vector vector_radius =
         vector_multiply(vector_rotate(norm_vector, random_angle), radius);
 
-    Enemy new_enemy =
-        enemy_create(vector_add(state->player.position, vector_radius));
+    Enemy new_enemy = enemy_create(
+        vector_add(state->player.position, vector_radius), type_enemy);
 
     state->enemies[state->enemies_count++] = new_enemy;
   }
@@ -445,7 +465,7 @@ static void update_animations(GlobalState *state) {
 
   // Exp Crystal
   for (size_t i = 0; i < state->exp_crystal_count; i++) {
-    ExpCrystal *crystal = &state->exp_crystal[i];
+    Crystal *crystal = &state->exp_crystal[i];
 
     size_t frame = (state->frame_counter % (EXP_CRYSTAL_FRAME_COUNT * 4)) /
                    EXP_CRYSTAL_FRAME_COUNT;
@@ -487,14 +507,14 @@ static void collect_crystals(GlobalState *state, Game *game) {
           state->player.stat_experience_for_lvlup) {
         state->status = GAME_LEVEL_UP;
 
-        game->level_menu_first = rand() % LVLUP_COUNT;
+        game->level_menu_first = player_get_random_stat();
 
         do {
-          game->level_menu_second = rand() % LVLUP_COUNT;
+          game->level_menu_second = player_get_random_stat();
         } while (game->level_menu_second == game->level_menu_first);
 
         do {
-          game->level_menu_third = rand() % LVLUP_COUNT;
+          game->level_menu_third = player_get_random_stat();
         } while (game->level_menu_third == game->level_menu_first ||
                  game->level_menu_third == game->level_menu_second);
       }
@@ -504,14 +524,14 @@ static void collect_crystals(GlobalState *state, Game *game) {
 
 // if enemies far from player -- teleport them to random angle from player
 static void teleport_enemies(GlobalState *state, Game *game) {
-  const float radius = 500.0;
+  const float radius = 650.0;
 
   for (size_t i = 0; i < state->enemies_count; i++) {
     Enemy *enemy = &state->enemies[i];
 
     float distance = vector_length(vector_from_to(enemy, &state->player));
 
-    if (distance > 650.0f) {
+    if (distance > 850.0f) {
 
       // spawn enemies at radius of circle
       Vector norm_vector = (Vector){1.0, 0.0};

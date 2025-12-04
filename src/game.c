@@ -16,6 +16,16 @@
 
 void game_free(Game *game);
 
+const float lvlup_values[LVLUP_COUNT] = {
+    [LVLUP_ATK_SPD] = 10.0f,  [LVLUP_PROJ_COUNT] = 1.0f, [LVLUP_PIERCE] = 1.0f,
+    [LVLUP_MOVEMENT] = 10.0f, [LVLUP_EXP] = 10.0f,       [LVLUP_MAXHP] = 10.0f,
+    [LVLUP_DMG] = 10.0f};
+
+const size_t lvlup_pool_values[LVLUP_COUNT] = {
+    [LVLUP_ATK_SPD] = 100,  [LVLUP_PROJ_COUNT] = 1, [LVLUP_PIERCE] = 1,
+    [LVLUP_MOVEMENT] = 100, [LVLUP_EXP] = 100,      [LVLUP_MAXHP] = 100,
+    [LVLUP_DMG] = 100};
+
 GameObject **get_game_objects_from_state(GlobalState *state) {
   GameObject **objects = calloc(
       sizeof(GameObject *), state->enemies_count + state->projectiles_count +
