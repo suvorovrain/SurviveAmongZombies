@@ -485,6 +485,29 @@ static void collect_crystals(GlobalState *state, Game *game) {
   }
 }
 
+// if enemies far from player -- teleport them to random angle from player
+static void teleport_enemies(GlobalState *state, Game *game) {
+  const float radius = 500.0;
+
+  for (size_t i = 0; i < state->enemies_count; i++) {
+    Enemy *enemy = &state->enemies[i];
+
+    float distance = vector_length(vector_from_to(enemy, &state->player));
+
+    if (distance > 650.0f) {
+
+      // spawn enemies at radius of circle
+      Vector norm_vector = (Vector){1.0, 0.0};
+      // [0; 2*PI)
+      float random_angle = ((float)rand() / (float)RAND_MAX) * 3.14159 * 2;
+      Vector vector_radius =
+          vector_multiply(vector_rotate(norm_vector, random_angle), radius);
+
+      enemy->position = vector_add(state->player.position, vector_radius);
+    }
+  }
+}
+
 void increase_dificilty(GlobalState *state) {
   // Each 7 second more by 5% to enemy spawn
   if (state->frame_counter % (60 * 7) == 0) {
@@ -504,6 +527,7 @@ void make_step(GlobalState *state, Input input, Game *game) {
   update_animations(state);
   increase_dificilty(state);
   collect_crystals(state, game);
+  teleport_enemies(state, game);
 
   state->frame_counter++;
 
