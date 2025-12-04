@@ -15,11 +15,11 @@ Player player_create(Vector position) {
   result.stat_max_hp = 100.0;
   result.stat_hp = 100.0;
   result.stat_level = 1.0;
-  result.stat_attack_speed = 0.75;
+  result.stat_attack_speed = 1.2;
   result.stat_experience = 0.0;
   result.stat_experience_for_lvlup = 5.0;
   result.stat_piercing = 1.0;
-  result.stat_damage = 30.0;
+  result.stat_damage = 10.0;
   result.stat_proj_count = 1.0;
 
   result.boost_attack_speed_percent = 1.0f;
@@ -53,26 +53,28 @@ void player_level_up(Player *player, Game *game, LevelUpStat stat) {
   switch (stat) {
   case LVLUP_ATK_SPD:
     player->boost_attack_speed_percent +=
-        (double)(lvlup_atk_speed_percent / 100.0f);
+        (double)(lvlup_values[LVLUP_ATK_SPD] / 100.0f);
     break;
   case LVLUP_PROJ_COUNT:
-    player->stat_proj_count += (double)lvlup_proj_count;
+    player->stat_proj_count += (double)lvlup_values[LVLUP_PROJ_COUNT];
     break;
   case LVLUP_PIERCE:
-    player->stat_piercing += (double)lvlup_pierce_count;
+    player->stat_piercing += (double)lvlup_values[LVLUP_PIERCE];
     break;
   case LVLUP_MOVEMENT:
-    player->boost_movement_percent += (double)(lvlup_movement_percent / 100.0f);
+    player->boost_movement_percent +=
+        (double)(lvlup_values[LVLUP_MOVEMENT] / 100.0f);
     break;
   case LVLUP_EXP:
-    player->boost_experience_percent += (double)(lvlup_exp_percent / 100.0f);
+    player->boost_experience_percent +=
+        (double)(lvlup_values[LVLUP_EXP] / 100.0f);
     break;
   case LVLUP_MAXHP:
-    player->stat_max_hp += (double)(lvlup_maxhp_count);
-    player->stat_hp += (double)(lvlup_maxhp_count);
+    player->stat_max_hp += (double)(lvlup_values[LVLUP_MAXHP]);
+    player->stat_hp += (double)(lvlup_values[LVLUP_MAXHP]);
     break;
   case LVLUP_DMG:
-    player->boost_damage_percent += (double)(lvlup_dmg_percent / 100.0f);
+    player->boost_damage_percent += (double)(lvlup_values[LVLUP_DMG] / 100.0f);
     break;
   default:
     break;
@@ -80,3 +82,24 @@ void player_level_up(Player *player, Game *game, LevelUpStat stat) {
 }
 
 void player_free() { return; }
+
+LevelUpStat player_get_random_stat() {
+  size_t pool[LVLUP_COUNT + 1];
+
+  pool[0] = 0;
+  size_t pool_sum = 0;
+  for (size_t i = 1; i <= LVLUP_COUNT; i++) {
+    pool[i] = pool[i - 1] + lvlup_pool_values[i - 1];
+    pool_sum += lvlup_pool_values[i - 1];
+  }
+
+  size_t random = rand() % pool_sum;
+
+  for (size_t i = 1; i <= LVLUP_COUNT; i++) {
+    if (random >= pool[i - 1] && random < pool[i])
+      return i - 1;
+  }
+
+  // Wrong implementaion
+  exit(-1);
+}

@@ -23,7 +23,8 @@ void projectile_free();
 
 Player player_create(Vector position);
 void player_level_up(Player *player, Game *game, LevelUpStat stat);
-Enemy enemy_create(Vector position);
+LevelUpStat player_get_random_stat();
+Enemy enemy_create(Vector position, EnemyType type_enemy);
 Crystal crystal_create(Vector pos, CrystalType type_crystal);
 
 // get unit hitbox size. Generic function

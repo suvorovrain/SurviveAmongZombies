@@ -256,28 +256,29 @@ static void update_level_menu_option(UIElement *ui, Game *game,
                                      LevelUpStat stat) {
   char text[100];
 
+  float value = lvlup_values[stat];
+
   switch (stat) {
   case LVLUP_ATK_SPD:
-    snprintf(text, 100, "+%.0f%% Increased ATK speed", lvlup_atk_speed_percent);
+    snprintf(text, 100, "+%.0f%% Increased ATK speed", value);
     break;
   case LVLUP_PROJ_COUNT:
-    snprintf(text, 100, "+%.1f Projectile count", lvlup_proj_count);
+    snprintf(text, 100, "+%.1f Projectile count", value);
     break;
   case LVLUP_PIERCE:
-    snprintf(text, 100, "+%.1f Projectile pierce", lvlup_pierce_count);
+    snprintf(text, 100, "+%.1f Projectile pierce", value);
     break;
   case LVLUP_MOVEMENT:
-    snprintf(text, 100, "+%.0f%% Increased movement speed",
-             lvlup_movement_percent);
+    snprintf(text, 100, "+%.0f%% Increased movement speed", value);
     break;
   case LVLUP_EXP:
-    snprintf(text, 100, "+%.0f%% Increased EXP", lvlup_exp_percent);
+    snprintf(text, 100, "+%.0f%% Increased EXP", value);
     break;
   case LVLUP_MAXHP:
-    snprintf(text, 100, "+%.0f Max HP", lvlup_maxhp_count);
+    snprintf(text, 100, "+%.0f Max HP", value);
     break;
   case LVLUP_DMG:
-    snprintf(text, 100, "+%.0f%% Increased DMG", lvlup_dmg_percent);
+    snprintf(text, 100, "+%.0f%% Increased DMG", value);
     break;
   default:
     break;
