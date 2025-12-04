@@ -444,14 +444,13 @@ static void update_animations(GlobalState *state) {
     size_t frame = (state->frame_counter % (EXP_CRYSTAL_FRAME_COUNT * 4)) /
                    EXP_CRYSTAL_FRAME_COUNT;
 
-    if (crystal->current_sprite.pixels ==
-        crystal->spritesheet.frames[frame].pixels)
-      continue;
-
-    crystal->current_sprite = crystal->spritesheet.frames[frame];
-    crystal->position =
-        vector_add(crystal->position,
-                   (Vector){0.0f, 8.0f * (frame == 0 || frame == 1 ? -1 : 1)});
+    if (state->frame_counter % 4 == 0) {
+      if (state->frame_counter % 60 < 30) {
+        crystal->position = vector_add(crystal->position, (Vector){0.0, 1.0f});
+      } else {
+        crystal->position = vector_add(crystal->position, (Vector){0.0, -1.0f});
+      }
+    }
   }
 }
 
