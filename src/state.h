@@ -15,7 +15,12 @@ typedef struct {
   Sprite *frames;
 } SpriteSheet;
 
-typedef enum { UNIT_PLAYER = 0, UNIT_ENEMY, UNIT_PROJECTILE } UnitType;
+typedef enum {
+  UNIT_PLAYER = 0,
+  UNIT_ENEMY,
+  UNIT_PROJECTILE,
+  UNIT_EXP_CRYSTAL
+} UnitType;
 typedef enum { DIRECTION_UP = 0, DIRECTION_DOWN } UnitDirectionFace;
 typedef enum { DIRECTION_LEFT = 0, DIRECTION_RIGHT } UnitDirectionSide;
 
@@ -87,6 +92,14 @@ typedef struct {
   SpriteSheet spritesheet_explode;
 } Projectile;
 
+typedef struct {
+  UnitType type; // must be UNIT_EXP_CRYSTAL
+  Vector position;
+  Vector movement;
+  Sprite current_sprite;
+  SpriteSheet spritesheet;
+} ExpCrystal;
+
 // Is player alive (so game too) or player already dead and game at pause
 typedef enum {
   GAME_ALIVE = 0,
@@ -101,6 +114,8 @@ typedef struct {
   uint64_t enemies_count;
   Projectile *projectiles;
   uint64_t projectiles_count;
+  ExpCrystal *exp_crystal;
+  uint64_t exp_crystal_count;
   uint64_t kills;
   GameStatus status;
   // internal state (don't be used for render)

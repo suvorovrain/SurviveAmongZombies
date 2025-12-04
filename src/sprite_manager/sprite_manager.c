@@ -55,6 +55,12 @@ static void sm_load_descriptions() {
                           .width = 90,
                           .count = 1,
                           .scale = 5.5f};
+  sprite_descriptions[SPRITE_EXP_CRYSTAL] =
+      (SpriteDescription){.path = "assets/exp_crystal.png",
+                          .height = 64,
+                          .width = 64,
+                          .count = 4,
+                          .scale = SCALE * 0.20f};
 }
 
 static void sm_load_sprite(SpriteType type) {
