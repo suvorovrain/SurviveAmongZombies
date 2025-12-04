@@ -92,13 +92,16 @@ typedef struct {
   SpriteSheet spritesheet_explode;
 } Projectile;
 
+typedef enum { CRYSTAL_BLUE = 0, CRYSTAL_GREEN } CrystalType;
+
 typedef struct {
   UnitType type; // must be UNIT_EXP_CRYSTAL
+  CrystalType type_crystal;
   Vector position;
   Vector movement;
   Sprite current_sprite;
   SpriteSheet spritesheet;
-} ExpCrystal;
+} Crystal;
 
 // Is player alive (so game too) or player already dead and game at pause
 typedef enum {
@@ -114,7 +117,7 @@ typedef struct {
   uint64_t enemies_count;
   Projectile *projectiles;
   uint64_t projectiles_count;
-  ExpCrystal *exp_crystal;
+  Crystal *exp_crystal;
   uint64_t exp_crystal_count;
   uint64_t kills;
   GameStatus status;

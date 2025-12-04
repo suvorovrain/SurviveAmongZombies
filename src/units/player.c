@@ -16,11 +16,11 @@ Player player_create(Vector position) {
   result.stat_hp = 100.0;
   result.stat_level = 1.0;
   result.stat_attack_speed = 0.75;
-  result.stat_experience = 1.0;
-  result.stat_experience_for_lvlup = 1000.0;
-  result.stat_piercing = 1.5;
+  result.stat_experience = 0.0;
+  result.stat_experience_for_lvlup = 5.0;
+  result.stat_piercing = 1.0;
   result.stat_damage = 30.0;
-  result.stat_proj_count = 2.0;
+  result.stat_proj_count = 1.0;
 
   result.boost_attack_speed_percent = 1.0f;
   result.boost_piercing_percent = 1.0f;
