@@ -7,4 +7,3 @@
 
 GlobalState init_global_state(Map *map);
 void make_step(GlobalState *state, Input input, Game *game);
-void player_level_up(Player *player, GlobalState *state);

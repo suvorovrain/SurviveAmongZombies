@@ -17,12 +17,16 @@ Player player_create(Vector position) {
   result.stat_level = 1.0;
   result.stat_attack_speed = 0.75;
   result.stat_experience = 1.0;
-  result.stat_piercing = 1;
+  result.stat_experience_for_lvlup = 1000.0;
+  result.stat_piercing = 1.0;
   result.stat_damage = 30.0;
-  result.stat_proj_count = 2.0;
+  result.stat_proj_count = 1.0;
 
   result.boost_attack_speed_percent = 1.0f;
   result.boost_piercing_percent = 1.0f;
+  result.boost_damage_percent = 1.0f;
+  result.boost_experience_percent = 1.0f;
+  result.boost_movement_percent = 1.0f;
 
   result.invincibility_count = 0;
   result.direction_face = DIRECTION_DOWN;
@@ -31,17 +35,42 @@ Player player_create(Vector position) {
   return result;
 }
 
-void player_level_up(Player *player, GlobalState *state) {
-  if (player->stat_experience < 1000.0) {
+void player_level_up(Player *player, Game *game, LevelUpStat stat) {
+  if (player->stat_experience < player->stat_experience_for_lvlup) {
     return;
   }
 
   player->stat_level += 1;
-  player->stat_experience -= 1000.0;
-  // player->stat_proj_count += 0.5;
-  player->boost_attack_speed_percent += 0.1f;
-  player->boost_piercing_percent += 0.1f;
-  player->stat_piercing *= 1.01;
+  player->stat_experience -= player->stat_experience_for_lvlup;
+  player->stat_experience_for_lvlup *= 1.1;
+
+  switch (stat) {
+  case LVLUP_ATK_SPD:
+    player->boost_attack_speed_percent +=
+        (double)(lvlup_atk_speed_percent / 100.0f);
+    break;
+  case LVLUP_PROJ_COUNT:
+    player->stat_proj_count += (double)lvlup_proj_count;
+    break;
+  case LVLUP_PIERCE:
+    player->stat_piercing += (double)lvlup_pierce_count;
+    break;
+  case LVLUP_MOVEMENT:
+    player->boost_movement_percent += (double)(lvlup_movement_percent / 100.0f);
+    break;
+  case LVLUP_EXP:
+    player->boost_experience_percent += (double)(lvlup_exp_percent / 100.0f);
+    break;
+  case LVLUP_MAXHP:
+    player->stat_max_hp += (double)(lvlup_maxhp_count);
+    player->stat_hp += (double)(lvlup_maxhp_count);
+    break;
+  case LVLUP_DMG:
+    player->boost_damage_percent += (double)(lvlup_dmg_percent / 100.0f);
+    break;
+  default:
+    break;
+  }
 }
 
 void player_free() { return; }

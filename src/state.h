@@ -33,6 +33,7 @@ typedef struct {
   double stat_hp;
   double stat_level;
   double stat_experience;
+  double stat_experience_for_lvlup;
   double stat_attack_speed;
   double stat_damage;
   double stat_proj_count;
@@ -40,6 +41,9 @@ typedef struct {
   // bosts
   double boost_attack_speed_percent;
   double boost_piercing_percent;
+  double boost_movement_percent;
+  double boost_experience_percent;
+  double boost_damage_percent;
   // internal state (don't be used for render)
   uint64_t invincibility_count; // after getting damage we has invincibility
   UnitDirectionFace direction_face;
@@ -84,7 +88,12 @@ typedef struct {
 } Projectile;
 
 // Is player alive (so game too) or player already dead and game at pause
-typedef enum { GAME_ALIVE = 0, GAME_DEAD, GAME_PAUSE } GameStatus;
+typedef enum {
+  GAME_ALIVE = 0,
+  GAME_DEAD,
+  GAME_PAUSE,
+  GAME_LEVEL_UP
+} GameStatus;
 
 typedef struct {
   Player player;

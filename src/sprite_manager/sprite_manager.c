@@ -26,7 +26,7 @@ static void sm_load_descriptions() {
                           .count = 8,
                           .scale = SCALE};
   sprite_descriptions[SPRITE_IMP] =
-      (SpriteDescription){.path = "assets/units/goblin.png",
+      (SpriteDescription){.path = "assets/units/imp.png",
                           .height = 15,
                           .width = 16,
                           .count = 8,
@@ -54,7 +54,7 @@ static void sm_load_descriptions() {
                           .height = 90,
                           .width = 90,
                           .count = 1,
-                          .scale = 2.0f};
+                          .scale = 5.5f};
 }
 
 static void sm_load_sprite(SpriteType type) {
@@ -85,6 +85,9 @@ void sm_init() {
 
 SpriteSheet sm_get_spritesheet(SpriteType type) { return spritesheets[type]; }
 Sprite sm_get_sprite(SpriteType type) { return spritesheets[type].frames[0]; }
+Sprite *sm_get_sprite_pointer(SpriteType type) {
+  return &spritesheets[type].frames[0];
+}
 
 void sm_free() {
   for (size_t i = 0; i < SPRITE_COUNT; i++) {

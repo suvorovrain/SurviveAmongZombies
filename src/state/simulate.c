@@ -84,6 +84,12 @@ static void spawn_enemies(GlobalState *state, Game *game) {
     return;
   }
 
+  printf("count: %ld, factor: %f\n", state->enemies_count, state->enemy_factor);
+
+  if (state->enemies_count > 200) {
+    return;
+  }
+
   const float radius = 500.0;
 
   // spawn enemies at radius of circle
@@ -128,7 +134,8 @@ static void process_input(GlobalState *state, Input input) {
 
   // normalize
   movement = vector_normalize(movement);
-  movement = vector_multiply(movement, player->stat_movespeed);
+  movement = vector_multiply(
+      movement, (player->stat_movespeed * player->boost_movement_percent));
 
   player->position = vector_add(player->position, movement);
 
@@ -151,10 +158,13 @@ static void create_projectiles(GlobalState *state, Game *game) {
   }
 
   // find closests
-  Enemy *closests = calloc(state->player.stat_proj_count, sizeof(Enemy));
-  size_t *indicies = calloc(state->player.stat_proj_count, sizeof(size_t));
-  float *distances = calloc(state->player.stat_proj_count, sizeof(float));
-  for (size_t i = 0; i < state->player.stat_proj_count; i++) {
+  Enemy *closests =
+      calloc((size_t)state->player.stat_proj_count, sizeof(Enemy));
+  size_t *indicies =
+      calloc((size_t)state->player.stat_proj_count, sizeof(size_t));
+  float *distances =
+      calloc((size_t)state->player.stat_proj_count, sizeof(float));
+  for (size_t i = 0; i < (size_t)state->player.stat_proj_count; i++) {
     closests[i] = state->enemies[0];
     indicies[i] = 0;
     distances[i] = 100000.0;
@@ -171,7 +181,7 @@ static void create_projectiles(GlobalState *state, Game *game) {
       closests[max_local] = state->enemies[i];
 
       max_local = 0;
-      for (size_t j = 0; j < state->player.stat_proj_count; j++) {
+      for (size_t j = 0; j < (size_t)state->player.stat_proj_count; j++) {
         if (distances[j] > distances[max_local]) {
           max_local = j;
         }
@@ -179,7 +189,7 @@ static void create_projectiles(GlobalState *state, Game *game) {
     }
   }
 
-  for (size_t i = 0; i < state->player.stat_proj_count; i++) {
+  for (size_t i = 0; i < (size_t)state->player.stat_proj_count; i++) {
     if (!is_visible(game->engine, closests[i].position)) {
       continue;
     }
@@ -215,7 +225,7 @@ static void update_projectile_positions(GlobalState *state) {
 }
 
 // TODO: fix deleting from arrays this
-static void damage_and_kill_enemies(GlobalState *state) {
+static void damage_and_kill_enemies(GlobalState *state, Game *game) {
   for (size_t i = 0; i < state->projectiles_count; i++) {
     Projectile *proj = &state->projectiles[i];
 
@@ -226,7 +236,8 @@ static void damage_and_kill_enemies(GlobalState *state) {
       Enemy *enemy = &state->enemies[j];
 
       if (units_intersect(proj, enemy, 1.0f)) {
-        enemy->stat_hp -= proj->stat_damage;
+        enemy->stat_hp -=
+            proj->stat_damage * state->player.boost_damage_percent;
         enemy->state = ENEMY_HURTED;
         proj->kills += 1;
 
@@ -257,8 +268,24 @@ static void damage_and_kill_enemies(GlobalState *state) {
     state->enemies_count--;
     i--;
     state->kills += 1;
-    state->player.stat_experience += 100.0;
-    player_level_up(&(state->player), state);
+    state->player.stat_experience +=
+        100.0 * state->player.boost_experience_percent;
+
+    if (state->player.stat_experience >=
+        state->player.stat_experience_for_lvlup) {
+      state->status = GAME_LEVEL_UP;
+
+      game->level_menu_first = rand() % LVLUP_COUNT;
+
+      do {
+        game->level_menu_second = rand() % LVLUP_COUNT;
+      } while (game->level_menu_second == game->level_menu_first);
+
+      do {
+        game->level_menu_third = rand() % LVLUP_COUNT;
+      } while (game->level_menu_third == game->level_menu_first ||
+               game->level_menu_third == game->level_menu_second);
+    }
   }
 
   return;
@@ -402,7 +429,7 @@ static void update_animations(GlobalState *state) {
 
 void increase_dificilty(GlobalState *state) {
   // Each 7 second more by 5% to enemy spawn
-  if (state->frame_counter % 60 * 7 == 0) {
+  if (state->frame_counter % (60 * 7) == 0) {
     state->enemy_factor *= 1.05;
   }
 }
@@ -413,7 +440,7 @@ void make_step(GlobalState *state, Input input, Game *game) {
   TIME(process_input(state, input), proc_input);
   TIME(create_projectiles(state, game), create_proj);
   TIME(update_projectile_positions(state), update_proj);
-  TIME(damage_and_kill_enemies(state), dmg_kill);
+  TIME(damage_and_kill_enemies(state, game), dmg_kill);
   TIME(update_enemies_positions(state), upd_enemy);
   TIME(damage_player(state), dmg_player);
   update_animations(state);
@@ -421,6 +448,7 @@ void make_step(GlobalState *state, Input input, Game *game) {
 
   state->frame_counter++;
 
+#if false
   if (state->frame_counter % 30 == 0) {
     printf("avg ns per frame:\n");
     printf("  dec_frame:   %lld\n", timings.dec_frame / 30);
@@ -433,6 +461,7 @@ void make_step(GlobalState *state, Input input, Game *game) {
 
     timings = (Timings){0};
   }
+#endif
 
   return;
 }
