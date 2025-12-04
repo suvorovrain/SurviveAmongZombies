@@ -49,7 +49,7 @@ GlobalState init_global_state(Map *map) {
   result.enemies_count = 0;
   result.projectiles = calloc(sizeof(Projectile), MAX_PROJECTILES);
   result.projectiles_count = 0;
-  result.exp_crystal = calloc(sizeof(ExpCrystal), MAX_EXP_CRYSTALS);
+  result.exp_crystal = calloc(sizeof(Crystal), MAX_EXP_CRYSTALS);
   result.exp_crystal_count = 0;
   result.status = GAME_ALIVE;
   result.kills = 0;
@@ -273,8 +273,14 @@ static void damage_and_kill_enemies(GlobalState *state, Game *game) {
     i--;
     state->kills += 1;
 
-    state->exp_crystal[state->exp_crystal_count++] =
-        exp_crystal_create(enemy_pos);
+    size_t random = rand() % 100;
+    if (random < 2) {
+      state->exp_crystal[state->exp_crystal_count++] =
+          crystal_create(enemy_pos, CRYSTAL_GREEN);
+    } else {
+      state->exp_crystal[state->exp_crystal_count++] =
+          crystal_create(enemy_pos, CRYSTAL_BLUE);
+    }
 
     // state->player.stat_experience +=
     //     100.0 * state->player.boost_experience_percent;
@@ -456,7 +462,7 @@ static void update_animations(GlobalState *state) {
 
 static void collect_crystals(GlobalState *state, Game *game) {
   for (size_t i = 0; i < state->exp_crystal_count; i++) {
-    ExpCrystal *crystal = &state->exp_crystal[i];
+    Crystal *crystal = &state->exp_crystal[i];
 
     float distance = vector_length(vector_from_to(crystal, &state->player));
 
@@ -465,6 +471,14 @@ static void collect_crystals(GlobalState *state, Game *game) {
         state->exp_crystal[j - 1] = state->exp_crystal[j];
       }
       state->exp_crystal_count--;
+
+      if (crystal->type_crystal == CRYSTAL_GREEN) {
+        state->player.stat_hp += 20.0;
+        if (state->player.stat_hp > state->player.stat_max_hp) {
+          state->player.stat_hp = state->player.stat_max_hp;
+        }
+        continue;
+      }
 
       state->player.stat_experience +=
           2.0 * state->player.boost_experience_percent;

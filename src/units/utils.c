@@ -15,7 +15,7 @@ static Vector unit_get_position(void *unit) {
     return ((Projectile *)unit)->position;
     break;
   case UNIT_EXP_CRYSTAL:
-    return ((ExpCrystal *)unit)->position;
+    return ((Crystal *)unit)->position;
     break;
   default:
     fprintf(stderr, "Wrong unit type\n");
@@ -39,7 +39,7 @@ static Sprite unit_get_sprite(void *unit) {
     return ((Projectile *)unit)->current_sprite;
     break;
   case UNIT_EXP_CRYSTAL:
-    return ((ExpCrystal *)unit)->current_sprite;
+    return ((Crystal *)unit)->current_sprite;
     break;
   default:
     fprintf(stderr, "Wrong unit type\n");

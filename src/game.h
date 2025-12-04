@@ -18,8 +18,8 @@ typedef enum {
 } LevelUpStat;
 
 #define lvlup_atk_speed_percent (10.0f)
-#define lvlup_proj_count (0.5f)
-#define lvlup_pierce_count (0.5f)
+#define lvlup_proj_count (1.0f)
+#define lvlup_pierce_count (1.0f)
 #define lvlup_movement_percent (10.0f)
 #define lvlup_exp_percent (10.0f)
 #define lvlup_maxhp_count (10.0f)
