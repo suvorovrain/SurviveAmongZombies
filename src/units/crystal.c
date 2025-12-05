@@ -12,6 +12,11 @@ Crystal crystal_create(Vector pos, CrystalType type_crystal) {
                                                       : SPRITE_GREEN_CRYSTAL);
   result.current_sprite = result.spritesheet.frames[0];
 
+  result.is_collectable = false;
+  result.collected_frame = 0;
+  result.collected_angle = (Vector){0.0f, 0.0f};
+  result.collected_position = (Vector){0.0f, 0.0f};
+
   return result;
 }
 
