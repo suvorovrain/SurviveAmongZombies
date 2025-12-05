@@ -484,9 +484,59 @@ static void collect_crystals(GlobalState *state, Game *game) {
   for (size_t i = 0; i < state->exp_crystal_count; i++) {
     Crystal *crystal = &state->exp_crystal[i];
 
+    if (crystal->is_collectable)
+      continue;
+
     float distance = vector_length(vector_from_to(crystal, &state->player));
 
     if (distance < 40.0f) {
+      crystal->is_collectable = true;
+      crystal->collected_frame = state->frame_counter;
+      crystal->collected_position = crystal->position;
+      crystal->collected_angle =
+          vector_normalize(vector_from_to(&state->player, crystal));
+    }
+  }
+}
+
+static void move_crystals(GlobalState *state, Game *game) {
+  const uint64_t out_frame_length = 30;
+  const double out_distance_len = 60.0;
+  const double in_accelaration = 1.0;
+  const double collect_distance = 10.0;
+
+  for (size_t i = 0; i < state->exp_crystal_count; i++) {
+    Crystal *crystal = &state->exp_crystal[i];
+
+    if (!crystal->is_collectable)
+      continue;
+
+    uint64_t diff_frame = state->frame_counter - crystal->collected_frame;
+
+    if (diff_frame <= out_frame_length) {
+      double t = (double)diff_frame / (double)out_frame_length;
+      // double distance_norm = 1.0 - (1.0 - t) * (1.0 - t); // ease-out
+      double distance_norm = t == 1.0 ? 1.0 : 1.0 - powl(1 - t, 3.0);
+      double distance = distance_norm * out_distance_len;
+      Vector new_pos =
+          vector_add(crystal->collected_position,
+                     vector_multiply(crystal->collected_angle, distance));
+      crystal->position = new_pos;
+      continue;
+    }
+
+    // diff_frame > out_frame_length
+    crystal->movement =
+        vector_add(crystal->movement, (Vector){0.0f, in_accelaration});
+    Vector vec_to = vector_from_to(crystal, &state->player);
+    Vector vec_to_norm = vector_normalize(vec_to);
+    Vector vec_to_new_pos =
+        vector_multiply(vec_to_norm, vector_length(crystal->movement));
+    double move_distance = vector_length(vec_to_new_pos);
+
+    // collect if crystal too close to player or speed is very high
+    if (vector_length(vec_to) < collect_distance ||
+        move_distance >= vector_length(vec_to)) {
       for (size_t j = i + 1; j < state->exp_crystal_count; j++) {
         state->exp_crystal[j - 1] = state->exp_crystal[j];
       }
@@ -518,6 +568,8 @@ static void collect_crystals(GlobalState *state, Game *game) {
         } while (game->level_menu_third == game->level_menu_first ||
                  game->level_menu_third == game->level_menu_second);
       }
+    } else {
+      crystal->position = vector_add(crystal->position, vec_to_new_pos);
     }
   }
 }
@@ -565,6 +617,7 @@ void make_step(GlobalState *state, Input input, Game *game) {
   increase_dificilty(state);
   collect_crystals(state, game);
   teleport_enemies(state, game);
+  move_crystals(state, game);
 
   state->frame_counter++;
 

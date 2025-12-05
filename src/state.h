@@ -103,6 +103,11 @@ typedef struct {
   Vector movement;
   Sprite current_sprite;
   SpriteSheet spritesheet;
+  // data for collecting
+  bool is_collectable;       // crystal fly to player
+  uint64_t collected_frame;  // frame when player was close to crystal
+  Vector collected_position; // position when player was close to crystal
+  Vector collected_angle;    // normalize vector for angle
 } Crystal;
 
 // Is player alive (so game too) or player already dead and game at pause
