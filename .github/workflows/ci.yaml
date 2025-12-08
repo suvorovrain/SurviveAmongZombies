@@ -1,41 +1,45 @@
+---
+
 name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   run-analyzers:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y shellcheck
-        sudo apt install -y shfmt
-        python -m pip install --upgrade pip
-        pip install cmakelang
-        sudo apt install -y clang-format-20
-        sudo apt install -y bear
-        sudo apt install -y cmake
-        sudo apt install -y clang-tidy
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y shellcheck
+          sudo apt install -y shfmt
+          python -m pip install --upgrade pip
+          pip install cmakelang
+          sudo apt install -y clang-format-20
+          sudo apt install -y libsdl2-dev
+          sudo apt install -y libsdl2-ttf-dev
+          sudo apt install -y bear
+          sudo apt install -y cmake
+          sudo apt install -y clang-tidy
 
-    - name: Check shell scripts
-      run: ./scripts/ci/shellcheck.sh
+      - name: Check shell scripts
+        run: ./scripts/ci/shellcheck.sh
 
-    - name: Check CMake files
-      run: ./scripts/ci/cmake-check.sh
+      - name: Check CMake files
+        run: ./scripts/ci/cmake-check.sh
 
-    - name: Check code formatting
-      run: ./scripts/ci/code-format-check.sh
+      - name: Check code formatting
+        run: ./scripts/ci/code-format-check.sh
 
-    - name: Lint code
-      run: ./scripts/ci/lint.sh
+      - name: Lint code
+        run: ./scripts/ci/lint.sh
 
   build:
     strategy:
@@ -45,42 +49,42 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install CMake (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt update
-        sudo apt install -y cmake
+      - name: Install CMake (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y cmake
 
-    - name: Install CMake (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        brew install cmake
+      - name: Install CMake (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install cmake
 
-    - name: Install CMake (Windows)
-      if: runner.os == 'Windows'
-      shell: cmd
-      run: |
-        choco install cmake
+      - name: Install CMake (Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          choco install cmake
 
-    - name: Build
-      run: ./scripts/ci/build.sh
+      - name: Build
+        run: ./scripts/ci/build.sh
 
   tests:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y lcov
-        sudo apt install -y valgrind
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y lcov
+          sudo apt install -y valgrind
 
-    - name: Run tests and display coverage
-      run: ./scripts/ci/tests_coverage.sh
+      - name: Run tests and display coverage
+        run: ./scripts/ci/tests_coverage.sh
 
-    - name: Check tests for leaks
-      run: ./scripts/ci/leaks.sh
+      - name: Check tests for leaks
+        run: ./scripts/ci/leaks.sh
