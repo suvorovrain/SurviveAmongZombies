@@ -6,7 +6,7 @@ Crystal crystal_create(Vector pos, CrystalType type_crystal) {
   result.type = UNIT_EXP_CRYSTAL;
   result.type_crystal = type_crystal;
   result.position = pos;
-  result.movement = (Vector){0.0f, 0.0f};
+  result.movement = (Vector){0.0F, 0.0F};
   result.spritesheet =
       sm_get_spritesheet(type_crystal == CRYSTAL_BLUE ? SPRITE_BLUE_CRYSTAL
                                                       : SPRITE_GREEN_CRYSTAL);
@@ -14,10 +14,10 @@ Crystal crystal_create(Vector pos, CrystalType type_crystal) {
 
   result.is_collectable = false;
   result.collected_frame = 0;
-  result.collected_angle = (Vector){0.0f, 0.0f};
-  result.collected_position = (Vector){0.0f, 0.0f};
+  result.collected_angle = (Vector){0.0F, 0.0F};
+  result.collected_position = (Vector){0.0F, 0.0F};
 
   return result;
 }
 
-void exp_crystal_free() { return; }
+void exp_crystal_free(void) {}

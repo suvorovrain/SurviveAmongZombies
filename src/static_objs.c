@@ -25,7 +25,7 @@ GameObject *gen_st_objs(Map *map, int count) {
   GameObject *objects = calloc(count, sizeof(GameObject));
   int cur_count = 0;
   while (cur_count < count) {
-    SpriteType sprite_type;
+    SpriteType sprite_type = SPRITE_STATIC_BUSH;
     // Random object type (determine first to know sprite size)
     ObjectType type = rand_big() % OBJ_COUNT;
     switch (type) {

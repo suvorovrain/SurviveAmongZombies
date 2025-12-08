@@ -50,7 +50,7 @@ static Sprite unit_get_sprite(void *unit) {
 
 Vector unit_get_size(void *unit) {
   Sprite sprite = unit_get_sprite(unit);
-  Vector size = {sprite.width, sprite.height};
+  Vector size = {(float)sprite.width, (float)sprite.height};
 
   return size;
 }
@@ -69,7 +69,7 @@ Vector unit_get_centre(void *unit) {
   Vector pos = unit_get_position(unit);
   Vector size = unit_get_size(unit);
 
-  return vector_add(pos, vector_multiply(size, 0.5));
+  return vector_add(pos, vector_multiply(size, (float)0.5));
 }
 
 Vector vector_multiply(Vector vector, float num) {
@@ -101,7 +101,7 @@ Vector vector_from_to(void *first, void *second) {
 }
 
 float vector_length(Vector vector) {
-  return sqrtl(vector.x * vector.x + vector.y * vector.y);
+  return (float)sqrtl(vector.x * vector.x + vector.y * vector.y);
 }
 
 float units_distance_between(void *first, void *second) {

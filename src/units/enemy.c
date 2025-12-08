@@ -6,10 +6,10 @@ Enemy enemy_create(Vector position, EnemyType type_enemy) {
   result.type = UNIT_ENEMY;
   result.type_enemy = type_enemy;
   result.position = position;
-  result.movement = (Vector){0.0, 0.0};
+  result.movement = (Vector){(float)0.0, (float)0.0};
   result.state = ENEMY_IDLE;
 
-  SpriteType type;
+  SpriteType type = SPRITE_SLIME;
   switch (type_enemy) {
   case ENEMY_SLIME:
     type = SPRITE_SLIME;
@@ -51,4 +51,4 @@ Enemy enemy_create(Vector position, EnemyType type_enemy) {
   return result;
 }
 
-void enemy_free() { return; }
+void enemy_free(void) {}

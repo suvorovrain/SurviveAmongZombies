@@ -41,7 +41,7 @@ Vector vector_from_to(void *first, void *second);
 float vector_length(Vector vector);
 // Normalize vector making their len by 1
 Vector vector_normalize(Vector vector);
-Vector vector_multiply(Vector vector, float value);
+Vector vector_multiply(Vector vector, float num);
 Vector vector_div(Vector vector, float num);
 Vector vector_add(Vector first, Vector second);
 Vector vector_sub(Vector first, Vector second);

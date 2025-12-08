@@ -7,11 +7,11 @@
 #define ENGINE_LOGIC_STEP (1.0f / 60.0f)
 
 // state.h
-
+typedef struct Game Game;
 // Sprite Sheet describe array of sprites for some state of
 // player\enemy\projectile
 typedef struct {
-  uint64_t frames_count;
+  int frames_count;
   Sprite *frames;
 } SpriteSheet;
 
