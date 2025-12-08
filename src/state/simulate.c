@@ -4,7 +4,6 @@
 #include "../static_objs.h"
 #include "../units/units.h"
 #include "engine/coordinates.h"
-#include "math.h"
 #include "state.h"
 #include <math.h>
 #include <stdio.h>
@@ -55,14 +54,15 @@ GlobalState init_global_state(Map *map) {
   result.exp_crystal_count = 0;
   result.status = GAME_ALIVE;
   result.kills = 0;
-  result.enemy_factor = 3.0f;
+  result.enemy_factor = 3.0F;
   result.frame_counter = 0;
   result.static_objects = gen_st_objs(map, STATIC_COUNT);
   result.static_objects_count = STATIC_COUNT;
 
   VectorU32 map_size = map_get_size(map);
 
-  result.player = player_create((Vector){map_size.x / 2, map_size.y / 2});
+  result.player =
+      player_create((Vector){(float)map_size.x / 2, (float)map_size.y / 2});
 
   return result;
 }
@@ -96,16 +96,16 @@ static void spawn_enemies(GlobalState *state) {
   size_t max_enemies = 0;
   EnemyType type_enemy = ENEMY_SLIME;
 
-  if (state->frame_counter < (60 * 30 * 1)) {
+  if (state->frame_counter < ((unsigned long)60 * 30 * 1)) {
     type_enemy = ENEMY_SLIME;
     max_enemies = 15;
-  } else if (state->frame_counter < (60 * 30 * 2)) {
+  } else if (state->frame_counter < ((unsigned long)60 * 30 * 2)) {
     type_enemy = rand() % 2 == 0 ? ENEMY_SLIME : ENEMY_IMP;
     max_enemies = 30;
-  } else if (state->frame_counter < (60 * 30 * 3)) {
+  } else if (state->frame_counter < ((unsigned long)60 * 30 * 3)) {
     type_enemy = ENEMY_SLIME;
     max_enemies = 50;
-  } else if (state->frame_counter < (60 * 30 * 4)) {
+  } else if (state->frame_counter < ((unsigned long)60 * 30 * 4)) {
     type_enemy = ENEMY_GOBLIN;
     max_enemies = 40;
   } else {
@@ -117,13 +117,13 @@ static void spawn_enemies(GlobalState *state) {
     return;
   }
 
-  const float radius = 500.0;
+  const float radius = (float)500.0;
 
   // spawn enemies at radius of circle
   for (size_t i = 0; i < (size_t)state->enemy_factor; i++) {
-    Vector norm_vector = (Vector){1.0, 0.0};
+    Vector norm_vector = (Vector){(float)1.0, (float)0.0};
     // [0; 2*PI)
-    float random_angle = ((float)rand() / (float)RAND_MAX) * 3.14159 * 2;
+    float random_angle = ((float)rand() / (float)RAND_MAX) * (float)3.14159 * 2;
     Vector vector_radius =
         vector_multiply(vector_rotate(norm_vector, random_angle), radius);
 
@@ -136,7 +136,7 @@ static void spawn_enemies(GlobalState *state) {
 
 static void process_input(GlobalState *state, Input input) {
   Player *player = &state->player;
-  Vector movement = {0.0, 0.0};
+  Vector movement = {(float)0.0, (float)0.0};
 
   if (input.w) {
     movement.y = -1;
@@ -161,12 +161,10 @@ static void process_input(GlobalState *state, Input input) {
 
   // normalize
   movement = vector_normalize(movement);
-  movement = vector_multiply(
-      movement, (player->stat_movespeed * player->boost_movement_percent));
+  movement = vector_multiply(movement, (float)(player->stat_movespeed *
+                                               player->boost_movement_percent));
 
   player->position = vector_add(player->position, movement);
-
-  return;
 }
 
 // TODO: attack speed
@@ -177,7 +175,6 @@ static void create_projectiles(GlobalState *state, Game *game) {
                  (state->player.boost_attack_speed_percent)) *
                 60) !=
       0) {
-    return;
   }
 
   if (state->enemies_count == 0) {
@@ -194,7 +191,7 @@ static void create_projectiles(GlobalState *state, Game *game) {
   for (size_t i = 0; i < (size_t)state->player.stat_proj_count; i++) {
     closests[i] = state->enemies[0];
     indicies[i] = 0;
-    distances[i] = 100000.0;
+    distances[i] = (float)100000.0;
   }
 
   size_t max_local = 0;
@@ -230,7 +227,9 @@ static void create_projectiles(GlobalState *state, Game *game) {
     state->projectiles_count++;
   }
 
-  return;
+  free(closests);
+  free(indicies);
+  free(distances);
 }
 
 // Update position of projectiles (why i wrote this comment?)
@@ -242,13 +241,12 @@ static void update_projectile_positions(GlobalState *state) {
       continue;
     }
 
-    Vector movement = vector_multiply(proj->movement, proj->stat_movespeed);
+    Vector movement =
+        vector_multiply(proj->movement, (float)proj->stat_movespeed);
     Vector result = vector_add(proj->position, movement);
 
     proj->position = result;
   }
-
-  return;
 }
 
 // TODO: fix deleting from arrays this
@@ -262,7 +260,7 @@ static void damage_and_kill_enemies(GlobalState *state) {
     for (size_t j = 0; j < state->enemies_count; j++) {
       Enemy *enemy = &state->enemies[j];
 
-      if (units_intersect(proj, enemy, 1.0f)) {
+      if (units_intersect(proj, enemy, 1.0F)) {
         enemy->stat_hp -=
             proj->stat_damage * state->player.boost_damage_percent;
         enemy->state = ENEMY_HURTED;
@@ -272,9 +270,10 @@ static void damage_and_kill_enemies(GlobalState *state) {
                                       state->player.boost_piercing_percent)) {
           proj->state = PROJ_EXPLODE;
           proj->explode_frame = state->frame_counter;
-          proj->live_frames_last = 12 * PROJ_EXPLODE_FRAMES_COUNT;
-          proj->position = vector_add(
-              proj->position, (Vector){-8.0 * SCALE * 0.5, -8.0 * SCALE * 0.5});
+          proj->live_frames_last = (uint64_t)12 * PROJ_EXPLODE_FRAMES_COUNT;
+          proj->position =
+              vector_add(proj->position, (Vector){(float)(-8.0 * SCALE * 0.5),
+                                                  (float)(-8.0 * SCALE * 0.5)});
         }
       }
     }
@@ -325,8 +324,6 @@ static void damage_and_kill_enemies(GlobalState *state) {
     //            game->level_menu_third == game->level_menu_second);
     // }
   }
-
-  return;
 }
 
 static void update_enemies_positions(GlobalState *state) {
@@ -340,21 +337,26 @@ static void update_enemies_positions(GlobalState *state) {
   for (size_t i = 0; i < state->enemies_count; i++) {
     Enemy *enemy = &state->enemies[i];
 
-    Vector movement = vector_multiply(enemy->movement, enemy->stat_movespeed);
+    Vector movement =
+        vector_multiply(enemy->movement, (float)enemy->stat_movespeed);
     Vector result = vector_add(enemy->position, movement);
 
     enemy->position = result;
   }
 
-  const int PADDING = 3.0;
+  const int PADDING = 3;
+
+  if (state->enemies_count == 0) {
+    return;
+  }
 
   Homka_Rect rects[state->enemies_count];
   for (size_t i = 0; i < state->enemies_count; i++) {
     rects[i] = unit_get_rect(&state->enemies[i]);
-    rects[i].left += PADDING * SCALE;
-    rects[i].right -= PADDING * SCALE;
-    rects[i].top += PADDING * SCALE;
-    rects[i].down -= PADDING * SCALE;
+    rects[i].left += (float)PADDING * SCALE;
+    rects[i].right -= (float)PADDING * SCALE;
+    rects[i].top += (float)PADDING * SCALE;
+    rects[i].down -= (float)PADDING * SCALE;
   }
 
   const size_t enemy_n = state->enemies_count;
@@ -377,7 +379,7 @@ static void update_enemies_positions(GlobalState *state) {
         Enemy *b = &state->enemies[j];
 
         if (overlap_x < overlap_y) {
-          float half = overlap_x * 0.5f;
+          float half = overlap_x * 0.5F;
           a->position.x -= half;
           b->position.x += half;
           rects[i].left -= half;
@@ -385,7 +387,7 @@ static void update_enemies_positions(GlobalState *state) {
           rects[j].left += half;
           rects[j].right += half;
         } else {
-          float half = overlap_y * 0.5f;
+          float half = overlap_y * 0.5F;
           a->position.y -= half;
           b->position.y += half;
           rects[i].top -= half;
@@ -396,8 +398,6 @@ static void update_enemies_positions(GlobalState *state) {
       }
     }
   }
-
-  return;
 }
 
 static void damage_player(GlobalState *state) {
@@ -409,7 +409,7 @@ static void damage_player(GlobalState *state) {
     Enemy *enemy = &state->enemies[i];
     Player *player = &state->player;
 
-    if (units_intersect(player, enemy, 5.0f)) {
+    if (units_intersect(player, enemy, 5.0F)) {
       player->stat_hp -= enemy->stat_damage;
       player->state = PLAYER_HURTED;
       player->invincibility_count = 25; // time for invincible
@@ -430,7 +430,7 @@ static void update_animations(GlobalState *state) {
       continue;
 
     uint64_t frames_diff = state->frame_counter - proj->explode_frame;
-    if (frames_diff / 4 > proj->spritesheet_explode.frames_count) {
+    if ((int)frames_diff / 4 > proj->spritesheet_explode.frames_count) {
       fprintf(stderr, "Wrong explode animation calculation\n");
       exit(-1);
     }
@@ -446,8 +446,9 @@ static void update_animations(GlobalState *state) {
   if (player->direction_side == DIRECTION_LEFT)
     frame += 4;
 
-  frame += (state->frame_counter % (PLAYER_WALK_FRAME_COUNT * 4)) /
-           PLAYER_WALK_FRAME_COUNT;
+  frame +=
+      (state->frame_counter % ((unsigned long)PLAYER_WALK_FRAME_COUNT * 4)) /
+      PLAYER_WALK_FRAME_COUNT;
 
   player->current_sprite = player->spritesheet_move.frames[frame];
 
@@ -462,8 +463,9 @@ static void update_animations(GlobalState *state) {
       frame_enemy += 4;
     }
 
-    frame_enemy += (state->frame_counter % (ENEMY_WALK_FRAME_COUNT * 2)) /
-                   ENEMY_WALK_FRAME_COUNT;
+    frame_enemy +=
+        (state->frame_counter % ((unsigned long)ENEMY_WALK_FRAME_COUNT * 2)) /
+        ENEMY_WALK_FRAME_COUNT;
     enemy->current_sprite = enemy->spritesheet_move.frames[frame_enemy];
   }
 
@@ -473,9 +475,11 @@ static void update_animations(GlobalState *state) {
 
     if (state->frame_counter % 4 == 0) {
       if (state->frame_counter % 60 < 30) {
-        crystal->position = vector_add(crystal->position, (Vector){0.0, 1.0f});
+        crystal->position =
+            vector_add(crystal->position, (Vector){(unsigned long)0.0, 1.0F});
       } else {
-        crystal->position = vector_add(crystal->position, (Vector){0.0, -1.0f});
+        crystal->position =
+            vector_add(crystal->position, (Vector){(unsigned long)0.0, -1.0F});
       }
     }
   }
@@ -490,7 +494,7 @@ static void collect_crystals(GlobalState *state) {
 
     float distance = vector_length(vector_from_to(crystal, &state->player));
 
-    if (distance < 40.0f) {
+    if (distance < 40.0F) {
       crystal->is_collectable = true;
       crystal->collected_frame = state->frame_counter;
       crystal->collected_position = crystal->position;
@@ -517,18 +521,18 @@ static void move_crystals(GlobalState *state, Game *game) {
     if (diff_frame <= out_frame_length) {
       double t = (double)diff_frame / (double)out_frame_length;
       // double distance_norm = 1.0 - (1.0 - t) * (1.0 - t); // ease-out
-      double distance_norm = t == 1.0 ? 1.0 : 1.0 - powl(1 - t, 3.0);
+      double distance_norm = t == 1.0 ? 1.0 : (double)(1.0 - powl(1 - t, 3.0));
       double distance = distance_norm * out_distance_len;
-      Vector new_pos =
-          vector_add(crystal->collected_position,
-                     vector_multiply(crystal->collected_angle, distance));
+      Vector new_pos = vector_add(
+          crystal->collected_position,
+          vector_multiply(crystal->collected_angle, (float)distance));
       crystal->position = new_pos;
       continue;
     }
 
     // diff_frame > out_frame_length
     crystal->movement =
-        vector_add(crystal->movement, (Vector){0.0f, in_accelaration});
+        vector_add(crystal->movement, (Vector){0.0F, (float)in_accelaration});
     Vector vec_to = vector_from_to(crystal, &state->player);
     Vector vec_to_norm = vector_normalize(vec_to);
     Vector vec_to_new_pos =
@@ -577,19 +581,20 @@ static void move_crystals(GlobalState *state, Game *game) {
 
 // if enemies far from player -- teleport them to random angle from player
 static void teleport_enemies(GlobalState *state) {
-  const float radius = 650.0;
+  const float radius = (float)650.0;
 
   for (size_t i = 0; i < state->enemies_count; i++) {
     Enemy *enemy = &state->enemies[i];
 
     float distance = vector_length(vector_from_to(enemy, &state->player));
 
-    if (distance > 850.0f) {
+    if (distance > 850.0F) {
 
       // spawn enemies at radius of circle
-      Vector norm_vector = (Vector){1.0, 0.0};
+      Vector norm_vector = (Vector){(float)1.0, (float)0.0};
       // [0; 2*PI)
-      float random_angle = ((float)rand() / (float)RAND_MAX) * 3.14159 * 2;
+      float random_angle =
+          (float)(((float)rand() / (float)RAND_MAX) * 3.14159 * 2);
       Vector vector_radius =
           vector_multiply(vector_rotate(norm_vector, random_angle), radius);
 
@@ -600,8 +605,8 @@ static void teleport_enemies(GlobalState *state) {
 
 void increase_dificilty(GlobalState *state) {
   // Each 7 second more by 5% to enemy spawn
-  if (state->frame_counter % (60 * 7) == 0) {
-    state->enemy_factor *= 1.05;
+  if (state->frame_counter % (unsigned long)(60 * 7) == 0) {
+    state->enemy_factor *= (float)1.05;
   }
 }
 
@@ -636,6 +641,4 @@ void make_step(GlobalState *state, Input input, Game *game) {
     timings = (Timings){0};
   }
 #endif
-
-  return;
 }

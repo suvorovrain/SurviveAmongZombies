@@ -10,10 +10,6 @@
 #include "stb_ds.h"
 #include "units/units.h"
 #include "utils/utils.h"
-#include <engine/coordinates.h>
-#include <engine/engine.h>
-#include <engine/input.h>
-#include <engine/map.h>
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
