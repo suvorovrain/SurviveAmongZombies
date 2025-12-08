@@ -35,7 +35,7 @@ Player player_create(Vector position) {
   return result;
 }
 
-void player_level_up(Player *player, Game *game, LevelUpStat stat) {
+void player_level_up(Player *player, LevelUpStat stat) {
   if (player->stat_experience < player->stat_experience_for_lvlup) {
     return;
   }

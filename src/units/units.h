@@ -22,7 +22,7 @@ Projectile projectile_create();
 void projectile_free();
 
 Player player_create(Vector position);
-void player_level_up(Player *player, Game *game, LevelUpStat stat);
+void player_level_up(Player *player, LevelUpStat stat);
 LevelUpStat player_get_random_stat();
 Enemy enemy_create(Vector position, EnemyType type_enemy);
 Crystal crystal_create(Vector pos, CrystalType type_crystal);

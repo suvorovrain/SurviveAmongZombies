@@ -36,7 +36,7 @@ static void update_hp_bar(UIElement *hp_bar, Game *game) {
   float size = 62;
   int32_t width_pixels = (int32_t)(size * percent);
 
-  for (uint32_t x = 1; x <= width_pixels; x++) {
+  for (uint32_t x = 1; x <= (uint32_t)width_pixels; x++) {
     for (uint32_t y = 1; y <= 6; y++) {
       *(hp_bar->sprite->pixels + y * 64 + x) = 0xFF00FF00;
     }
@@ -53,7 +53,7 @@ static void update_hp_bar(UIElement *hp_bar, Game *game) {
 
 const float EXP_BAR_SCALE = 3.0f;
 
-static UIElement exp_bar(Game *game) {
+static UIElement exp_bar(void) {
   UIElement bar = {0};
   bar.mode = UI_POS_SCREEN;
   bar.position.screen = (Vector){10.0f, 10.0f};
@@ -99,7 +99,7 @@ static void update_exp_bar(UIElement *exp_bar, Game *game) {
   }
 }
 
-static UIElement dead_background(Game *game) {
+static UIElement dead_background(void) {
   UIElement bar = {0};
   bar.position.screen = (Vector){0.0, 0.0};
   bar.mode = UI_POS_SCREEN;
@@ -119,7 +119,7 @@ static UIElement dead_background(Game *game) {
   return bar;
 }
 
-static UIElement dead_screen(Game *game) {
+static UIElement dead_screen(void) {
   UIElement bar = {0};
   bar.mode = UI_POS_SCREEN;
   bar.z_index = 3;
@@ -220,7 +220,7 @@ static UIElement pause_text_ui(Game *game) {
   return ui;
 }
 
-static UIElement level_menu_ui(Game *game) {
+static UIElement level_menu_ui(void) {
   UIElement ui = {0};
   ui.sprite = sm_get_sprite_pointer(SPRITE_LEVEL_MENU);
 
@@ -327,17 +327,17 @@ static UIElement level_menu_third_ui(Game *game) {
 
 void um_ui_init(Game *game) {
   uis[UI_HP_BAR] = hp_bar(game);
-  uis[UI_EXP_BAR] = exp_bar(game);
+  uis[UI_EXP_BAR] = exp_bar();
   uis[UI_LEVEL] = level_ui(game);
   uis[UI_KILLS] = kills_ui(game);
   uis[UI_TIME] = time_ui(game);
   uis[UI_PAUSE] = pause_text_ui(game);
-  uis[UI_DEAD_BACKGROUND] = dead_background(game);
-  uis[UI_DEAD_SCREEN] = dead_screen(game);
+  uis[UI_DEAD_BACKGROUND] = dead_background();
+  uis[UI_DEAD_SCREEN] = dead_screen();
   uis[UI_LEVEL_MENU_FIRST] = level_menu_first_ui(game);
   uis[UI_LEVEL_MENU_SECOND] = level_menu_second_ui(game);
   uis[UI_LEVEL_MENU_THIRD] = level_menu_third_ui(game);
-  uis[UI_LEVEL_MENU] = level_menu_ui(game);
+  uis[UI_LEVEL_MENU] = level_menu_ui();
 
   for (size_t i = 0; i < UI_COUNT; i++) {
     enable_flags[i] = true;
