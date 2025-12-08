@@ -1,6 +1,7 @@
 // #include "input.h"
 #include "../config.h"
 #include "../game.h"
+#include "../static_objs.h"
 #include "../units/units.h"
 #include "engine/coordinates.h"
 #include "math.h"
@@ -42,6 +43,7 @@ static inline long long ns() {
 #define MAX_ENEMIES 3000
 #define MAX_PROJECTILES 30000
 #define MAX_EXP_CRYSTALS 3000
+#define STATIC_COUNT 400
 
 GlobalState init_global_state(Map *map) {
   GlobalState result = {0};
@@ -55,6 +57,8 @@ GlobalState init_global_state(Map *map) {
   result.kills = 0;
   result.enemy_factor = 3.0f;
   result.frame_counter = 0;
+  result.static_objects = gen_st_objs(map, STATIC_COUNT);
+  result.static_objects_count = STATIC_COUNT;
 
   VectorU32 map_size = map_get_size(map);
 

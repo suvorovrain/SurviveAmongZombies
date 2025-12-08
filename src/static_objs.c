@@ -1,125 +1,93 @@
-// #include "static_objs.h"
-// #include "engine/coordinates.h"
-// #include "engine/map.h"
-// #include "engine/random.h"
-// #include "engine/types.h"
-// #include "stb_ds.h"
-// #include <stdlib.h>
-// #include <time.h>
+#include "static_objs.h"
+#include "engine/coordinates.h"
+#include "engine/map.h"
+#include "engine/random.h"
+#include "engine/types.h"
+#include "sprite_manager/sprite_manager.h"
+#include "stb_ds.h"
+#include <stdlib.h>
+#include <time.h>
 
-// typedef enum {
-//   OBJ_BUSH1 = 0,
-//   OBJ_ROCK,
-//   OBJ_CACTUS_LONG,
-//   OBJ_CACTUS_SHORT,
-//   OBJ_COUNT
-// } ObjectType;
+typedef enum {
+  OBJ_BUSH = 0,
+  OBJ_ROCK,
+  OBJ_CACTUS_LONG,
+  OBJ_CACTUS_SHORT,
+  OBJ_COUNT
+} ObjectType;
 
-// static Sprite *load_st_sprites() {
-//   Sprite *obj_sprites = calloc(OBJ_COUNT, sizeof(Sprite));
+GameObject *gen_st_objs(Map *map, int count) {
+  if (!map)
+    return NULL;
 
-//   obj_sprites[OBJ_BUSH1] = load_sprite("assets/static/bush_red.png", 7.5f);
-//   obj_sprites[OBJ_ROCK] = load_sprite("assets/static/rock.png", 3.5f);
-//   obj_sprites[OBJ_CACTUS_LONG] =
-//       load_sprite("assets/static/cactus_long.png", 4.5f);
-//   obj_sprites[OBJ_CACTUS_SHORT] =
-//       load_sprite("assets/static/cactus_short.png", 3.0f);
-//   // obj_sprites[OBJ_CACTUS] = load_sprite("assets/cactus1.png", 1.0f);
-//   // obj_sprites[OBJ_PALM] = load_sprite("assets/palm.png", 2.5f);
+  const int margin = 80;
 
-//   return obj_sprites;
-// }
+  GameObject *objects = calloc(count, sizeof(GameObject));
+  int cur_count = 0;
+  while (cur_count < count) {
+    SpriteType sprite_type;
+    // Random object type (determine first to know sprite size)
+    ObjectType type = rand_big() % OBJ_COUNT;
+    switch (type) {
+    case OBJ_BUSH:
+      sprite_type = SPRITE_STATIC_BUSH;
+      break;
+    case OBJ_ROCK:
+      sprite_type = SPRITE_STATIC_ROCK;
+      break;
+    case OBJ_CACTUS_LONG:
+      sprite_type = SPRITE_STATIC_CACTUS_LONG;
+      break;
+    case OBJ_CACTUS_SHORT:
+      sprite_type = SPRITE_STATIC_CACTUS_SHORT;
+      break;
+    default:
+      exit(-1);
+    }
 
-// static GameObject *gen_st_objs(Map *map, Sprite *sprites, int count) {
-//   if (!map || !sprites)
-//     return NULL;
+    Sprite *sprite = sm_get_sprite_pointer(sprite_type);
 
-//   GameObject *objects = NULL;
+    if (!sprite->pixels)
+      continue;
 
-//   int margin = 80;
+    VectorU32 world = map_gen_random_position(map, margin);
+    VectorU32 map_size = map_get_size(map);
+    // Check if sprite corners are within map pixel bounds
+    if (world.x + sprite->width >= map_size.x ||
+        world.y + sprite->height >= map_size.y) {
+      continue;
+    }
 
-//   while (arrlen(objects) < count) {
-//     // Random object type (determine first to know sprite size)
-//     ObjectType type = rand_big() % OBJ_COUNT;
-//     Sprite *sprite = &sprites[type];
+    // Check that the pixel at this position is not transparent (inside diamond)
+    // uint32_t center_x = (uint32_t)(world.x + sprite->width / 2);
+    // uint32_t center_y = (uint32_t)(world.y + sprite->height);
+    // if (center_x < map_size.x && center_y < map_size.y) {
+    //   uint32_t pixel =
+    //       is_point_within_map(map, (VectorU32){center_x, center_y}, margin);
+    //   // Check if pixel is not background (has alpha > 0)
+    //   if ((pixel >> 24) == 0) {
+    //     continue; // Outside diamond shape
+    //   }
+    // }
 
-//     if (!sprite->pixels)
-//       continue;
+    GameObject obj = {0};
+    obj.position = (Vector){(float)world.x, (float)world.y};
+    obj.cur_sprite = sprite;
+    // obj.data = NULL;
+    if (type == OBJ_ROCK || type == OBJ_CACTUS_SHORT ||
+        type == OBJ_CACTUS_LONG) {
+      obj.data = (void *)true;
+    }
 
-//     VectorU32 world = map_gen_random_position(map, margin);
-//     VectorU32 map_size = map_get_size(map);
-//     // Check if sprite corners are within map pixel bounds
-//     if (world.x + sprite->width >= map_size.x ||
-//         world.y + sprite->height >= map_size.y) {
-//       continue;
-//     }
+    objects[cur_count++] = obj;
+  }
 
-//     // Check that the pixel at this position is not transparent (inside
-//     diamond) uint32_t center_x = (uint32_t)(world.x + sprite->width / 2);
-//     uint32_t center_y = (uint32_t)(world.y + sprite->height);
-//     if (center_x < map_size.x && center_y < map_size.y) {
-//       uint32_t pixel = get_pixel(map, center_x, center_y);
-//       // Check if pixel is not background (has alpha > 0)
-//       if ((pixel >> 24) == 0) {
-//         continue; // Outside diamond shape
-//       }
-//     }
+  return objects;
+}
 
-//     GameObject obj = {0};
-//     obj.position = (Vector){(float)world.x, (float)world.y};
-//     obj.cur_sprite = sprite;
-//     // obj.data = NULL;
-//     if (type == OBJ_ROCK || type == OBJ_CACTUS_SHORT ||
-//         type == OBJ_CACTUS_LONG) {
-//       obj.data = (void *)true;
-//     }
-//     arrpush(objects, obj);
-//   }
+void free_static_objs(GameObject *st_objs) {
+  if (!st_objs)
+    return;
 
-//   return objects;
-// }
-
-// StaticObjects *create_static_objs(Map *map, int count) {
-//   if (!map)
-//     return NULL;
-
-//   StaticObjects *st_objs = calloc(1, sizeof(StaticObjects));
-//   if (!st_objs)
-//     return NULL;
-
-//   st_objs->sprites = load_st_sprites();
-//   if (!st_objs->sprites) {
-//     free(st_objs);
-//     return NULL;
-//   }
-
-//   st_objs->objects = gen_st_objs(map, st_objs->sprites, count);
-//   if (!st_objs->objects) {
-//     for (int i = 0; i < OBJ_COUNT; i++) {
-//       free_sprite(&st_objs->sprites[i]);
-//     }
-//     free(st_objs->sprites);
-//     free(st_objs);
-//     return NULL;
-//   }
-
-//   return st_objs;
-// }
-
-// void free_static_objs(StaticObjects *st_objs) {
-//   if (!st_objs)
-//     return;
-
-//   if (st_objs->sprites) {
-//     for (int i = 0; i < OBJ_COUNT; i++) {
-//       free_sprite(&st_objs->sprites[i]);
-//     }
-//     free(st_objs->sprites);
-//   }
-
-//   if (st_objs->objects) {
-//     arrfree(st_objs->objects);
-//   }
-
-//   free(st_objs);
-// }
+  free(st_objs);
+}

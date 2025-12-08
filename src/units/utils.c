@@ -126,15 +126,6 @@ bool units_intersect(void *first, void *second, float padding) {
   rect2.top += padding * SCALE;
   rect2.down -= padding * SCALE;
 
-  // if (fabsf(rect1.left - rect2.left) < 0.001 &&
-  //     fabsf(rect1.right - rect2.right) < 0.001 &&
-  //     fabsf(rect1.top - rect2.top) < 0.001 &&
-  //     fabsf(rect1.down - rect2.down) < 0.001)
-  //   return true;
-
   return !(rect1.right <= rect2.left || rect1.left >= rect2.right ||
            rect1.top >= rect2.down || rect1.down <= rect2.top);
-
-  // return ((rect1.right > rect2.left || rect1.left < rect2.right) &&
-  //         (rect1.down < rect2.top || rect1.top > rect2.down));
 }

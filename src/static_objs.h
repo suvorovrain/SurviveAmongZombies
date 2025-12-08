@@ -4,12 +4,7 @@
 #include "engine/map.h"
 #include "engine/types.h"
 
-typedef struct StaticObjects {
-  Sprite *sprites;
-  GameObject *objects;
-} StaticObjects;
-
-StaticObjects *create_static_objs(Map *map, int count);
-void free_static_objs(StaticObjects *st_objs);
+GameObject *gen_st_objs(Map *map, int count);
+void free_static_objs(GameObject *st_objs);
 
 #endif

@@ -22,14 +22,15 @@ const float lvlup_values[LVLUP_COUNT] = {
     [LVLUP_DMG] = 10.0f};
 
 const size_t lvlup_pool_values[LVLUP_COUNT] = {
-    [LVLUP_ATK_SPD] = 100,  [LVLUP_PROJ_COUNT] = 1, [LVLUP_PIERCE] = 1,
-    [LVLUP_MOVEMENT] = 100, [LVLUP_EXP] = 100,      [LVLUP_MAXHP] = 100,
+    [LVLUP_ATK_SPD] = 100,  [LVLUP_PROJ_COUNT] = 10, [LVLUP_PIERCE] = 10,
+    [LVLUP_MOVEMENT] = 100, [LVLUP_EXP] = 100,       [LVLUP_MAXHP] = 100,
     [LVLUP_DMG] = 100};
 
 GameObject **get_game_objects_from_state(GlobalState *state) {
-  GameObject **objects = calloc(
-      sizeof(GameObject *), state->enemies_count + state->projectiles_count +
-                                state->exp_crystal_count + 1);
+  GameObject **objects =
+      calloc(sizeof(GameObject *),
+             state->enemies_count + state->projectiles_count +
+                 state->exp_crystal_count + state->static_objects_count + 1);
 
   GameObject *player = calloc(sizeof(GameObject), 1);
   player->position = state->player.position;
@@ -60,6 +61,15 @@ GameObject **get_game_objects_from_state(GlobalState *state) {
 
     objects[i + state->enemies_count + state->projectiles_count + 1] =
         exp_crystal;
+  }
+
+  for (size_t i = 0; i < state->static_objects_count; i++) {
+    GameObject *static_obj = calloc(sizeof(GameObject), 1);
+    static_obj->position = state->static_objects[i].position;
+    static_obj->cur_sprite = state->static_objects[i].cur_sprite;
+
+    objects[i + state->enemies_count + state->projectiles_count +
+            state->exp_crystal_count + 1] = static_obj;
   }
 
   return objects;
@@ -133,7 +143,8 @@ Game *game_create() {
   um_ui_disable(UI_LEVEL_MENU_THIRD);
   game->batch = (RenderBatch){.obj_count = 1 + game->state.enemies_count +
                                            game->state.enemies_count +
-                                           game->state.exp_crystal_count,
+                                           game->state.exp_crystal_count +
+                                           game->state.static_objects_count,
                               .objs = objects,
                               .ui_count = um_ui_get_uis_count(),
                               .uis = um_ui_get_uis()};
@@ -214,10 +225,16 @@ void game_update(Game *game, Input *input) {
   }
 
   make_step(&game->state, *input, game);
+
+  for (size_t i = 0; i < game->batch.obj_count; i++) {
+    free(game->batch.objs[i]);
+  }
+  free(game->batch.objs);
+
   GameObject **objects = get_game_objects_from_state(&(game->state));
-  game->batch.obj_count = 1 + game->state.enemies_count +
-                          game->state.projectiles_count +
-                          game->state.exp_crystal_count;
+  game->batch.obj_count =
+      1 + game->state.enemies_count + game->state.projectiles_count +
+      game->state.exp_crystal_count + game->state.static_objects_count;
   game->batch.objs = objects;
 
   if (game->pause_frame != 0) {

@@ -72,25 +72,25 @@ static void sm_load_descriptions() {
                           .height = 10,
                           .width = 10,
                           .count = 1,
-                          .scale = SCALE * 0.50f};
+                          .scale = SCALE};
   sprite_descriptions[SPRITE_STATIC_CACTUS_LONG] =
       (SpriteDescription){.path = "assets/static/cactus_long.png",
                           .height = 15,
                           .width = 10,
                           .count = 1,
-                          .scale = SCALE * 0.50f};
+                          .scale = SCALE};
   sprite_descriptions[SPRITE_STATIC_CACTUS_SHORT] =
       (SpriteDescription){.path = "assets/static/cactus_short.png",
                           .height = 13,
                           .width = 12,
                           .count = 1,
-                          .scale = SCALE * 0.50f};
+                          .scale = SCALE};
   sprite_descriptions[SPRITE_STATIC_ROCK] =
       (SpriteDescription){.path = "assets/static/rock.png",
                           .height = 11,
                           .width = 10,
                           .count = 1,
-                          .scale = SCALE * 0.50f};
+                          .scale = SCALE};
 }
 
 static void sm_load_sprite(SpriteType type) {
