@@ -126,6 +126,8 @@ typedef struct {
   uint64_t projectiles_count;
   Crystal *exp_crystal;
   uint64_t exp_crystal_count;
+  GameObject *static_objects;
+  uint64_t static_objects_count;
   uint64_t kills;
   GameStatus status;
   // internal state (don't be used for render)
