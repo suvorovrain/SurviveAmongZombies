@@ -91,7 +91,6 @@ Game *game_create() {
   TilesInfo ti = {0};
   ti.tile_sprites = calloc(1, sizeof(Sprite));
   ti.tile_sprites[0] = load_sprite("assets/static/grass.png", 4.0f);
-  printf("%p\n", ti.tile_sprites[0]);
   ti.sprite_count = 1;
   ti.tiles = calloc(MAP_WIDTH * MAP_HEIGHT, sizeof(uint32_t));
   ti.sides_height = 32;
@@ -203,11 +202,11 @@ void game_update(Game *game, Input *input) {
     }
 
     if (input->z) {
-      player_level_up(&game->state.player, game, game->level_menu_first);
+      player_level_up(&game->state.player, game->level_menu_first);
     } else if (input->x) {
-      player_level_up(&game->state.player, game, game->level_menu_second);
+      player_level_up(&game->state.player, game->level_menu_second);
     } else if (input->c) {
-      player_level_up(&game->state.player, game, game->level_menu_third);
+      player_level_up(&game->state.player, game->level_menu_third);
     }
 
     return;

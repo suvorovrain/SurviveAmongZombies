@@ -86,7 +86,7 @@ static void decrease_frame_counters(GlobalState *state) {
 }
 
 // generate enemies every second
-static void spawn_enemies(GlobalState *state, Game *game) {
+static void spawn_enemies(GlobalState *state) {
   if (state->frame_counter % 60 != 0) {
     return;
   }
@@ -252,7 +252,7 @@ static void update_projectile_positions(GlobalState *state) {
 }
 
 // TODO: fix deleting from arrays this
-static void damage_and_kill_enemies(GlobalState *state, Game *game) {
+static void damage_and_kill_enemies(GlobalState *state) {
   for (size_t i = 0; i < state->projectiles_count; i++) {
     Projectile *proj = &state->projectiles[i];
 
@@ -471,9 +471,6 @@ static void update_animations(GlobalState *state) {
   for (size_t i = 0; i < state->exp_crystal_count; i++) {
     Crystal *crystal = &state->exp_crystal[i];
 
-    size_t frame = (state->frame_counter % (EXP_CRYSTAL_FRAME_COUNT * 4)) /
-                   EXP_CRYSTAL_FRAME_COUNT;
-
     if (state->frame_counter % 4 == 0) {
       if (state->frame_counter % 60 < 30) {
         crystal->position = vector_add(crystal->position, (Vector){0.0, 1.0f});
@@ -484,7 +481,7 @@ static void update_animations(GlobalState *state) {
   }
 }
 
-static void collect_crystals(GlobalState *state, Game *game) {
+static void collect_crystals(GlobalState *state) {
   for (size_t i = 0; i < state->exp_crystal_count; i++) {
     Crystal *crystal = &state->exp_crystal[i];
 
@@ -579,7 +576,7 @@ static void move_crystals(GlobalState *state, Game *game) {
 }
 
 // if enemies far from player -- teleport them to random angle from player
-static void teleport_enemies(GlobalState *state, Game *game) {
+static void teleport_enemies(GlobalState *state) {
   const float radius = 650.0;
 
   for (size_t i = 0; i < state->enemies_count; i++) {
@@ -610,17 +607,17 @@ void increase_dificilty(GlobalState *state) {
 
 void make_step(GlobalState *state, Input input, Game *game) {
   TIME(decrease_frame_counters(state), dec_frame);
-  spawn_enemies(state, game);
+  spawn_enemies(state);
   TIME(process_input(state, input), proc_input);
   TIME(create_projectiles(state, game), create_proj);
   TIME(update_projectile_positions(state), update_proj);
-  TIME(damage_and_kill_enemies(state, game), dmg_kill);
+  TIME(damage_and_kill_enemies(state), dmg_kill);
   TIME(update_enemies_positions(state), upd_enemy);
   TIME(damage_player(state), dmg_player);
   update_animations(state);
   increase_dificilty(state);
-  collect_crystals(state, game);
-  teleport_enemies(state, game);
+  collect_crystals(state);
+  teleport_enemies(state);
   move_crystals(state, game);
 
   state->frame_counter++;
