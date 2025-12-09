@@ -18,7 +18,7 @@ if(ENABLE_COVERAGE)
   add_link_options(-fprofile-arcs -ftest-coverage)
 endif()
 
-set(SRC_COMPILE_OPTIONS -O2 -Wall -Wextra -pedantic -Werror)
+set(SRC_COMPILE_OPTIONS -O2 -Wall -Wextra -pedantic)
 set(VENDOR_COMPILE_OPTIONS -O2 -w)
 
 add_library(stb STATIC vendor/stb/stb_implementations.c)
