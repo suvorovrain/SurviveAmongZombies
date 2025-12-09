@@ -10,7 +10,7 @@ Projectile projectile_create(Player player, Vector movement) {
   Vector proj_size =
       (Vector){.x = (float)size * SCALE, .y = (float)size * SCALE};
   result.position =
-      vector_add(player_center, vector_multiply(proj_size, (float)-0.5));
+      vector_add(player_center, vector_multiply(proj_size, -(float)0.5));
   result.stat_damage = player.stat_damage;
   result.stat_movespeed = 5.0;
   result.movement = movement;
