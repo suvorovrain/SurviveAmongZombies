@@ -175,6 +175,7 @@ static void create_projectiles(GlobalState *state, Game *game) {
                  (state->player.boost_attack_speed_percent)) *
                 60) !=
       0) {
+    return;
   }
 
   if (state->enemies_count == 0) {
