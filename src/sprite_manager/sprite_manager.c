@@ -3,9 +3,9 @@
 
 typedef struct SpriteDescription {
   char *path;
-  size_t width;
-  size_t height;
-  size_t count;
+  int width;
+  int height;
+  int count;
   float scale;
 } SpriteDescription;
 
@@ -42,31 +42,31 @@ static void sm_load_descriptions() {
                           .height = 8,
                           .width = 8,
                           .count = 1,
-                          .scale = SCALE * 0.5f};
+                          .scale = SCALE * 0.5F};
   sprite_descriptions[SPRITE_PROJECTILE_EXPLODE] =
       (SpriteDescription){.path = "assets/particles/06.png",
                           .height = 32,
                           .width = 32,
                           .count = 12,
-                          .scale = SCALE * 0.5f};
+                          .scale = SCALE * 0.5F};
   sprite_descriptions[SPRITE_LEVEL_MENU] =
       (SpriteDescription){.path = "assets/level_menu.png",
                           .height = 90,
                           .width = 90,
                           .count = 1,
-                          .scale = 5.5f};
+                          .scale = 5.5F};
   sprite_descriptions[SPRITE_BLUE_CRYSTAL] =
       (SpriteDescription){.path = "assets/crystals/blue.png",
                           .height = 64,
                           .width = 64,
                           .count = 4,
-                          .scale = SCALE * 0.20f};
+                          .scale = SCALE * 0.20F};
   sprite_descriptions[SPRITE_GREEN_CRYSTAL] =
       (SpriteDescription){.path = "assets/crystals/green.png",
                           .height = 64,
                           .width = 64,
                           .count = 4,
-                          .scale = SCALE * 0.20f};
+                          .scale = SCALE * 0.20F};
   sprite_descriptions[SPRITE_STATIC_BUSH] =
       (SpriteDescription){.path = "assets/static/bush_red.png",
                           .height = 10,
@@ -95,9 +95,9 @@ static void sm_load_descriptions() {
 
 static void sm_load_sprite(SpriteType type) {
   char *path = sprite_descriptions[type].path;
-  size_t height = sprite_descriptions[type].height;
-  size_t width = sprite_descriptions[type].width;
-  size_t count = sprite_descriptions[type].count;
+  int height = sprite_descriptions[type].height;
+  int width = sprite_descriptions[type].width;
+  int count = sprite_descriptions[type].count;
   float scale = sprite_descriptions[type].scale;
   Sprite *sprites = load_spritesheet_frames(path, width, height, count, scale);
 
@@ -115,8 +115,6 @@ void sm_init() {
   for (size_t i = 0; i < SPRITE_COUNT; i++) {
     sm_load_sprite(i);
   }
-
-  return;
 }
 
 Sprite sm_rotate_sprite(Sprite sprite, double angle) {
@@ -128,16 +126,17 @@ Sprite sm_rotate_sprite(Sprite sprite, double angle) {
   printf("angle %lf\n", angle);
 
   Sprite new_sprite;
-  new_sprite.pixels = calloc(sprite.width * sprite.height, sizeof(uint32_t));
+  new_sprite.pixels =
+      calloc((unsigned long)sprite.width * sprite.height, sizeof(uint32_t));
   new_sprite.width = sprite.width;
   new_sprite.height = sprite.height;
 
   Vector centre =
-      (Vector){(float)sprite.width / 2.0f, (float)sprite.height / 2.0f};
+      (Vector){(float)sprite.width / 2.0F, (float)sprite.height / 2.0F};
   for (size_t x_input = 0; x_input < sprite.width; x_input++) {
     for (size_t y_input = 0; y_input < sprite.height; y_input++) {
       Vector vec = vector_sub((Vector){(float)x_input, (float)y_input}, centre);
-      Vector vec_rotated = vector_rotate(vec, -angle);
+      Vector vec_rotated = vector_rotate(vec, -(float)angle);
       Vector new_pos = vector_add(centre, vec_rotated);
 
       ssize_t x_out = (ssize_t)new_pos.x;

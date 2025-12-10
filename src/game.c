@@ -14,12 +14,10 @@
 #define MAP_HEIGHT 150
 #define STATIC_OBJ_COUNT 100
 
-void game_free(Game *game);
-
 const float lvlup_values[LVLUP_COUNT] = {
-    [LVLUP_ATK_SPD] = 10.0f,  [LVLUP_PROJ_COUNT] = 1.0f, [LVLUP_PIERCE] = 1.0f,
-    [LVLUP_MOVEMENT] = 10.0f, [LVLUP_EXP] = 10.0f,       [LVLUP_MAXHP] = 10.0f,
-    [LVLUP_DMG] = 10.0f};
+    [LVLUP_ATK_SPD] = 10.0F,  [LVLUP_PROJ_COUNT] = 1.0F, [LVLUP_PIERCE] = 1.0F,
+    [LVLUP_MOVEMENT] = 10.0F, [LVLUP_EXP] = 10.0F,       [LVLUP_MAXHP] = 10.0F,
+    [LVLUP_DMG] = 10.0F};
 
 const size_t lvlup_pool_values[LVLUP_COUNT] = {
     [LVLUP_ATK_SPD] = 100,  [LVLUP_PROJ_COUNT] = 10, [LVLUP_PIERCE] = 10,
@@ -90,10 +88,9 @@ Game *game_create() {
 
   TilesInfo ti = {0};
   ti.tile_sprites = calloc(1, sizeof(Sprite));
-  ti.tile_sprites[0] = load_sprite("assets/static/grass.png", 4.0f);
-  printf("%p\n", ti.tile_sprites[0]);
+  ti.tile_sprites[0] = load_sprite("assets/static/grass.png", 4.0F);
   ti.sprite_count = 1;
-  ti.tiles = calloc(MAP_WIDTH * MAP_HEIGHT, sizeof(uint32_t));
+  ti.tiles = calloc((unsigned long)(MAP_WIDTH)*MAP_HEIGHT, sizeof(uint32_t));
   ti.sides_height = 32;
 
   Map *map = map_create(MAP_WIDTH, MAP_HEIGHT, ti);
@@ -203,11 +200,11 @@ void game_update(Game *game, Input *input) {
     }
 
     if (input->z) {
-      player_level_up(&game->state.player, game, game->level_menu_first);
+      player_level_up(&game->state.player, game->level_menu_first);
     } else if (input->x) {
-      player_level_up(&game->state.player, game, game->level_menu_second);
+      player_level_up(&game->state.player, game->level_menu_second);
     } else if (input->c) {
-      player_level_up(&game->state.player, game, game->level_menu_third);
+      player_level_up(&game->state.player, game->level_menu_third);
     }
 
     return;

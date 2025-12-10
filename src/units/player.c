@@ -5,7 +5,7 @@ Player player_create(Vector position) {
 
   result.type = UNIT_PLAYER;
   result.position = position;
-  result.movement = (Vector){0.0, 0.0};
+  result.movement = (Vector){(float)0.0, (float)0.0};
   result.state = PLAYER_IDLE;
 
   result.spritesheet_move = sm_get_spritesheet(SPRITE_PLAYER);
@@ -22,11 +22,11 @@ Player player_create(Vector position) {
   result.stat_damage = 10.0;
   result.stat_proj_count = 1.0;
 
-  result.boost_attack_speed_percent = 1.0f;
-  result.boost_piercing_percent = 1.0f;
-  result.boost_damage_percent = 1.0f;
-  result.boost_experience_percent = 1.0f;
-  result.boost_movement_percent = 1.0f;
+  result.boost_attack_speed_percent = 1.0F;
+  result.boost_piercing_percent = 1.0F;
+  result.boost_damage_percent = 1.0F;
+  result.boost_experience_percent = 1.0F;
+  result.boost_movement_percent = 1.0F;
 
   result.invincibility_count = 0;
   result.direction_face = DIRECTION_DOWN;
@@ -35,7 +35,7 @@ Player player_create(Vector position) {
   return result;
 }
 
-void player_level_up(Player *player, Game *game, LevelUpStat stat) {
+void player_level_up(Player *player, LevelUpStat stat) {
   if (player->stat_experience < player->stat_experience_for_lvlup) {
     return;
   }
@@ -53,7 +53,7 @@ void player_level_up(Player *player, Game *game, LevelUpStat stat) {
   switch (stat) {
   case LVLUP_ATK_SPD:
     player->boost_attack_speed_percent +=
-        (double)(lvlup_values[LVLUP_ATK_SPD] / 100.0f);
+        (double)(lvlup_values[LVLUP_ATK_SPD] / 100.0F);
     break;
   case LVLUP_PROJ_COUNT:
     player->stat_proj_count += (double)lvlup_values[LVLUP_PROJ_COUNT];
@@ -63,25 +63,25 @@ void player_level_up(Player *player, Game *game, LevelUpStat stat) {
     break;
   case LVLUP_MOVEMENT:
     player->boost_movement_percent +=
-        (double)(lvlup_values[LVLUP_MOVEMENT] / 100.0f);
+        (double)(lvlup_values[LVLUP_MOVEMENT] / 100.0F);
     break;
   case LVLUP_EXP:
     player->boost_experience_percent +=
-        (double)(lvlup_values[LVLUP_EXP] / 100.0f);
+        (double)(lvlup_values[LVLUP_EXP] / 100.0F);
     break;
   case LVLUP_MAXHP:
     player->stat_max_hp += (double)(lvlup_values[LVLUP_MAXHP]);
     player->stat_hp += (double)(lvlup_values[LVLUP_MAXHP]);
     break;
   case LVLUP_DMG:
-    player->boost_damage_percent += (double)(lvlup_values[LVLUP_DMG] / 100.0f);
+    player->boost_damage_percent += (double)(lvlup_values[LVLUP_DMG] / 100.0F);
     break;
   default:
     break;
   }
 }
 
-void player_free() { return; }
+void player_free(void) {}
 
 LevelUpStat player_get_random_stat() {
   size_t pool[LVLUP_COUNT + 1];

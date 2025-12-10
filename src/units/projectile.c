@@ -7,8 +7,10 @@ Projectile projectile_create(Player player, Vector movement) {
 
   result.type = UNIT_PROJECTILE;
   Vector player_center = unit_get_centre(&player);
-  Vector proj_size = (Vector){.x = size * SCALE, .y = size * SCALE};
-  result.position = vector_add(player_center, vector_multiply(proj_size, -0.5));
+  Vector proj_size =
+      (Vector){.x = (float)size * SCALE, .y = (float)size * SCALE};
+  result.position =
+      vector_add(player_center, vector_multiply(proj_size, -(float)0.5));
   result.stat_damage = player.stat_damage;
   result.stat_movespeed = 5.0;
   result.movement = movement;
@@ -22,4 +24,4 @@ Projectile projectile_create(Player player, Vector movement) {
   return result;
 }
 
-void projectile_free() { return; }
+void projectile_free(void) {}
