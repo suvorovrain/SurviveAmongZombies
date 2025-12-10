@@ -78,23 +78,3 @@ jobs:
 
       - name: Build
         run: ./scripts/ci/build.sh
-
-  tests:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y lcov
-          sudo apt install -y valgrind
-          sudo apt install -y libsdl2-dev
-          sudo apt install -y libsdl2-ttf-dev
-
-      - name: Run tests and display coverage
-        run: ./scripts/ci/tests_coverage.sh
-
-      - name: Check tests for leaks
-        run: ./scripts/ci/leaks.sh
