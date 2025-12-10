@@ -31,7 +31,8 @@ typedef struct Game {
   Map *map;
   Engine *engine;
   size_t pause_frame; // when pause button was pressed (20 frames gap)
-  // костыль)
+  // An engineering solution that perfectly solved the problem of storing menu
+  // upgrade options.
   LevelUpStat level_menu_first;
   LevelUpStat level_menu_second;
   LevelUpStat level_menu_third;
