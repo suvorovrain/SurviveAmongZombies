@@ -56,17 +56,23 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y cmake
+          sudo apt install -y libsdl2-dev
+          sudo apt install -y libsdl2-ttf-dev
 
       - name: Install CMake (macOS)
         if: runner.os == 'macOS'
         run: |
           brew install cmake
+          brew sdl2
+          brew sdl2_ttf
 
       - name: Install CMake (Windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
           choco install cmake
+          choco install sdl2
+          choco install sdl2_ttf
 
       - name: Build
         run: ./scripts/ci/build.sh
@@ -82,6 +88,8 @@ jobs:
           sudo apt update
           sudo apt install -y lcov
           sudo apt install -y valgrind
+          sudo apt install -y libsdl2-dev
+          sudo apt install -y libsdl2-ttf-dev
 
       - name: Run tests and display coverage
         run: ./scripts/ci/tests_coverage.sh
