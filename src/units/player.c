@@ -83,7 +83,7 @@ void player_level_up(Player *player, LevelUpStat stat) {
 
 void player_free(void) {}
 
-LevelUpStat player_get_random_stat() {
+LevelUpStat player_get_random_stat(void) {
   size_t pool[LVLUP_COUNT + 1];
 
   pool[0] = 0;

@@ -21,7 +21,7 @@ typedef enum {
 } SpriteType;
 
 // load all sprites to memory
-void sm_init();
+void sm_init(void);
 // get spritesheet by key
 SpriteSheet sm_get_spritesheet(SpriteType type);
 // get sprite by key
@@ -29,4 +29,4 @@ Sprite sm_get_sprite(SpriteType type);
 Sprite sm_get_rotated_sprite(SpriteType type, double angle);
 Sprite *sm_get_sprite_pointer(SpriteType type);
 // delete all sprite from memory
-void sm_free();
+void sm_free(void);

@@ -46,7 +46,7 @@ enum {
   FONT_COUNT
 };
 
-Game *game_create();
+Game *game_create(void);
 void game_free(Game *game);
 void game_update(Game *game, Input *input);
 

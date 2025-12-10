@@ -18,12 +18,12 @@ typedef struct Rect {
 
 #define SCALE (3.0f)
 
-Projectile projectile_create();
-void projectile_free();
+Projectile projectile_create(Player player, Vector movement);
+void projectile_free(void);
 
 Player player_create(Vector position);
 void player_level_up(Player *player, LevelUpStat stat);
-LevelUpStat player_get_random_stat();
+LevelUpStat player_get_random_stat(void);
 Enemy enemy_create(Vector position, EnemyType type_enemy);
 Crystal crystal_create(Vector pos, CrystalType type_crystal);
 

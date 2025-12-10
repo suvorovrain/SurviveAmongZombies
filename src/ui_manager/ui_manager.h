@@ -21,5 +21,5 @@ void um_ui_init(Game *game);
 void um_ui_update(Game *game);
 void um_ui_enable(UIType type);
 void um_ui_disable(UIType type);
-size_t um_ui_get_uis_count();
-UIElement **um_ui_get_uis();
+size_t um_ui_get_uis_count(void);
+UIElement **um_ui_get_uis(void);
