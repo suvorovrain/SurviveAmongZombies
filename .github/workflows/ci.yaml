@@ -70,15 +70,22 @@ jobs:
       - name: Install deps (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
+        env:
+          SDL2_PATH: "C:\deps\SDL2"
+          SDL2_TTF_PATH: "C:\deps\SDL2_ttf"
+          CMAKE_PREFIX_PATH: "C:\deps\SDL2;C:\deps\SDL2_ttf"
+          VCPKG_ROOT: "C:\vcpkg"
         run: |
-          New-Item -ItemType Directory -Force -Path "deps"
-          dotnet tool install -g NuGet.CommandLine  
-          nuget init .\deps
-          nuget sources Add -Name "sdl2-nuget" -Source "https://www.nuget.org/api/v2/"
-          nuget install sdl2 -Version 2.28.5 -OutputDirectory "deps" -ExcludeVersion
-          nuget install sdl2_ttf -Version 2.20.2 -OutputDirectory "deps" -ExcludeVersion
-          Copy-Item -Path "deps\sdl2" -Destination "deps\SDL2" -Recurse -Force
-          Copy-Item -Path "deps\sdl2_ttf" -Destination "deps\SDL2_ttf" -Recurse -Force
-
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+          mkdir C:\deps
+          curl -L https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-devel-2.28.5-VC.zip -o C:\deps\sdl2.zip
+          Expand-Archive C:\deps\sdl2.zip C:\deps\sdl2_temp -Force
+          $sdl2_dir = Get-ChildItem "C:\deps\sdl2_temp" -Directory | Select-Object -First 1
+          Move-Item $sdl2_dir.FullName "C:\deps\SDL2" -Force
+          curl -L https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.20.2/SDL2_ttf-devel-2.20.2-VC.zip -o C:\deps\sdl2_ttf.zip
+          Expand-Archive C:\deps\sdl2_ttf.zip C:\deps\sdl2_ttf_temp -Force
+          $sdl2_ttf_dir = Get-ChildItem "C:\deps\sdl2_ttf_temp" -Directory | Select-Object -First 1
+          Move-Item $sdl2_ttf_dir.FullName "C:\deps\SDL2_ttf" -Force
+    
       - name: Build
         run: ./scripts/ci/build.sh
