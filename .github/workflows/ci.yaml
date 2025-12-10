@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install CMake (Linux)
+      - name: Install deps (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt update
@@ -59,14 +59,14 @@ jobs:
           sudo apt install -y libsdl2-dev
           sudo apt install -y libsdl2-ttf-dev
 
-      - name: Install CMake (macOS)
+      - name: Install deps (macOS)
         if: runner.os == 'macOS'
         run: |
           brew install cmake
-          brew sdl2
-          brew sdl2_ttf
+          brew install sdl2
+          brew install sdl2_ttf
 
-      - name: Install CMake (Windows)
+      - name: Install deps (Windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
