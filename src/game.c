@@ -26,18 +26,18 @@ const size_t lvlup_pool_values[LVLUP_COUNT] = {
 
 GameObject **get_game_objects_from_state(GlobalState *state) {
   GameObject **objects =
-      calloc(sizeof(GameObject *),
-             state->enemies_count + state->projectiles_count +
-                 state->exp_crystal_count + state->static_objects_count + 1);
+      calloc(state->enemies_count + state->projectiles_count +
+                 state->exp_crystal_count + state->static_objects_count + 1,
+             sizeof(GameObject *));
 
-  GameObject *player = calloc(sizeof(GameObject), 1);
+  GameObject *player = calloc(1, sizeof(GameObject));
   player->position = state->player.position;
   player->cur_sprite = &state->player.current_sprite;
 
   objects[0] = player;
 
   for (size_t i = 0; i < state->enemies_count; i++) {
-    GameObject *enemy = calloc(sizeof(GameObject), 1);
+    GameObject *enemy = calloc(1, sizeof(GameObject));
     enemy->position = state->enemies[i].position;
     enemy->cur_sprite = &state->enemies[i].current_sprite;
 
@@ -45,7 +45,7 @@ GameObject **get_game_objects_from_state(GlobalState *state) {
   }
 
   for (size_t i = 0; i < state->projectiles_count; i++) {
-    GameObject *projectile = calloc(sizeof(GameObject), 1);
+    GameObject *projectile = calloc(1, sizeof(GameObject));
     projectile->position = state->projectiles[i].position;
     projectile->cur_sprite = &state->projectiles[i].current_sprite;
 
@@ -53,7 +53,7 @@ GameObject **get_game_objects_from_state(GlobalState *state) {
   }
 
   for (size_t i = 0; i < state->exp_crystal_count; i++) {
-    GameObject *exp_crystal = calloc(sizeof(GameObject), 1);
+    GameObject *exp_crystal = calloc(1, sizeof(GameObject));
     exp_crystal->position = state->exp_crystal[i].position;
     exp_crystal->cur_sprite = &state->exp_crystal[i].current_sprite;
 
@@ -62,7 +62,7 @@ GameObject **get_game_objects_from_state(GlobalState *state) {
   }
 
   for (size_t i = 0; i < state->static_objects_count; i++) {
-    GameObject *static_obj = calloc(sizeof(GameObject), 1);
+    GameObject *static_obj = calloc(1, sizeof(GameObject));
     static_obj->position = state->static_objects[i].position;
     static_obj->cur_sprite = state->static_objects[i].cur_sprite;
 
@@ -107,7 +107,7 @@ Game *game_create() {
     game_free(game);
     return NULL;
   }
-  game->fonts = calloc(sizeof(TTF_Font *), FONT_COUNT);
+  game->fonts = calloc(FONT_COUNT, sizeof(TTF_Font *));
   game->fonts[FONT_DEJAVU] = TTF_OpenFont("fonts/DejaVuSans.ttf", 20);
   game->fonts[FONT_PIXELOID_MONO] = TTF_OpenFont("fonts/PixeloidMono.ttf", 20);
   game->fonts[FONT_PIXELOID_SANS] = TTF_OpenFont("fonts/PixeloidSans.ttf", 20);

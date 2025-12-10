@@ -46,11 +46,11 @@ static inline long long ns() {
 
 GlobalState init_global_state(Map *map) {
   GlobalState result = {0};
-  result.enemies = calloc(sizeof(Enemy), MAX_ENEMIES);
+  result.enemies = calloc(MAX_ENEMIES, sizeof(Enemy));
   result.enemies_count = 0;
-  result.projectiles = calloc(sizeof(Projectile), MAX_PROJECTILES);
+  result.projectiles = calloc(MAX_PROJECTILES, sizeof(Projectile));
   result.projectiles_count = 0;
-  result.exp_crystal = calloc(sizeof(Crystal), MAX_EXP_CRYSTALS);
+  result.exp_crystal = calloc(MAX_EXP_CRYSTALS, sizeof(Crystal));
   result.exp_crystal_count = 0;
   result.status = GAME_ALIVE;
   result.kills = 0;
