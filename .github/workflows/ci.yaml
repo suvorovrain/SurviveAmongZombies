@@ -65,6 +65,8 @@ jobs:
           brew install cmake
           brew install sdl2
           brew install sdl2_ttf
+          sudo mkdir -p /usr/local/include
+          sudo ln -sf /opt/homebrew/include/SDL2 /usr/local/include/SDL2
 
       - name: Install deps (Windows)
         if: runner.os == 'Windows'
