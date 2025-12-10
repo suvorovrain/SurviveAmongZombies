@@ -376,7 +376,7 @@ void um_ui_update(Game *game) {
 void um_ui_enable(UIType type) { enable_flags[type] = true; }
 void um_ui_disable(UIType type) { enable_flags[type] = false; }
 
-size_t um_ui_get_uis_count() {
+size_t um_ui_get_uis_count(void) {
   size_t count = 0;
 
   for (size_t i = 0; i < UI_COUNT; i++) {
@@ -387,7 +387,7 @@ size_t um_ui_get_uis_count() {
   return count;
 }
 
-UIElement **um_ui_get_uis() {
+UIElement **um_ui_get_uis(void) {
   size_t index = 0;
 
   for (size_t i = 0; i < UI_COUNT; i++) {

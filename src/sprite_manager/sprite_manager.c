@@ -12,7 +12,7 @@ typedef struct SpriteDescription {
 SpriteSheet spritesheets[SPRITE_COUNT];
 SpriteDescription sprite_descriptions[SPRITE_COUNT];
 
-static void sm_load_descriptions() {
+static void sm_load_descriptions(void) {
   sprite_descriptions[SPRITE_GOBLIN] =
       (SpriteDescription){.path = "assets/units/goblin.png",
                           .height = 16,
@@ -109,7 +109,7 @@ static void sm_load_sprite(SpriteType type) {
   spritesheets[type] = (SpriteSheet){.frames = sprites, .frames_count = count};
 }
 
-void sm_init() {
+void sm_init(void) {
   sm_load_descriptions();
 
   for (size_t i = 0; i < SPRITE_COUNT; i++) {
@@ -165,7 +165,7 @@ Sprite *sm_get_sprite_pointer(SpriteType type) {
   return &spritesheets[type].frames[0];
 }
 
-void sm_free() {
+void sm_free(void) {
   for (size_t i = 0; i < SPRITE_COUNT; i++) {
     free_sprites(spritesheets[i].frames, spritesheets[i].frames_count);
   }

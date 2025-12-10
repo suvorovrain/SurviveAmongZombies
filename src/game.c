@@ -73,7 +73,7 @@ GameObject **get_game_objects_from_state(GlobalState *state) {
   return objects;
 }
 
-Game *game_create() {
+Game *game_create(void) {
   Game *game = calloc(1, sizeof(Game));
   if (!game) {
     return NULL;
