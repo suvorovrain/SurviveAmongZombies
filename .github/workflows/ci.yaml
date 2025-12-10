@@ -67,14 +67,18 @@ jobs:
           brew install sdl2_ttf
           sudo mkdir -p /usr/local/include
           sudo ln -sf /opt/homebrew/include/SDL2 /usr/local/include/SDL2
-
       - name: Install deps (Windows)
         if: runner.os == 'Windows'
-        shell: cmd
+        shell: pwsh
         run: |
-          choco install cmake
-          choco install sdl2
-          choco install sdl2_ttf
+          New-Item -ItemType Directory -Force -Path "deps"
+          dotnet tool install -g NuGet.CommandLine  
+          nuget init .\deps
+          nuget sources Add -Name "sdl2-nuget" -Source "https://www.nuget.org/api/v2/"
+          nuget install sdl2 -Version 2.28.5 -OutputDirectory "deps" -ExcludeVersion
+          nuget install sdl2_ttf -Version 2.20.2 -OutputDirectory "deps" -ExcludeVersion
+          Copy-Item -Path "deps\sdl2" -Destination "deps\SDL2" -Recurse -Force
+          Copy-Item -Path "deps\sdl2_ttf" -Destination "deps\SDL2_ttf" -Recurse -Force
 
       - name: Build
         run: ./scripts/ci/build.sh
