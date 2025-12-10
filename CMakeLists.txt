@@ -12,12 +12,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(PLATFORM_MACOS TRUE)
 endif()
 
-option(ENABLE_COVERAGE "Enable code coverage" OFF)
-if(ENABLE_COVERAGE)
-  add_compile_options(-fprofile-arcs -ftest-coverage)
-  add_link_options(-fprofile-arcs -ftest-coverage)
-endif()
-
 set(SRC_COMPILE_OPTIONS -O2 -Wall -Wextra -pedantic)
 set(VENDOR_COMPILE_OPTIONS -O2 -w)
 
@@ -66,4 +60,3 @@ endif()
 find_library(MATH_LIBRARY m)
 
 add_subdirectory(src)
-add_subdirectory(tests)
