@@ -71,9 +71,9 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         env:
-          SDL2_PATH: "C:\deps\SDL2"
-          SDL2_TTF_PATH: "C:\deps\SDL2_ttf"
-          CMAKE_PREFIX_PATH: "C:\deps\SDL2;C:\deps\SDL2_ttf"
+          SDL2_PATH: "C:\\deps\\SDL2"
+          SDL2_TTF_PATH: "C:\\deps\\SDL2_ttf"
+          CMAKE_PREFIX_PATH: "C:\\deps\\SDL2;C:\\deps\\SDL2_ttf"
           VCPKG_ROOT: "C:\vcpkg"
         run: |
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
@@ -86,6 +86,6 @@ jobs:
           Expand-Archive C:\deps\sdl2_ttf.zip C:\deps\sdl2_ttf_temp -Force
           $sdl2_ttf_dir = Get-ChildItem "C:\deps\sdl2_ttf_temp" -Directory | Select-Object -First 1
           Move-Item $sdl2_ttf_dir.FullName "C:\deps\SDL2_ttf" -Force
-    
+
       - name: Build
         run: ./scripts/ci/build.sh
