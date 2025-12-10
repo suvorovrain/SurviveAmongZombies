@@ -58,18 +58,6 @@ GameObject *gen_st_objs(Map *map, int count) {
       continue;
     }
 
-    // Check that the pixel at this position is not transparent (inside diamond)
-    // uint32_t center_x = (uint32_t)(world.x + sprite->width / 2);
-    // uint32_t center_y = (uint32_t)(world.y + sprite->height);
-    // if (center_x < map_size.x && center_y < map_size.y) {
-    //   uint32_t pixel =
-    //       is_point_within_map(map, (VectorU32){center_x, center_y}, margin);
-    //   // Check if pixel is not background (has alpha > 0)
-    //   if ((pixel >> 24) == 0) {
-    //     continue; // Outside diamond shape
-    //   }
-    // }
-
     GameObject obj = {0};
     obj.position = (Vector){(float)world.x, (float)world.y};
     obj.cur_sprite = sprite;

@@ -305,25 +305,6 @@ static void damage_and_kill_enemies(GlobalState *state) {
       state->exp_crystal[state->exp_crystal_count++] =
           crystal_create(enemy_pos, CRYSTAL_BLUE);
     }
-
-    // state->player.stat_experience +=
-    //     100.0 * state->player.boost_experience_percent;
-
-    // if (state->player.stat_experience >=
-    //     state->player.stat_experience_for_lvlup) {
-    //   state->status = GAME_LEVEL_UP;
-
-    //   game->level_menu_first = rand() % LVLUP_COUNT;
-
-    //   do {
-    //     game->level_menu_second = rand() % LVLUP_COUNT;
-    //   } while (game->level_menu_second == game->level_menu_first);
-
-    //   do {
-    //     game->level_menu_third = rand() % LVLUP_COUNT;
-    //   } while (game->level_menu_third == game->level_menu_first ||
-    //            game->level_menu_third == game->level_menu_second);
-    // }
   }
 }
 
