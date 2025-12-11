@@ -26,5 +26,7 @@ Checks: >
   -cert-msc51-cpp,
   -cert-msc30-c,
   -cert-msc50-cpp,
+  -cppcoreguidelines-macro-to-enum,
+  -modernize-macro-to-enum,
 
 WarningsAsErrors: '*'
