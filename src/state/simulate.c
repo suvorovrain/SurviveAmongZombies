@@ -13,7 +13,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <winsock2.h>
+#else
 #include <sys/time.h>
+#endif
 
 typedef struct {
   long long dec_frame;

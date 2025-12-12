@@ -6,6 +6,16 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#elif defined(__unix__) || defined(__APPLE__)
+#include <sys/types.h>
+#else
+#include <stddef.h>
+#include <stdint.h>
+typedef intptr_t ssize_t; // fallback
+#endif
 
 typedef struct SpriteDescription {
   char *path;
