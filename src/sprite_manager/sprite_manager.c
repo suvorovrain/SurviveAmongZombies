@@ -2,8 +2,8 @@
 #include "../state.h"
 #include "../units/units.h"
 #include <engine/types.h>
-#include <inttypes.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 

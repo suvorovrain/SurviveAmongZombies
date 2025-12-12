@@ -5,8 +5,8 @@
 #include "../units/units.h"
 #include "engine/types.h"
 #include <SDL2/SDL.h>
-#include <inttypes.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 

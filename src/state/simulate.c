@@ -6,12 +6,11 @@
 #include "../units/units.h"
 #include "engine/coordinates.h"
 #include "state.h"
-#include <bits/types.h>
 #include <engine/input.h>
 #include <engine/map.h>
 #include <engine/types.h>
-#include <inttypes.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>

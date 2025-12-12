@@ -8,8 +8,8 @@
 #include <engine/input.h>
 #include <engine/map.h>
 #include <engine/types.h>
-#include <inttypes.h>
 #include <stb_ds.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
