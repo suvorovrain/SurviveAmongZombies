@@ -1,17 +1,10 @@
-
-#include "engine/coordinates.h"
 #include "engine/engine.h"
 #include "engine/input.h"
-#include "engine/map.h"
 #include "game.h"
 #include "sprite_manager/sprite_manager.h"
-#include "state/state.h"
-#include "static_objs.h"
 #include "stb_ds.h"
-#include "units/units.h"
-#include "utils/utils.h"
-#include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 static void update(Input *input, void *user_data);

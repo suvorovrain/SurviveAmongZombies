@@ -1,9 +1,14 @@
 #include "ui_manager.h"
 #include "../game.h"
+#include "../sprite_manager/sprite_manager.h"
 #include "../state.h"
 #include "../units/units.h"
 #include "engine/types.h"
+#include <SDL2/SDL.h>
+#include <inttypes.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 UIElement uis[UI_COUNT];
 UIElement *uis_pointers[UI_COUNT];

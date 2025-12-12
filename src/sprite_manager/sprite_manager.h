@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../state.h"
-#include "../units/units.h"
+#include <engine/types.h>
 
 typedef enum {
   SPRITE_GOBLIN = 0,

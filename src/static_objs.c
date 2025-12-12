@@ -1,5 +1,4 @@
 #include "static_objs.h"
-#include "engine/coordinates.h"
 #include "engine/map.h"
 #include "engine/random.h"
 #include "engine/types.h"

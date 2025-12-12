@@ -1,13 +1,9 @@
 #pragma once
 
 #include "../game.h"
-#include "../sprite_manager/sprite_manager.h"
 #include "../state.h"
 #include "engine/types.h"
-#include <math.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 typedef struct Rect {
   float left;
