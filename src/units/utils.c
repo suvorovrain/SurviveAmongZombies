@@ -1,4 +1,10 @@
+#include "../sprite_manager/sprite_manager.h"
+#include "../state.h"
+#include "engine/types.h"
 #include "units.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // get position from generic object
 static Vector unit_get_position(void *unit) {

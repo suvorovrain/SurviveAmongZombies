@@ -1,4 +1,8 @@
+#include "../sprite_manager/sprite_manager.h"
+#include "../state.h"
+#include "engine/types.h"
 #include "units.h"
+#include <stdlib.h>
 
 Enemy enemy_create(Vector position, EnemyType type_enemy) {
   Enemy result = {0};

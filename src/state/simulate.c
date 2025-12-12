@@ -1,14 +1,19 @@
 // #include "input.h"
 #include "../config.h"
 #include "../game.h"
+#include "../state.h"
 #include "../static_objs.h"
 #include "../units/units.h"
 #include "engine/coordinates.h"
 #include "state.h"
+#include <bits/types.h>
+#include <engine/input.h>
+#include <engine/map.h>
+#include <engine/types.h>
+#include <inttypes.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/random.h>
 #include <sys/time.h>
 
 typedef struct {
