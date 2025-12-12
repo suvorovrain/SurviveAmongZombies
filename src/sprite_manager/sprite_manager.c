@@ -14,7 +14,7 @@ typedef SSIZE_T ssize_t;
 #else
 #include <stddef.h>
 #include <stdint.h>
-typedef intptr_t ssize_t; // fallback
+typedef intptr_t ssize_t;
 #endif
 
 typedef struct SpriteDescription {

@@ -2,11 +2,11 @@
 #define GAME_H
 
 #include "engine/engine.h"
+#include "engine/input.h"
+#include "engine/map.h"
 #include "engine/types.h"
 #include "state.h"
 #include <SDL2/SDL_ttf.h>
-#include <engine/input.h>
-#include <engine/map.h>
 
 typedef enum {
   LVLUP_ATK_SPD = 0,
