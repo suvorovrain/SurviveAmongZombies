@@ -1,4 +1,4 @@
 #!/bin/sh -e
 echo "Format the code"
-find src tests -type f \( -name "*.c" -o -name "*.h" \) -print0 | xargs -r -0 clang-format-20 -i
+find src -type f \( -name "*.c" -o -name "*.h" \) -print0 | xargs -r -0 clang-format-20 -i
 echo "OK"
