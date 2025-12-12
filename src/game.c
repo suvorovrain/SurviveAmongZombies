@@ -1,13 +1,16 @@
 #include "game.h"
+#include "state.h"
 #include "state/state.h"
-#include "static_objs.h"
 #include "ui_manager/ui_manager.h"
 #include "units/units.h"
-#include <engine/coordinates.h>
+#include <SDL2/SDL_ttf.h>
 #include <engine/engine.h>
 #include <engine/input.h>
 #include <engine/map.h>
+#include <engine/types.h>
+#include <inttypes.h>
 #include <stb_ds.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define MAP_WIDTH 150
@@ -25,10 +28,10 @@ const size_t lvlup_pool_values[LVLUP_COUNT] = {
     [LVLUP_DMG] = 100};
 
 GameObject **get_game_objects_from_state(GlobalState *state) {
-  GameObject **objects =
-      calloc(state->enemies_count + state->projectiles_count +
-                 state->exp_crystal_count + state->static_objects_count + 1,
-             sizeof(GameObject *));
+  GameObject **objects = (GameObject **)calloc(
+      state->enemies_count + state->projectiles_count +
+          state->exp_crystal_count + state->static_objects_count + 1,
+      sizeof(GameObject *));
 
   GameObject *player = calloc(1, sizeof(GameObject));
   player->position = state->player.position;
@@ -107,7 +110,7 @@ Game *game_create(void) {
     game_free(game);
     return NULL;
   }
-  game->fonts = calloc(FONT_COUNT, sizeof(TTF_Font *));
+  game->fonts = (TTF_Font **)calloc(FONT_COUNT, sizeof(TTF_Font *));
   game->fonts[FONT_DEJAVU] = TTF_OpenFont("fonts/DejaVuSans.ttf", 20);
   game->fonts[FONT_PIXELOID_MONO] = TTF_OpenFont("fonts/PixeloidMono.ttf", 20);
   game->fonts[FONT_PIXELOID_SANS] = TTF_OpenFont("fonts/PixeloidSans.ttf", 20);
@@ -226,7 +229,7 @@ void game_update(Game *game, Input *input) {
   for (size_t i = 0; i < game->batch.obj_count; i++) {
     free(game->batch.objs[i]);
   }
-  free(game->batch.objs);
+  free((void *)game->batch.objs);
 
   GameObject **objects = get_game_objects_from_state(&(game->state));
   game->batch.obj_count =

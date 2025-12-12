@@ -4,7 +4,9 @@
 #include "engine/engine.h"
 #include "engine/types.h"
 #include "state.h"
-#include "static_objs.h"
+#include <SDL2/SDL_ttf.h>
+#include <engine/input.h>
+#include <engine/map.h>
 
 typedef enum {
   LVLUP_ATK_SPD = 0,
