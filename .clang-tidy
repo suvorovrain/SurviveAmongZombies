@@ -28,5 +28,6 @@ Checks: >
   -cert-msc50-cpp,
   -cppcoreguidelines-macro-to-enum,
   -modernize-macro-to-enum,
+  -misc-include-cleaner,
 
 WarningsAsErrors: '*'
