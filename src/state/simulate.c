@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
 #include <winsock2.h>
 #else
 #include <sys/time.h>
