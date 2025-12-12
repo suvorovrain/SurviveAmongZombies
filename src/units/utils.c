@@ -1,4 +1,3 @@
-#include "../sprite_manager/sprite_manager.h"
 #include "../state.h"
 #include "engine/types.h"
 #include "units.h"

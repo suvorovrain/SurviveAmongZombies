@@ -4,7 +4,7 @@
 #include "../state.h"
 #include "../units/units.h"
 #include "engine/types.h"
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_pixels.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
