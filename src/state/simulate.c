@@ -1,5 +1,5 @@
 #define WIN32_LEAN_AND_MEAN
-#define _WINSOCKAPI_
+#define WINSOCKAPI_
 
 #if defined(_WIN32) || defined(_WIN64)
 // clang-format off
