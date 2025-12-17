@@ -2,8 +2,10 @@
 #define _WINSOCKAPI_
 
 #if defined(_WIN32) || defined(_WIN64)
-#include <windows.h>
+// clang-format off
 #include <winsock2.h>
+#include <windows.h>
+// clang-format on
 #include <ws2tcpip.h>
 #else
 #include <sys/time.h>
