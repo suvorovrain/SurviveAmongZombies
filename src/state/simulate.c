@@ -19,7 +19,7 @@
 #include <engine/input.h>
 #include <engine/map.h>
 #include <engine/types.h>
-#include <inttypes.h> // для PRIu64
+#include <inttypes.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
