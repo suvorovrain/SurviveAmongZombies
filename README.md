@@ -1,4 +1,5 @@
 # SurviveAmongZombies
+Vampire survivors-like 2D game with isometric graphic written with C and based on [Glebas Engine](https://github.com/Sibiri4ok/GTA-VI)
 ## Development dependencies
 * `sudo apt install build-essentials`
 * `sudo apt install cmake`
